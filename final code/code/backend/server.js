@@ -4,10 +4,12 @@
  * Node.js + Express with CORS, Error Handling, and Sample Data
  * ═══════════════════════════════════════════════════════════════════════════
  */
-
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+app.use(cors({
+  origin: "*"
+}));
 const mongoose = require('mongoose');
 const crypto = require('crypto');
 const Prescription = require('./models/Prescription');
