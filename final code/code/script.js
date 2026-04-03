@@ -1,49 +1,14 @@
 /**
  * script.js — Rivaansh Lifesciences Frontend Engine
  * Features: API fetch, search/filter, cart (localStorage), orders, modal
- *
- * Razorpay Integration:
- * 1. Sign up at https://razorpay.com
- * 2. Get Test API Key from Dashboard
- * 3. Replace 'rzp_test_YOUR_TEST_KEY_HERE' with your key
- * 4. For production, use Live Key and enable webhooks
  */
 
-const API = (() => {
-    const host = window.location.hostname;
-    const protocol = window.location.protocol;
-
-    if (host === 'localhost') {
-        return 'http://localhost:5000';
-    }
-    if (host === '127.0.0.1') {
-        return 'http://127.0.0.1:5000';
-    }
-    if (host === '0.0.0.0') {
-        return 'http://127.0.0.1:5000';
-    }
-
-    // For deployed domain, use same-origin API path
-    return `${protocol}//${host}`;
-})();
+const API = 'http://localhost:5000';
 
 // ── State ──────────────────────────────────────────────────────────────────
 let _allProducts   = [];   // full catalogue from API
 let _filtered      = [];   // currently shown on products page
 let _currentCat    = 'all';
-
-// Normalize image URLs from backend data sources
-function getProductImageUrl(image) {
-    if (!image) return 'https://placehold.co/400x300/e0f5f2/0a7c6e?text=No+Image';
-
-    const normalized = String(image).trim();
-    if (/^(https?:)?\/\//i.test(normalized)) {
-        return normalized.startsWith('http') ? normalized : `${window.location.protocol}${normalized}`;
-    }
-
-    return `${API}/${normalized.replace(/^\/?/, '')}`;
-}
-
 let _currentSearch = '';
 let _currentSort   = 'default';
 let _cart          = JSON.parse(localStorage.getItem('rv_cart') || '[]');
@@ -105,29 +70,14 @@ async function loadPrescriptions() {
 }
 
 async function loadProducts() {
-    console.log('🔄 Starting to load products from API...');
     try {
-        const apiUrl = `${API}/api/products`;
-        console.log('📡 Fetching from:', apiUrl);
-        const res = await fetch(apiUrl);
-        console.log('📡 Response status:', res.status);
-        if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
-        const data = await res.json();
-        console.log('📦 Raw API response:', data);
-        if (!Array.isArray(data) || !data.length) {
-            throw new Error('API returned empty or invalid product array');
+        const res = await fetch(`${API}/api/products`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        _allProducts = await res.json();
+        if (!Array.isArray(_allProducts) || !_allProducts.length) {
+            throw new Error('No products returned');
         }
-        _allProducts = data;
-        console.log(`✅ Loaded ${data.length} products from backend`);
-
-        // Convert relative backend image paths into full API URLs
-        _allProducts = _allProducts.map(p => ({
-            ...p,
-            image: getProductImageUrl(p.image)
-        }));
         _filtered = [..._allProducts];
-        console.log('🎨 Processed products with images:', _allProducts.slice(0, 3)); // Log first 3
-
         renderHome();
         renderProductsPage();
         renderAISuggestions();
@@ -137,7 +87,6 @@ async function loadProducts() {
         renderPrescriptionsPage();
     } catch (err) {
         console.error('❌ Fetch error:', err.message);
-        console.log('🔄 Falling back to local products...');
         addNotification('Could not reach backend server, loading local fallback products.', 'error');
         loadFallbackProducts();
         showError(true);
@@ -171,9 +120,6 @@ function renderProductsPage() {
     const counter = document.getElementById('productCount');
     const noRes   = document.getElementById('noResults');
     if (!grid) return;
-
-    console.log(`🎨 Rendering products page with ${_filtered.length} products`);
-    console.log('📋 Products to render:', _filtered.slice(0, 5)); // Log first 5
 
     if (!_filtered.length) {
         grid.innerHTML = '';
@@ -213,7 +159,7 @@ function cardHTML(p) {
     return `
     <div class="product-card" onclick="openModal(${p.id})">
         <div class="card-img-wrap">
-            <img src="${getProductImageUrl(p.image)}" alt="${p.name}" loading="lazy" onerror="this.src='https://placehold.co/400x300/e0f5f2/0a7c6e?text=Rivaansh'">
+            <img src="${p.image}" alt="${p.name}" loading="lazy" onerror="this.src='https://placehold.co/400x300/e0f5f2/0a7c6e?text=Rivaansh'">
             ${badgeHTML}
             ${rxHTML}
         </div>
@@ -329,7 +275,7 @@ window.openModal = function(id) {
         : `<button class="modal-add-btn" onclick="addToCart(${p.id}); closeModalDirect()"><i class="fa fa-cart-plus"></i> Add to Cart</button>`;
 
     document.getElementById('modalContent').innerHTML = `
-        <img class="modal-img" src="${getProductImageUrl(p.image)}" alt="${p.name}" onerror="this.src='https://placehold.co/700x260/e0f5f2/0a7c6e?text=Rivaansh'">
+        <img class="modal-img" src="${p.image}" alt="${p.name}" onerror="this.src='https://placehold.co/700x260/e0f5f2/0a7c6e?text=Rivaansh'">
         <div class="modal-body">
             <div class="modal-brand">${p.brand}</div>
             <h2 class="modal-name">${p.name}</h2>
@@ -548,70 +494,25 @@ window.startPayment = async function(method) {
 
         if (method === 'razorpay') {
             if (typeof Razorpay === 'undefined') {
-                toast('Razorpay SDK not loaded. Please refresh the page.', 'error');
+                toast('Razorpay SDK not loaded. Please check internet connection.', 'error');
                 return;
             }
 
-            // Razorpay Test Key (replace with your live key in production)
-            const razorpayKey = 'rzp_test_YOUR_TEST_KEY_HERE'; // Get from https://dashboard.razorpay.com/
-
             const options = {
-                key: razorpayKey,
-                amount: amount, // Amount in paise (₹1 = 100 paise)
-                currency: 'INR',
+                key: 'rzp_test_YourRazorpayKeyHere',
+                amount, currency: 'INR',
                 name: 'Rivaansh Lifesciences',
-                description: 'Healthcare Products Purchase',
-                image: 'https://rivaanshlifesciences.com/logo.png', // Your logo URL
-                prefill: {
-                    email: _user?.email || '',
-                    name: _user?.name || 'Guest User',
-                    contact: _user?.phone || ''
-                },
-                notes: {
-                    orderId: orderId,
-                    userId: _user?.uid || 'guest'
-                },
-                theme: {
-                    color: '#10B981' // Green theme matching your brand
-                },
+                description: 'Purchase from Rivaansh pharmacy',
+                prefill: { email: _user?.email || '', name: _user?.name || 'Guest' },
+                notes: { orderId },
                 handler: async function(response) {
-                    try {
-                        // Confirm payment on backend
-                        await confirmPayment(orderId, 'razorpay', response.razorpay_payment_id, true);
-                        toast(`Payment successful! ID: ${response.razorpay_payment_id}`, 'success');
-
-                        // Clear cart and update UI
-                        _cart = [];
-                        saveCart();
-                        updateCartBadge();
-                        renderOrders();
-                        showPage('orders');
-                        toggleCart(); // Close cart drawer
-
-                    } catch (err) {
-                        console.error('Payment confirmation error:', err);
-                        toast('Payment successful but confirmation failed. Contact support.', 'warning');
-                    }
+                    await confirmPayment(orderId, 'razorpay', response.razorpay_payment_id, true);
+                    toast(`Payment successful: ${response.razorpay_payment_id}`, 'success');
                 },
-                modal: {
-                    ondismiss: function() {
-                        toast('Payment cancelled by user', 'info');
-                    },
-                    confirm_close: true,
-                    escape: true
-                },
-                retry: {
-                    enabled: false // Disable retry for demo
-                }
+                modal: { ondismiss: function() { toast('Payment window closed', 'info'); } }
             };
-
-            try {
-                const rzp = new Razorpay(options);
-                rzp.open();
-            } catch (err) {
-                console.error('Razorpay initialization error:', err);
-                toast('Payment gateway error. Please try again.', 'error');
-            }
+            const rzp = new Razorpay(options);
+            rzp.open();
 
         } else if (method === 'paypal') {
             const returnUrl = `${window.location.origin}/payment-success?order=${orderId}`;

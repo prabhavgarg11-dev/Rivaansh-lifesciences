@@ -9,43 +9,12 @@ const path    = require("path");
 const fs      = require("fs");
 
 const app  = express();
-const PORT = process.env.PORT || 5000;
-
-const allowedOrigins = [
-    'http://localhost:3000',
-    'http://127.0.0.1:3000',
-    'http://localhost:5173',
-    'http://127.0.0.1:5173',
-    'http://localhost:5000',
-    'http://127.0.0.1:5000'
-];
-
-const corsOptions = {
-    origin: function (origin, callback) {
-        if (!origin || allowedOrigins.indexOf(origin) !== -1) {
-            callback(null, true);
-        } else {
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    credentials: false,
-    optionsSuccessStatus: 200
-};
+const PORT = 5000;
 
 // ── Middleware ────────────────────────────────────────────────────────────────
-app.use(cors(corsOptions));                   // Fix CORS with explicit allowed origins
-app.options('*', cors(corsOptions));          // Preflight for all routes
+app.use(cors());                              // Fix CORS for all origins
 app.use(express.json());                      // Parse JSON bodies
-app.use(express.urlencoded({ extended: true }));
 app.use('/images', express.static(path.join(__dirname, 'images')));
-
-// Response headers for stronger API behavior
-app.use((req, res, next) => {
-    res.setHeader('X-API-Server', 'Rivaansh Lifesciences');
-    res.setHeader('Cache-Control', 'no-store');
-    next();
-});
 
 // ── Helper: load products ─────────────────────────────────────────────────────
 function loadProducts() {
@@ -124,30 +93,7 @@ app.post('/api/orders', (req, res) => {
 
 // GET / — health check
 app.get('/', (req, res) => {
-    res.json({
-        status: 'ok',
-        service: 'Rivaansh Lifesciences API',
-        port: PORT,
-        timestamp: new Date().toISOString()
-    });
-});
-
-// 404 Not Found handler
-app.use((req, res, next) => {
-    res.status(404).json({
-        error: 'Route not found',
-        path: req.path,
-        method: req.method
-    });
-});
-
-// Error handler
-app.use((err, req, res, next) => {
-    console.error('Server error:', err);
-    res.status(err.status || 500).json({
-        error: err.message || 'Internal Server Error',
-        details: process.env.NODE_ENV === 'development' ? err : undefined
-    });
+    res.send('🚀 Rivaansh Lifesciences API is live on port ' + PORT);
 });
 
 // ── Start ─────────────────────────────────────────────────────────────────────

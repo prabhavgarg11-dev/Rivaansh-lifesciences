@@ -19,6 +19,32 @@ yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
 
+# Build outputs
+dist/
+build/
+.next/
+out/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+*.tmp
+*.bak
+
+# Database
+*.sqlite
+*.db
+
+# Temporary files
+*.zip
+*.tar.gz
+
 # Runtime data
 pids
 *.pid

@@ -3,15 +3,6 @@
  * Features: Debounced Live-Search, Clinical Cart & SPA Page Switching
  */
 
-const BACKEND_URL = (() => {
-    const host = window.location.hostname;
-    const protocol = window.location.protocol;
-    if (host === 'localhost' || host === '127.0.0.1') {
-        return 'http://localhost:5000';
-    }
-    return `${protocol}//${host}`;
-})();
-
 let allProducts = [];
 let cart = [];
 let debounceTimeout;
@@ -55,10 +46,9 @@ document.addEventListener("DOMContentLoaded", () => {
 // 🚀 FETCH INVENTORY (Step fetch)
 async function fetchInventory() {
     try {
-        const endpoint = `${BACKEND_URL}/api/products`;
-        console.log(`📡 Fetching from ${endpoint}`);
-        const res = await fetch(endpoint, { method: 'GET', cache: 'no-cache' });
-        if (!res.ok) throw new Error(`Backend returned ${res.status}`);
+        console.log("📡 Fetching from http://localhost:5000/api/products...");
+        const res = await fetch("http://localhost:5000/api/products");
+        if (!res.ok) throw new Error("Backend Unreachable");
 
         allProducts = await res.json();
         renderProducts(allProducts.slice(0, 8), "trending-grid");
@@ -66,13 +56,6 @@ async function fetchInventory() {
         console.log(`📦 DATA LOADED: ${allProducts.length} Items ✅`);
     } catch (err) {
         console.error("❌ FETCH ERROR:", err);
-        // fallback to local hardcoded products if backend is unreachable
-        allProducts = [
-            { id: 1, name: 'Vitamin C 1000mg Tablet', price: 299, composition: 'Ascorbic Acid', image: 'https://placehold.co/200', rating: 4.5, discount: 10 },
-            { id: 2, name: 'Omega-3 Fish Oil', price: 549, composition: 'EPA/DHA', image: 'https://placehold.co/200', rating: 4.7, discount: 8 }
-        ];
-        renderProducts(allProducts.slice(0, 8), "trending-grid");
-        renderProducts(allProducts, "catalog-grid");
     }
 }
 
@@ -152,12 +135,10 @@ function addToCart(productId) {
     updateCartIcon();
     
     // Post to Server (Step POST /api/cart)
-    fetch(`${BACKEND_URL}/api/cart`, {
+    fetch("http://localhost:5000/api/cart", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(product)
-    }).catch(() => {
-        console.warn('🟡 Could not reach /api/cart, using local cart fallback.');
     });
 
     console.log("🛒 Item added to clinical cart🚑", product.name);
@@ -216,11 +197,8 @@ window.removeFromCart = (index) => {
 };
 
 window.viewDetails = function(id) {
-    fetch(`${BACKEND_URL}/api/products/${id}`)
-        .then(res => {
-            if (!res.ok) throw new Error(`Backend responded ${res.status}`);
-            return res.json();
-        })
+    fetch(`http://localhost:5000/api/products/${id}`)
+        .then(res => res.json())
         .then(p => {
             const container = document.getElementById("product-detail-view");
             container.innerHTML = `

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tata 1mg | Digital Health Hub Clone 💊</title>
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Premium Clinical Typography (Inter) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Icons for App Feel -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+
+    <!-- 1. Top Navigation Bar: Sticky Expert Header -->
+    <header class="sticky-nav">
+        <div class="header-main">
+            <div class="logo" onclick="showPage('home')">
+                <h2 style="font-weight: 900; color: #ff6f61;">Tata <span>1mg.</span></h2>
+            </div>
+            
+            <div class="search-hub">
+                <div class="search-bar">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="liveSearch" placeholder="Search medicines, vitamins and more...">
+                </div>
+                <!-- 🔍 Live Search Results Dropdown -->
+                <div id="search-dropdown" class="search-dropdown"></div>
+            </div>
+
+            <div class="header-actions">
+                <button class="login-btn">Login | Signup</button>
+                <button class="cart-icon" onclick="showPage('cart')">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span id="cart-count">0</span>
+                </button>
+            </div>
+        </div>
+        
+        <nav class="sub-nav">
+            <button onclick="showPage('home')">Medicines</button>
+            <button>Lab Tests</button>
+            <button onclick="showPage('products')">Healthcare Products</button>
+            <button>Offers</button>
+        </nav>
+    </header>
+
+    <main class="content">
+        <!-- SPA PAGE: HOME -->
+        <div id="homePage" class="page active">
+            <!-- 🏠 Homepage: Hero & Banner (Steps 1 & 2) -->
+            <section class="hero-banner">
+                <div class="banner-slider">
+                    <div class="slide">
+                        <h1>Authentic Medicines. <br> Flat 20% Off.</h1>
+                        <p>Trusted pharmaceutical formulations delivered to your doorstep.</p>
+                        <button class="btn-primary">Browse Medicines</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 🏠 Category Section (Step  category) -->
+            <section class="categories-hub">
+                <div class="cat-card" onclick="filterType('Medicines')">
+                    <i class="fa-solid fa-pills" style="color: #10B981;"></i>
+                    <span>Medicines</span>
+                </div>
+                <div class="cat-card" onclick="filterType('Lab Tests')">
+                    <i class="fa-solid fa-vial" style="color: #3b82f6;"></i>
+                    <span>Lab Tests</span>
+                </div>
+                <div class="cat-card" onclick="filterType('Diabetes Care')">
+                    <i class="fa-solid fa-droplet" style="color: #ff6f61;"></i>
+                    <span>Diabetes Care</span>
+                </div>
+                <div class="cat-card" onclick="filterType('Vitamins & Supplements')">
+                    <i class="fa-solid fa-leaf" style="color: #8b5cf6;"></i>
+                    <span>Vitamins</span>
+                </div>
+                <div class="cat-card" onclick="filterType('Personal Care')">
+                    <i class="fa-solid fa-soap" style="color: #f59e0b;"></i>
+                    <span>Personal Care</span>
+                </div>
+            </section>
+
+            <!-- Trending Medicines Section -->
+            <div style="padding: 20px 8%; background: #fff; margin-top: 20px;">
+                <h3 style="font-weight: 900; margin-bottom: 20px;">Trending Medicines</h3>
+                <div id="trending-grid" class="products-container horizontal-scroll">
+                    <!-- Cards injected by JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- SPA PAGE: PRODUCTS (Catalog) -->
+        <div id="productsPage" class="page">
+            <div style="padding: 40px 8%;">
+                <h2 style="font-weight: 900;">Healthcare Catalogue</h2>
+                <div id="catalog-grid" class="products-container"></div>
+            </div>
+        </div>
+
+        <!-- SPA PAGE: CART (Step cart) -->
+        <div id="cartPage" class="page">
+            <div class="cart-container">
+                <h2>Clinical Cart Summary</h2>
+                <div id="cart-items" class="cart-items-list">
+                    <!-- Products injected by cart logic -->
+                </div>
+                <div class="cart-total">
+                    <h3>Total Payable: ₹<span id="grand-total">0.00</span></h3>
+                    <button class="checkout-btn">Proceed to Checkout</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- SPA PAGE: DETAILS (Step detail) -->
+        <div id="detailsPage" class="page">
+            <div id="product-detail-view" class="detail-matrix">
+                <!-- Data injected by JS -->
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="footer">
+        <div class="footer-grid">
+            <div class="col">
+                <h3>Tata <span>1mg.</span></h3>
+                <p>Authentic Medical formulations Hub.</p>
+            </div>
+            <div class="col">
+                <p>Medicines Catalog</p>
+                <p>Privacy Policy</p>
+                <p>Editorial Policy</p>
+            </div>
+            <div class="col">
+                <p>GET THE APP</p>
+                <button class="btn-app">Download on App Store</button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Universal Logic (Tata 1mg Standard) -->
+    <script src="script.js"></script>
+</body>
+</html>
