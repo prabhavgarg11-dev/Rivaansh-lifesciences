@@ -100,13 +100,20 @@ async function loadPrescriptions() {
 }
 
 async function loadProducts() {
+    console.log('🔄 Starting to load products from API...');
     try {
-        const res = await fetch(`${API}/api/products`);
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        _allProducts = await res.json();
-        if (!Array.isArray(_allProducts) || !_allProducts.length) {
-            throw new Error('No products returned');
+        const apiUrl = `${API}/api/products`;
+        console.log('📡 Fetching from:', apiUrl);
+        const res = await fetch(apiUrl);
+        console.log('📡 Response status:', res.status);
+        if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+        const data = await res.json();
+        console.log('📦 Raw API response:', data);
+        if (!Array.isArray(data) || !data.length) {
+            throw new Error('API returned empty or invalid product array');
         }
+        _allProducts = data;
+        console.log(`✅ Loaded ${data.length} products from backend`);
 
         // Convert relative backend image paths into full API URLs
         _allProducts = _allProducts.map(p => ({
@@ -114,6 +121,8 @@ async function loadProducts() {
             image: getProductImageUrl(p.image)
         }));
         _filtered = [..._allProducts];
+        console.log('🎨 Processed products with images:', _allProducts.slice(0, 3)); // Log first 3
+
         renderHome();
         renderProductsPage();
         renderAISuggestions();
@@ -123,6 +132,7 @@ async function loadProducts() {
         renderPrescriptionsPage();
     } catch (err) {
         console.error('❌ Fetch error:', err.message);
+        console.log('🔄 Falling back to local products...');
         addNotification('Could not reach backend server, loading local fallback products.', 'error');
         loadFallbackProducts();
         showError(true);
@@ -156,6 +166,9 @@ function renderProductsPage() {
     const counter = document.getElementById('productCount');
     const noRes   = document.getElementById('noResults');
     if (!grid) return;
+
+    console.log(`🎨 Rendering products page with ${_filtered.length} products`);
+    console.log('📋 Products to render:', _filtered.slice(0, 5)); // Log first 5
 
     if (!_filtered.length) {
         grid.innerHTML = '';

@@ -10,6 +10,7 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const crypto = require('crypto');
+const path = require('path');
 const Prescription = require('./models/Prescription');
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -62,6 +63,10 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.options('*', cors(corsOptions));
 app.set('trust proxy', 1); // For nginx/Heroku proxy customers if needed
+
+// Serve static files (images, uploads)
+app.use('/images', express.static(path.join(__dirname, '../images')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Parse JSON requests
 app.use(express.json());
