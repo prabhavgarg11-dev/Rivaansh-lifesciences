@@ -1,6 +1,12 @@
 /**
  * script.js — Rivaansh Lifesciences Frontend Engine
  * Features: API fetch, search/filter, cart (localStorage), orders, modal
+ *
+ * Razorpay Integration:
+ * 1. Sign up at https://razorpay.com
+ * 2. Get Test API Key from Dashboard
+ * 3. Replace 'rzp_test_YOUR_TEST_KEY_HERE' with your key
+ * 4. For production, use Live Key and enable webhooks
  */
 
 const API = (() => {
@@ -524,25 +530,70 @@ window.startPayment = async function(method) {
 
         if (method === 'razorpay') {
             if (typeof Razorpay === 'undefined') {
-                toast('Razorpay SDK not loaded. Please check internet connection.', 'error');
+                toast('Razorpay SDK not loaded. Please refresh the page.', 'error');
                 return;
             }
 
+            // Razorpay Test Key (replace with your live key in production)
+            const razorpayKey = 'rzp_test_YOUR_TEST_KEY_HERE'; // Get from https://dashboard.razorpay.com/
+
             const options = {
-                key: 'rzp_test_YourRazorpayKeyHere',
-                amount, currency: 'INR',
+                key: razorpayKey,
+                amount: amount, // Amount in paise (₹1 = 100 paise)
+                currency: 'INR',
                 name: 'Rivaansh Lifesciences',
-                description: 'Purchase from Rivaansh pharmacy',
-                prefill: { email: _user?.email || '', name: _user?.name || 'Guest' },
-                notes: { orderId },
-                handler: async function(response) {
-                    await confirmPayment(orderId, 'razorpay', response.razorpay_payment_id, true);
-                    toast(`Payment successful: ${response.razorpay_payment_id}`, 'success');
+                description: 'Healthcare Products Purchase',
+                image: 'https://rivaanshlifesciences.com/logo.png', // Your logo URL
+                prefill: {
+                    email: _user?.email || '',
+                    name: _user?.name || 'Guest User',
+                    contact: _user?.phone || ''
                 },
-                modal: { ondismiss: function() { toast('Payment window closed', 'info'); } }
+                notes: {
+                    orderId: orderId,
+                    userId: _user?.uid || 'guest'
+                },
+                theme: {
+                    color: '#10B981' // Green theme matching your brand
+                },
+                handler: async function(response) {
+                    try {
+                        // Confirm payment on backend
+                        await confirmPayment(orderId, 'razorpay', response.razorpay_payment_id, true);
+                        toast(`Payment successful! ID: ${response.razorpay_payment_id}`, 'success');
+
+                        // Clear cart and update UI
+                        _cart = [];
+                        saveCart();
+                        updateCartBadge();
+                        renderOrders();
+                        showPage('orders');
+                        toggleCart(); // Close cart drawer
+
+                    } catch (err) {
+                        console.error('Payment confirmation error:', err);
+                        toast('Payment successful but confirmation failed. Contact support.', 'warning');
+                    }
+                },
+                modal: {
+                    ondismiss: function() {
+                        toast('Payment cancelled by user', 'info');
+                    },
+                    confirm_close: true,
+                    escape: true
+                },
+                retry: {
+                    enabled: false // Disable retry for demo
+                }
             };
-            const rzp = new Razorpay(options);
-            rzp.open();
+
+            try {
+                const rzp = new Razorpay(options);
+                rzp.open();
+            } catch (err) {
+                console.error('Razorpay initialization error:', err);
+                toast('Payment gateway error. Please try again.', 'error');
+            }
 
         } else if (method === 'paypal') {
             const returnUrl = `${window.location.origin}/payment-success?order=${orderId}`;
