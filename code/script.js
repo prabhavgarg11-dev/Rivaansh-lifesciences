@@ -13,12 +13,17 @@ const API = (() => {
     const host = window.location.hostname;
     const protocol = window.location.protocol;
 
-    // Local dev: use backend port 5000 explicitly
-    if (host === 'localhost' || host === '127.0.0.1') {
+    if (host === 'localhost') {
         return 'http://localhost:5000';
     }
+    if (host === '127.0.0.1') {
+        return 'http://127.0.0.1:5000';
+    }
+    if (host === '0.0.0.0') {
+        return 'http://127.0.0.1:5000';
+    }
 
-    // Production staging (same domain) fallback
+    // For deployed domain, use same-origin API path
     return `${protocol}//${host}`;
 })();
 
