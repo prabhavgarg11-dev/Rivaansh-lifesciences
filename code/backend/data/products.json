@@ -163,5 +163,170 @@
     "discount": 5,
     "rating": 4.5,
     "image": "http://localhost:5000/images/zandubalm.jpg"
+  },
+  {
+    "id": 16,
+    "name": "Complete Blood Count (CBC)",
+    "category": "Lab Tests",
+    "composition": "Blood Analysis",
+    "description": "Comprehensive blood test for overall health assessment.",
+    "price": 300.00,
+    "discount": 10,
+    "rating": 4.8,
+    "image": "http://localhost:5000/images/cbc.jpg"
+  },
+  {
+    "id": 17,
+    "name": "Lipid Profile",
+    "category": "Lab Tests",
+    "composition": "Cholesterol & Triglycerides Test",
+    "description": "Heart health screening for cholesterol levels.",
+    "price": 500.00,
+    "discount": 15,
+    "rating": 4.7,
+    "image": "http://localhost:5000/images/lipid.jpg"
+  },
+  {
+    "id": 18,
+    "name": "Thyroid Function Test",
+    "category": "Lab Tests",
+    "composition": "TSH, T3, T4",
+    "description": "Thyroid hormone levels for metabolic health.",
+    "price": 600.00,
+    "discount": 12,
+    "rating": 4.6,
+    "image": "http://localhost:5000/images/thyroid.jpg"
+  },
+  {
+    "id": 19,
+    "name": "Blood Sugar Test (Fasting)",
+    "category": "Lab Tests",
+    "composition": "Glucose Level Test",
+    "description": "Diabetes screening with fasting blood glucose.",
+    "price": 150.00,
+    "discount": 8,
+    "rating": 4.9,
+    "image": "http://localhost:5000/images/bloodsugar.jpg"
+  },
+  {
+    "id": 20,
+    "name": "Liver Function Test (LFT)",
+    "category": "Lab Tests",
+    "composition": "SGOT, SGPT, Bilirubin",
+    "description": "Liver health assessment and damage detection.",
+    "price": 450.00,
+    "discount": 10,
+    "rating": 4.5,
+    "image": "http://localhost:5000/images/lft.jpg"
+  },
+  {
+    "id": 21,
+    "name": "Kidney Function Test (KFT)",
+    "category": "Lab Tests",
+    "composition": "Creatinine, Urea, Electrolytes",
+    "description": "Kidney health and function evaluation.",
+    "price": 400.00,
+    "discount": 12,
+    "rating": 4.7,
+    "image": "http://localhost:5000/images/kft.jpg"
+  },
+  {
+    "id": 22,
+    "name": "Urine Routine Examination",
+    "category": "Lab Tests",
+    "composition": "Urine Analysis",
+    "description": "Comprehensive urine test for infections and health.",
+    "price": 200.00,
+    "discount": 5,
+    "rating": 4.4,
+    "image": "http://localhost:5000/images/urine.jpg"
+  },
+  {
+    "id": 23,
+    "name": "HbA1c Test",
+    "category": "Lab Tests",
+    "composition": "Glycated Hemoglobin",
+    "description": "Long-term diabetes control and average blood sugar.",
+    "price": 350.00,
+    "discount": 10,
+    "rating": 4.8,
+    "image": "http://localhost:5000/images/hba1c.jpg"
+  },
+  {
+    "id": 24,
+    "name": "Vitamin D Test",
+    "category": "Lab Tests",
+    "composition": "25-Hydroxy Vitamin D",
+    "description": "Bone health and immunity vitamin D levels.",
+    "price": 800.00,
+    "discount": 15,
+    "rating": 4.6,
+    "image": "http://localhost:5000/images/vitamind.jpg"
+  },
+  {
+    "id": 25,
+    "name": "Iron Studies",
+    "category": "Lab Tests",
+    "composition": "Serum Iron, TIBC, Ferritin",
+    "description": "Anemia and iron deficiency assessment.",
+    "price": 550.00,
+    "discount": 12,
+    "rating": 4.5,
+    "image": "http://localhost:5000/images/iron.jpg"
+  },
+  {
+    "id": 26,
+    "name": "Calcium Test",
+    "category": "Lab Tests",
+    "composition": "Total Calcium",
+    "description": "Bone health and parathyroid function test.",
+    "price": 250.00,
+    "discount": 8,
+    "rating": 4.3,
+    "image": "http://localhost:5000/images/calcium.jpg"
+  },
+  {
+    "id": 27,
+    "name": "Vitamin B12 Test",
+    "category": "Lab Tests",
+    "composition": "Serum Vitamin B12",
+    "description": "Neurological health and anemia screening.",
+    "price": 700.00,
+    "discount": 10,
+    "rating": 4.7,
+    "image": "http://localhost:5000/images/vitaminb12.jpg"
+  },
+  {
+    "id": 28,
+    "name": "Dengue NS1 Antigen Test",
+    "category": "Lab Tests",
+    "composition": "Dengue Virus Detection",
+    "description": "Early dengue fever diagnosis.",
+    "price": 600.00,
+    "discount": 5,
+    "rating": 4.2,
+    "image": "http://localhost:5000/images/dengue.jpg"
+  },
+  {
+    "id": 29,
+    "name": "COVID-19 RT-PCR Test",
+    "category": "Lab Tests",
+    "composition": "SARS-CoV-2 Detection",
+    "description": "Accurate COVID-19 virus detection.",
+    "price": 1200.00,
+    "discount": 20,
+    "rating": 4.9,
+    "image": "http://localhost:5000/images/covid.jpg"
+  },
+  {
+    "id": 30,
+    "name": "Allergy Test Panel",
+    "category": "Lab Tests",
+    "composition": "Common Allergens",
+    "description": "Comprehensive allergy screening.",
+    "price": 1500.00,
+    "discount": 15,
+    "rating": 4.4,
+    "image": "http://localhost:5000/images/allergy.jpg"
   }
 ]
