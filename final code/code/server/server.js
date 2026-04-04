@@ -48,14 +48,14 @@ async function seedProducts() {
     }
 }
 
-// Start Server (Port 5000)
+// Start Server
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-    const baseURL = process.env.RENDER_EXTERNAL_URL || `http://localhost:${PORT}`;
+  const baseURL = process.env.RENDER_EXTERNAL_URL || `http://localhost:${PORT}`;
 
-    console.log(`\n🚀 Server launched successfully`);
-    console.log(`→ Server: ${baseURL}`);
-    console.log(`→ GET ${baseURL}/api/products`);
-    console.log(`→ GET ${baseURL}/api/orders\n`);
+  console.log("\n🚀 Server launched successfully");
+  console.log(`👉 Server: ${baseURL}`);
+  console.log(`👉 GET ${baseURL}/api/products`);
+  console.log(`👉 GET ${baseURL}/api/orders\n`);
 });

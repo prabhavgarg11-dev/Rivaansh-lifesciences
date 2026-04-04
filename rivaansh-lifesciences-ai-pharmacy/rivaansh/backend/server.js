@@ -99,11 +99,17 @@ app.use((err, req, res, next) => {
 
 // ── Start ─────────────────────────────────────────────────────────────
 app.listen(PORT, () => {
-    console.log('\n╔════════════════════════════════════════╗');
-    console.log('║   Rivaansh Lifesciences API v2.0 🚀    ║');
-    console.log('╚════════════════════════════════════════╝');
-    console.log(`\n→ Server:   http://localhost:${PORT}`);
-    console.log(`→ Products: http://localhost:${PORT}/api/products`);
-    console.log(`→ AI Chat:  http://localhost:${PORT}/api/ai/chat`);
-    console.log(`→ AI Key:   ${process.env.ANTHROPIC_API_KEY ? '✅ Set' : '❌ Missing (set ANTHROPIC_API_KEY)'}\n`);
+    console.log("\n🚀 Rivaansh Lifesciences API v2.0\n");
+
+    const baseURL = process.env.RENDER_EXTERNAL_URL || `http://localhost:${PORT}`;
+
+    console.log(`→ Server: ${baseURL}`);
+    console.log(`→ Products: ${baseURL}/api/products`);
+    console.log(`→ AI Chat: ${baseURL}/api/ai/chat`);
+
+    console.log(
+        `→ AI Key: ${
+            process.env.ANTHROPIC_API_KEY ? "✅ Set" : "❌ Missing (set ANTHROPIC_API_KEY)"
+        }\n`
+    );
 });

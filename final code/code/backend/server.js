@@ -22,14 +22,13 @@ const ADMIN_TOKEN = crypto.createHash('sha256').update(ADMIN_SECRET).digest('hex
 
 // Database connection
 mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
+    useNewUrlParser: true,
+    useUnifiedTopology: true
 })
 .then(() => console.log("✅ MongoDB Connected"))
 .catch(err => {
-  console.error("❌ DB Error:", err.message);
+    console.error("❌ MongoDB Error:", err);
 });
-
 // ═══════════════════════════════════════════════════════════════════════════
 // MIDDLEWARE SETUP
 // ════════════════════
