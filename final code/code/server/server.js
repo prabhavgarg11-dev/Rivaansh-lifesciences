@@ -50,8 +50,12 @@ async function seedProducts() {
 
 // Start Server (Port 5000)
 const PORT = process.env.PORT || 5000;
+
 app.listen(PORT, () => {
-    console.log(`Server launched successfully on http://localhost:${PORT}`);
-    console.log(`- GET http://localhost:5000/api/products`);
-    console.log(`- GET http://localhost:5000/api/orders`);
+    const baseURL = process.env.RENDER_EXTERNAL_URL || `http://localhost:${PORT}`;
+
+    console.log(`\n🚀 Server launched successfully`);
+    console.log(`→ Server: ${baseURL}`);
+    console.log(`→ GET ${baseURL}/api/products`);
+    console.log(`→ GET ${baseURL}/api/orders\n`);
 });

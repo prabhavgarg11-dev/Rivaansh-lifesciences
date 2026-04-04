@@ -140,24 +140,28 @@ function addToCart(productId) {
     const product = allProducts.find(p => p.id === productId);
     if (!product) return;
 
+    // Add to local cart
     cart.push(product);
     updateCartIcon();
-    
-    // Post to Server (Step POST /api/cart)
-    fetch("http://localhost:5000/api/cart", {
+
+    console.log("🛒 Item added to cart:", product.name);
+
+    // Send to backend (optional but correct way)
+    fetch(`${API}/api/cart`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+            "Content-Type": "application/json"
+        },
         body: JSON.stringify(product)
+    })
+    .then(res => res.json())
+    .then(data => {
+        console.log("✅ Sent to backend:", data);
+    })
+    .catch(err => {
+        console.error("❌ Cart API error:", err);
     });
-
-    console.log("🛒 Item added to clinical cart🚑", product.name);
 }
-
-function updateCartIcon() {
-    const countEl = document.getElementById("cart-count");
-    if (countEl) countEl.innerText = cart.length;
-}
-
 // 📦 5. SPA NAVIGATION SWITCHER
 function showPage(pageId) {
     console.log("Navigating to Hub Page:", pageId);
@@ -172,64 +176,82 @@ function showPage(pageId) {
 
 // CART RENDER
 function renderCart() {
-    const container = document.getElementById("cart-items");
-    const totalEl = document.getElementById("grand-total");
-    if (!container) return;
+  const container = document.getElementById("cart-items");
+  const totalEl = document.getElementById("grand-total");
 
-    container.innerHTML = "";
-    let total = 0;
+  if (!container) return;
 
-    cart.forEach((item, index) => {
-        total += item.price;
-        const div = document.createElement("div");
-        div.style = "display:flex; justify-content:space-between; align-items:center; padding:15px; border-bottom:1px solid #eee; background:#fff; border-radius:12px; margin-bottom:10px;";
-        div.innerHTML = `
-            <div style="display:flex; align-items:center; gap:15px;">
-                <img src="${item.image}" style="width:50px; height:50px; object-fit:contain;" />
-                <div>
-                    <h5 style="font-weight:800;">${item.name}</h5>
-                    <p style="color:#10B981; font-weight:900;">₹${item.price.toFixed(2)}</p>
-                </div>
-            </div>
-            <button onclick="removeFromCart(${index})" style="background:none; border:none; color:red; cursor:pointer;"><i class="fa-solid fa-trash"></i></button>
-        `;
-        container.appendChild(div);
-    });
+  let cart = JSON.parse(localStorage.getItem("rv_cart")) || [];
 
-    totalEl.innerText = total.toFixed(2);
+  if (cart.length === 0) {
+    container.innerHTML = "<p>Cart is empty</p>";
+    totalEl.innerText = "₹0";
+    return;
+  }
+
+  let total = 0;
+
+  container.innerHTML = cart.map((item, index) => {
+    const price = item.price || 0;
+    const qty = item.qty || 1;
+    total += price * qty;
+
+    return `
+      <div class="cart-item">
+        <img src="${item.image || 'https://via.placeholder.com/80'}" width="80"/>
+        <div>
+          <h4>${item.name}</h4>
+          <p>₹${price} x ${qty}</p>
+          <button onclick="removeFromCart(${index})">Remove</button>
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  totalEl.innerText = `₹${total}`;
 }
-
 window.removeFromCart = (index) => {
-    cart.splice(index, 1);
-    updateCartIcon();
-    renderCart();
-};
+  let cart = JSON.parse(localStorage.getItem("rv_cart")) || [];
+  cart.splice(index, 1);
+  localStorage.setItem("rv_cart", JSON.stringify(cart));
+  renderCart();
+};      
 
 window.viewDetails = function(id) {
-    fetch(`http://localhost:5000/api/products/${id}`)
+    fetch(`${API}/api/products/${id}`)
         .then(res => res.json())
         .then(p => {
             const container = document.getElementById("product-detail-view");
+
             container.innerHTML = `
-                <div style="display:grid; grid-template-columns: 1fr 1.2fr; gap:40px; background:#fff; padding:40px; border-radius:20px; box-shadow:var(--sh);">
+                <div style="display:grid; grid-template-columns: 1fr 1.2fr; gap:40px; background:#fff; padding:40px; border-radius:20px;">
+                    
                     <div style="background:#f8fafc; border-radius:20px; padding:40px; text-align:center;">
                         <img src="${p.image}" style="width:100%; height:100%; object-fit:contain;" />
                     </div>
+
                     <div>
-                        <h5 style="color:var(--su); font-weight:900; margin-bottom:5px;">Certified Healthcare Formulation</h5>
                         <h1 style="font-size:2.5rem; font-weight:900;">${p.name}</h1>
-                        <p style="font-size:1.1rem; color:#666; margin-bottom:20px;">${p.composition}</p>
-                        <div style="display:flex; align-items:center; gap:15px; margin-bottom:30px;">
-                            <span style="font-size:2.5rem; font-weight:900; color:var(--txt);">₹${p.price.toFixed(2)}</span>
-                            <span style="color:var(--su); font-weight:800;">${p.discount}% OFF</span>
+                        <p style="font-size:1rem; margin-bottom:20px;">${p.composition}</p>
+
+                        <div style="display:flex; gap:15px; margin-bottom:20px;">
+                            <span style="font-size:2rem; font-weight:900;">₹${p.price}</span>
+                            <span>${p.discount || 0}% OFF</span>
                         </div>
-                        <h4 style="font-weight:900; margin-bottom:10px;">Product Highlights</h4>
-                        <p style="color:#555; line-height:1.6; margin-bottom:40px;">${p.description}</p>
-                        <button onclick="addToCart(${p.id})" style="width:100%; padding:20px; background:var(--pr); color:#fff; border:none; border-radius:50px; font-weight:900; font-size:1.1rem; cursor:pointer;">Order Now🚑</button>
+
+                        <p>${p.description}</p>
+
+                        <button onclick="addToCart('${p.id}')"
+                            style="width:100%; padding:15px; background:black; color:white; border:none; border-radius:10px;">
+                            Add to Cart
+                        </button>
                     </div>
+
                 </div>
             `;
-            showPage('details');
+        })
+        .catch(err => {
+            console.error("❌ Product fetch error:", err);
         });
 };
 

@@ -5,6 +5,9 @@
 
 const express = require("express");
 const cors    = require("cors");
+app.use(cors({
+  origin: "*"
+}));
 const path    = require("path");
 const fs      = require("fs");
 
@@ -98,8 +101,5 @@ app.get('/', (req, res) => {
 
 // ── Start ─────────────────────────────────────────────────────────────────────
 app.listen(PORT, () => {
-    console.log('\n✅ Rivaansh API Server Started');
-    console.log(`   → http://localhost:${PORT}`);
-    console.log(`   → Products: http://localhost:${PORT}/api/products`);
-    console.log(`   → Single:   http://localhost:${PORT}/api/products/1\n`);
+  console.log(`Server running on ${PORT}`);
 });

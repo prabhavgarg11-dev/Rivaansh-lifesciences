@@ -5,14 +5,12 @@
  * ═══════════════════════════════════════════════════════════════════════════
  */
 require('dotenv').config();
+
 const express = require('express');
 const cors = require('cors');
-app.use(cors({
-  origin: "*"
-}));
 const mongoose = require('mongoose');
 const crypto = require('crypto');
-const Prescription = require('./models/Prescription');
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -23,25 +21,23 @@ const ADMIN_SECRET = process.env.ADMIN_SECRET || 'rivaansh_admin_secret';
 const ADMIN_TOKEN = crypto.createHash('sha256').update(ADMIN_SECRET).digest('hex');
 
 // Database connection
-mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/rivaansh', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-}).then(conn => {
-    console.log(`MongoDB Connected: ${conn.connection.host}`);
-}).catch(error => {
-    console.error(`Error: ${error.message}`);
-    process.exit(1);
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
+.then(() => console.log("✅ MongoDB Connected"))
+.catch(err => {
+  console.error("❌ DB Error:", err.message);
 });
 
 // ═══════════════════════════════════════════════════════════════════════════
 // MIDDLEWARE SETUP
-// ═══════════════════════════════════════════════════════════════════════════
-
+// ════════════════════
 // CORS Configuration - Allow all origins (frontend will work on any port)
 const corsOptions = {
     origin: '*',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    credentials: false,
+    credentials: true,
     optionsSuccessStatus: 200
 };
 app.use(cors(corsOptions));
@@ -176,7 +172,7 @@ const products = [
 /**
  * GET /api/products
  * Returns all healthcare products as JSON array
- * Access via: http://localhost:5000/api/products
+ * Access via: https://rivaansh-lifesciences.onrender.com/api/products
  */
 app.get('/api/products', (req, res) => {
     try {
@@ -382,11 +378,9 @@ app.get('/', (req, res) => {
  * 404 Not Found Handler
  */
 app.use((req, res) => {
-    res.status(404).json({
-        success: false,
-        message: 'Route not found',
-        path: req.path,
-        method: req.method
+  res.status(404).json({
+    success: false,
+    message: "Route not found"
     });
 });
 
@@ -394,11 +388,10 @@ app.use((req, res) => {
  * Global Error Handler
  */
 app.use((err, req, res, next) => {
-    console.error('❌ Server Error:', err);
-    res.status(err.status || 500).json({
-        success: false,
-        message: err.message || 'Internal server error',
-        error: process.env.NODE_ENV === 'development' ? err : {}
+  console.error("❌ Server Error:", err);
+  res.status(500).json({
+    success: false,
+    message: err.message || "Internal server error"
     });
 });
 
@@ -409,7 +402,7 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () => {
     console.log('\n╔═══════════════════════════════════════════════════════════╗');
     console.log('║                                                           ║');
-    console.log('║       ✓ Server running on http://localhost:5000          ║');
+    console.log('║       ✓ Server running on https://rivaansh-lifesciences.onrender.com          ║');
     console.log('║       ✓ API Products: /api/products                      ║');
     console.log('║       ✓ CORS enabled for frontend requests               ║');
     console.log('║       ✓ Error handling middleware active                 ║');
