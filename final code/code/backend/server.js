@@ -22,13 +22,15 @@ const ADMIN_TOKEN = crypto.createHash('sha256').update(ADMIN_SECRET).digest('hex
 
 // Database connection
 mongoose.connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
+  useNewUrlParser: true,
+  useUnifiedTopology: true
 })
 .then(() => console.log("✅ MongoDB Connected"))
 .catch(err => {
-    console.error("❌ MongoDB Error:", err);
+  console.error("❌ MongoDB Error:", err.message);
+  process.exit(1);
 });
+
 // ═══════════════════════════════════════════════════════════════════════════
 // MIDDLEWARE SETUP
 // ════════════════════
@@ -36,7 +38,6 @@ mongoose.connect(process.env.MONGO_URI, {
 const corsOptions = {
     origin: '*',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    credentials: true,
     optionsSuccessStatus: 200
 };
 app.use(cors(corsOptions));

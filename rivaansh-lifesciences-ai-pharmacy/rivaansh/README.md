@@ -13,7 +13,7 @@ npm install
 cp .env.example .env
 # Edit .env — set your ANTHROPIC_API_KEY and JWT_SECRET
 node server.js
-# Server runs on http://localhost:5000
+# Server runs on "https://rivaansh-lifesciences.onrender.com
 ```
 
 ### 2. Frontend Setup

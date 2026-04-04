@@ -8,7 +8,7 @@
     "price": 40.00,
     "discount": 10,
     "rating": 4.5,
-    "image": "http://localhost:5000/images/paracetamol.jpg"
+    "image": ""https://rivaansh-lifesciences.onrender.com/images/paracetamol.jpg"
   },
   {
     "id": 2,
@@ -19,7 +19,7 @@
     "price": 85.00,
     "discount": 15,
     "rating": 4.2,
-    "image": "http://localhost:5000/images/rivakold.jpg"
+    "image": ""https://rivaansh-lifesciences.onrender.com/images/rivakold.jpg"
   },
   {
     "id": 3,
@@ -30,7 +30,7 @@
     "price": 120.00,
     "discount": 20,
     "rating": 4.8,
-    "image": "http://localhost:5000/images/vitaminc.jpg"
+    "image": ""https://rivaansh-lifesciences.onrender.com/images/vitaminc.jpg"
   },
   {
     "id": 4,
@@ -41,7 +41,7 @@
     "price": 950.00,
     "discount": 5,
     "rating": 4.7,
-    "image": "http://localhost:5000/images/accuchek.jpg"
+    "image": ""https://rivaansh-lifesciences.onrender.com/images/accuchek.jpg"
   },
   {
     "id": 5,
@@ -52,7 +52,7 @@
     "price": 150.00,
     "discount": 12,
     "rating": 4.3,
-    "image": "http://localhost:5000/images/azithromycin.jpg"
+    "image": ""https://rivaansh-lifesciences.onrender.com/images/azithromycin.jpg"
   },
   {
     "id": 6,
@@ -63,7 +63,7 @@
     "price": 175.00,
     "discount": 10,
     "rating": 4.6,
-    "image": "http://localhost:5000/images/moov.jpg"
+    "image": ""https://rivaansh-lifesciences.onrender.com/images/moov.jpg"
   },
   {
     "id": 7,
@@ -74,7 +74,7 @@
     "price": 550.00,
     "discount": 25,
     "rating": 4.9,
-    "image": "http://localhost:5000/images/omega3.jpg"
+    "image": ""https://rivaansh-lifesciences.onrender.com/images/omega3.jpg"
   },
   {
     "id": 8,
@@ -85,7 +85,7 @@
     "price": 30.00,
     "discount": 5,
     "rating": 4.7,
-    "image": "http://localhost:5000/images/electrol.jpg"
+    "image": ""https://rivaansh-lifesciences.onrender.com/images/electrol.jpg"
   },
   {
     "id": 9,
@@ -96,7 +96,7 @@
     "price": 140.00,
     "discount": 8,
     "rating": 4.8,
-    "image": "http://localhost:5000/images/dettol.jpg"
+    "image": ""https://rivaansh-lifesciences.onrender.com/images/dettol.jpg"
   },
   {
     "id": 10,
@@ -107,7 +107,7 @@
     "price": 110.00,
     "discount": 15,
     "rating": 4.4,
-    "image": "http://localhost:5000/images/bcomplex.jpg"
+    "image": ""https://rivaansh-lifesciences.onrender.com/images/bcomplex.jpg"
   },
   {
     "id": 11,
@@ -118,7 +118,7 @@
     "price": 190.00,
     "discount": 30,
     "rating": 4.5,
-    "image": "http://localhost:5000/images/nivea.jpg"
+    "image": ""https://rivaansh-lifesciences.onrender.com/images/nivea.jpg"
   },
   {
     "id": 12,
@@ -129,7 +129,7 @@
     "price": 110.00,
     "discount": 5,
     "rating": 4.1,
-    "image": "http://localhost:5000/images/hcgkit.jpg"
+    "image": ""https://rivaansh-lifesciences.onrender.com/images/hcgkit.jpg"
   },
   {
     "id": 13,
@@ -140,7 +140,7 @@
     "price": 230.00,
     "discount": 10,
     "rating": 4.7,
-    "image": "http://localhost:5000/images/volini.jpg"
+    "image": ""https://rivaansh-lifesciences.onrender.com/images/volini.jpg"
   },
   {
     "id": 14,
@@ -151,7 +151,7 @@
     "price": 160.00,
     "discount": 20,
     "rating": 4.6,
-    "image": "http://localhost:5000/images/facewash.jpg"
+    "image": ""https://rivaansh-lifesciences.onrender.com/images/facewash.jpg"
   },
   {
     "id": 15,
@@ -162,6 +162,6 @@
     "price": 45.00,
     "discount": 5,
     "rating": 4.5,
-    "image": "http://localhost:5000/images/zandubalm.jpg"
+    "image": ""https://rivaansh-lifesciences.onrender.com/images/zandubalm.jpg"
   }
 ]

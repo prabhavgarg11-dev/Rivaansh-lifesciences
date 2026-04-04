@@ -287,7 +287,7 @@ export default function App() {
         async function loadStore() {
             try {
                 setLoading(true);
-                const res = await fetch(`http://localhost:5000/api/products?keyword=${keyword}`);
+                const res = await fetch(`"https://rivaansh-lifesciences.onrender.com/api/products?keyword=${keyword}`);
                 const data = await res.json();
                 setDbProducts(data);
                 setLoading(false);
