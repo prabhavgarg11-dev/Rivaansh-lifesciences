@@ -45,18 +45,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // 🚀 FETCH INVENTORY (Step fetch)
 async function fetchInventory() {
-    try {
-        console.log("📡 Fetching from http://localhost:5000/api/products...");
-        const res = await fetch("http://localhost:5000/api/products");
-        if (!res.ok) throw new Error("Backend Unreachable");
+  try {
+    console.log("🚀 Fetching from LIVE API...");
 
-        allProducts = await res.json();
-        renderProducts(allProducts.slice(0, 8), "trending-grid");
-        renderProducts(allProducts, "catalog-grid");
-        console.log(`📦 DATA LOADED: ${allProducts.length} Items ✅`);
-    } catch (err) {
-        console.error("❌ FETCH ERROR:", err);
+    const API = "https://rivaansh-lifesciences.onrender.com";
+
+    const res = await fetch(`${API}/api/products`);
+
+    if (!res.ok) {
+      throw new Error("Backend Unreachable");
     }
+
+    const allProducts = await res.json();
+
+    renderProducts(allProducts.slice(0, 8), "trending-grid");
+    renderProducts(allProducts, "catalog-grid");
+
+    console.log(`📦 DATA LOADED: ${allProducts.length} Items ✅`);
+
+  } catch (err) {
+    console.error("❌ FETCH ERROR:", err);
+  }
 }
 
 // 📦 2. PRODUCT RENDER LOGIC (Step 🛒)

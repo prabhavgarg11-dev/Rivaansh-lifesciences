@@ -2,17 +2,10 @@
 // Clean, modular JavaScript for Tata 1mg inspired UI
 
 // API Configuration
-const API = (() => {
-    const host = window.location.hostname;
-    const protocol = window.location.protocol;
-
-    if (host === 'localhost' || host === '127.0.0.1') {
-        return 'http://localhost:5000';
-    }
-
-    // For deployed domain, use same-origin API path
-    return `${protocol}//${host}`;
-})();
+const API =
+  window.location.hostname === "localhost"
+    ? "http://localhost:5000"
+    : "https://rivaansh-lifesciences.onrender.com";
 
 // State Management
 let products = [];

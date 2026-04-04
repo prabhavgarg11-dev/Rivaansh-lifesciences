@@ -2,8 +2,8 @@
  * script.js — Rivaansh Lifesciences Frontend Engine
  * Features: API fetch, search/filter, cart (localStorage), orders, modal
  */
-
-const API = 'http://localhost:5000';
+                                                                                                            
+const API = 'https://rivaansh-lifesciences.onrender.com';
 
 // ── State ──────────────────────────────────────────────────────────────────
 let _allProducts   = [];   // full catalogue from API
