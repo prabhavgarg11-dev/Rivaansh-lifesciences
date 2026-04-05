@@ -853,6 +853,7 @@
     <div class="footer-col">
         <h4>Support</h4>
         <a href="#" onclick="showPage('medicineInfo')">Medicine Guide</a>
+        <a href="#" onclick="toggleChatbot()">Live Chat Support</a>
         <a href="#" onclick="showPage('orderTracking')">Track Order</a>
         <a href="#" onclick="showPage('refund')">Returns & Refunds</a>
         <a href="#" onclick="showPage('faq')">FAQs</a>
@@ -872,7 +873,44 @@
 </footer>
 
 
-<script src="admin_manager.js"></script>
+<!-- ── CHATBOT ─────────────────────────────────────────────────────────── -->
+<div id="chatbotWrapper" class="chatbot-wrapper">
+    <div id="chatbotBubble" class="chatbot-bubble" onclick="toggleChatbot()">
+        <i class="fa fa-comment-medical"></i>
+        <span class="status-dot"></span>
+    </div>
+    
+    <div id="chatbotWindow" class="chatbot-window">
+        <div class="chat-header">
+            <div class="chat-header-info">
+                <div class="chat-avatar"><i class="fa fa-user-doctor"></i></div>
+                <div>
+                    <div class="chat-name">Rivaansh Assistant</div>
+                    <div class="chat-status">Typically replies in 1 minute</div>
+                </div>
+            </div>
+            <button class="chat-close" onclick="toggleChatbot()"><i class="fa fa-minus"></i></button>
+        </div>
+        
+        <div id="chatMessages" class="chat-messages">
+            <div class="chat-msg bot">
+                <p>Hello! 👋 I'm your Rivaansh Clinical Assistant. How can I help you today?</p>
+            </div>
+            <div class="chat-suggestions">
+                <button onclick="handleChatAction('track')">📦 Track my order</button>
+                <button onclick="handleChatAction('medInfo')">💊 Find medicine info</button>
+                <button onclick="handleChatAction('presc')">📄 Upload prescription</button>
+                <button onclick="handleChatAction('expert')">👨‍⚕️ Talk to an expert</button>
+            </div>
+        </div>
+        
+        <div class="chat-footer">
+            <input type="text" id="chatInput" placeholder="Type your clinical query..." onkeypress="if(event.key==='Enter') sendChatMsg()">
+            <button onclick="sendChatMsg()"><i class="fa fa-paper-plane"></i></button>
+        </div>
+    </div>
+</div>
+
 <script src="script.js"></script>
 </body>
 </html>

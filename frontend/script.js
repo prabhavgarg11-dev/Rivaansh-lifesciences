@@ -1653,3 +1653,53 @@ function showError(isFallback = false) {
     const counter = document.getElementById('productCount');
     if (counter) counter.textContent = isFallback ? 'Fallback products loaded' : 'Backend server not reachable';
 }
+
+/* ── CHATBOT LOGIC ───────────────────────────────────────────────────────── */
+window.toggleChatbot = function() {
+    const win = document.getElementById('chatbotWindow');
+    if (win) win.classList.toggle('open');
+};
+
+window.sendChatMsg = function() {
+    const input = document.getElementById('chatInput');
+    const msg = input.value?.trim();
+    if (!msg) return;
+
+    addChatMessage(msg, 'user');
+    input.value = '';
+
+    setTimeout(() => {
+        const botReply = getClinicalBotResponse(msg.toLowerCase());
+        addChatMessage(botReply, 'bot');
+    }, 800);
+};
+
+function addChatMessage(text, side) {
+    const container = document.getElementById('chatMessages');
+    if (!container) return;
+
+    const div = document.createElement('div');
+    div.className = `chat-msg ${side}`;
+    div.innerHTML = `<p>${text}</p>`;
+    container.appendChild(div);
+    container.scrollTop = container.scrollHeight;
+}
+
+function getClinicalBotResponse(input) {
+    if (input.includes('order') || input.includes('track')) return "You can track your latest pharmacy orders from the 'My Orders' section in your dashboard. Would you like me to take you there?";
+    if (input.includes('medicine') || input.includes('info')) return "I can provide clinical details on over 300 formulations. Just use the 'Medicine Guide' link in the footer or search the catalogue.";
+    if (input.includes('doctor') || input.includes('expert')) return "Connecting you to our on-call pharmacist... Please wait. You can also call us directly at +91 8426033033 for urgent clinical queries.";
+    if (input.includes('hi') || input.includes('hello')) return "Hello! 👋 I'm here to assist with your medical queries, order status, or prescription uploads. What can I do for you?";
+    return "Thank you for reaching out. To better assist you with pharmaceutical queries, please use our quick suggestion buttons or call our direct helpline.";
+}
+
+window.handleChatAction = function(action) {
+    if (action === 'track') showPage('orders');
+    if (action === 'medInfo') showPage('medicineInfo');
+    if (action === 'presc') showPage('prescriptions');
+    if (action === 'expert') {
+        window.open('tel:+918426033033');
+        toast('Calling Rivaansh Health Helpline...', 'info');
+    }
+    toggleChatbot();
+};
