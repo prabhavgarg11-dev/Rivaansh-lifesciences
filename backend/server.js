@@ -66,32 +66,11 @@ connectDB().then(connected => {
     dbConnected = connected;
 });
 
-// ── Mongoose models (defined once; safe to call even before DB connects) ──────
-const PrescriptionSchema = new mongoose.Schema({
-    productId  : { type: String, required: true },
-    user       : { type: String, default: 'guest' },
-    fileName   : { type: String, required: true },
-    uploadedAt : { type: String },
-    fileType   : { type: String, default: 'unknown' },
-    dataUrl    : { type: String },
-    status     : { type: String, enum: ['Pending', 'Approved', 'Rejected'], default: 'Pending' },
-    comment    : { type: String, default: 'Awaiting pharmacist review' },
-    isReviewed : { type: Boolean, default: false },
-    createdAt  : { type: Date, default: Date.now }
-});
-const Prescription = mongoose.models.Prescription || mongoose.model('Prescription', PrescriptionSchema);
-
-const OrderSchema = new mongoose.Schema({
-    products    : [{ productId: String, quantity: { type: Number, default: 1 } }],
-    totalAmount : { type: Number, required: true },
-    status      : { type: String, enum: ['Pending', 'Confirmed', 'Delivered', 'Cancelled'], default: 'Confirmed' },
-    userName    : { type: String, default: 'Guest User' },
-    address     : { type: String },
-    paymentId   : { type: String },
-    provider    : { type: String },
-    createdAt   : { type: Date, default: Date.now }
-});
-const Order = mongoose.models.Order || mongoose.model('Order', OrderSchema);
+// ── Models (Professional Centralized Schema) ───────────────────────────────
+const Product = require('./models/Product');
+const Order = require('./models/Order');
+const Prescription = require('./models/Prescription');
+const User = require('./models/User');
 
 // ═══════════════════════════════════════════════════════════════════════════
 // MIDDLEWARE SETUP
@@ -117,17 +96,6 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // SAMPLE HEALTHCARE PRODUCTS DATABASE
 // ═══════════════════════════════════════════════════════════════════════════
 
-const Product = require('./models/Product');
-
-// ═══════════════════════════════════════════════════════════════════════════
-// API ENDPOINTS
-// ═══════════════════════════════════════════════════════════════════════════
-
-/**
- * GET /api/products
- * Returns all healthcare products as JSON array
- * Access via: https://rivaansh-lifesciences.onrender.com/api/products
- */
 /**
  * GET /api/products
  * Returns all healthcare products as JSON array
@@ -166,6 +134,77 @@ app.get('/api/products/category/:category', async (req, res) => {
     } catch (error) {
         console.error('❌ Error filtering products:', error);
         res.status(500).json({ error: 'Error filtering products', message: error.message });
+    }
+});
+
+/**
+ * POST /api/orders
+ * Create a new healthcare order in the database.
+ * If DB is offline, returns a simulated order object.
+ */
+app.post('/api/orders', async (req, res) => {
+    try {
+        const { products, totalAmount, userName, address } = req.body;
+        
+        if (!totalAmount || !products || !products.length) {
+            return res.status(400).json({ message: 'Incomplete order data' });
+        }
+
+        if (!dbConnected) {
+            console.warn('⚠️ Order saved in simulated mode (DB offline)');
+            return res.status(201).json({
+                order: {
+                    _id: 'sim_' + Date.now(),
+                    totalAmount,
+                    status: 'Confirmed (Local)',
+                    createdAt: new Date()
+                }
+            });
+        }
+
+        const newOrder = new Order({
+            products,
+            totalAmount: Number(totalAmount),
+            userName,
+            address,
+            status: 'Pending'
+        });
+
+        const saved = await newOrder.save();
+        res.status(201).json({ order: saved });
+
+    } catch (error) {
+        console.error('❌ Order Error:', error);
+        res.status(500).json({ message: 'Internal server order error' });
+    }
+});
+
+/**
+ * POST /api/orders/:id/payment-confirmation
+ * Update order status upon successful payment gateway response.
+ */
+app.post('/api/orders/:id/payment-confirmation', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { paymentId, provider, status } = req.body;
+
+        if (!dbConnected) {
+            return res.status(200).json({ message: 'Payment acknowledged (Local Mode)' });
+        }
+
+        const order = await Order.findById(id);
+        if (!order) return res.status(404).json({ message: 'Order not found' });
+
+        order.status = status || 'Paid';
+        order.paymentId = paymentId;
+        order.provider = provider;
+        
+        await order.save();
+        res.status(200).json({ success: true, order });
+
+    } catch (error) {
+        console.error('❌ Payment Confirmation Error:', error);
+        res.status(500).json({ message: 'Server error during payment verification' });
     }
 });
 
@@ -331,6 +370,63 @@ app.delete('/api/prescriptions/:id', requireAdmin, async (req, res) => {
     } catch (error) {
         console.error('❌ Error deleting prescription:', error);
         res.status(500).json({ message: 'Server error' });
+    }
+});
+
+/**
+ * AUTH ENTPOINTS
+ * POST /api/users/register
+ */
+app.post('/api/users/register', async (req, res) => {
+    try {
+        const { name, email, phone, password } = req.body;
+        
+        if (!name || !email || !password) return res.status(400).json({ message: 'Missing fields' });
+
+        const userExists = await User.findOne({ email });
+        if (userExists) return res.status(400).json({ message: 'User already exists' });
+
+        const user = await User.create({
+            name,
+            email: email.toLowerCase(),
+            phone: phone || '9999999999',
+            password
+        });
+
+        res.status(201).json({
+            uid: user._id,
+            name: user.name,
+            email: user.email,
+            isAdmin: user.isAdmin
+        });
+
+    } catch (error) {
+        console.error('❌ Signup error:', error);
+        res.status(500).json({ message: 'Server error during registration' });
+    }
+});
+
+/**
+ * POST /api/users/login
+ */
+app.post('/api/users/login', async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        const user = await User.findOne({ email: email.toLowerCase() });
+
+        if (user && (await user.matchPassword(password))) {
+            res.json({
+                uid: user._id,
+                name: user.name,
+                email: user.email,
+                isAdmin: user.isAdmin
+            });
+        } else {
+            res.status(401).json({ message: 'Invalid email or password' });
+        }
+    } catch (error) {
+        console.error('❌ Login error:', error);
+        res.status(500).json({ message: 'Server error during login' });
     }
 });
 

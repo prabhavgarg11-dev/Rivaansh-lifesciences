@@ -562,21 +562,25 @@ window.startPayment = async function(method) {
     try {
         const initial = await createOrderOnServer();
         const orderId = initial.order?._id;
-        if (!orderId) throw new Error('Order create failed');
+        const totalAmount = initial.order?.totalAmount;
+        if (!orderId) throw new Error('Order creation failed on backend');
 
-        const amount = _cart.reduce((a, i) => a + i.price * i.qty, 0) * 100;
+        const amount = Math.round(totalAmount * 100);
 
         if (method === 'razorpay') {
             if (typeof Razorpay === 'undefined') {
-                toast('Razorpay SDK not loaded. Please check internet connection.', 'error');
+                toast('💳 Razorpay SDK not loaded. Retrying...', 'info');
+                // Optional: Dynamic reload or just wait for it in head
+                setTimeout(() => { if(typeof Razorpay !== 'undefined') window.startPayment(method); }, 1500);
                 return;
             }
 
             const options = {
-                key: 'rzp_test_YourRazorpayKeyHere',
-                amount, currency: 'INR',
+                key: 'rzp_test_YourRazorpayKeyHere', // Replace with your LIVE/TEST key from Razorpay Dashboard
+                amount,
+                currency: 'INR',
                 name: 'Rivaansh Lifesciences',
-                description: 'Purchase from Rivaansh pharmacy',
+                description: 'Safe & Secure Clinical Purchase',
                 prefill: { email: _user?.email || '', name: _user?.name || 'Guest' },
                 notes: { orderId },
                 handler: async function(response) {
@@ -584,7 +588,7 @@ window.startPayment = async function(method) {
                     const confirmedOrder = {
                         id: orderId,
                         items: [..._cart],
-                        totalAmount: sub + delivery,
+                        totalAmount: totalAmount,
                         status: 'Paid',
                         date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
                     };
@@ -600,33 +604,33 @@ window.startPayment = async function(method) {
             };
             const rzp = new Razorpay(options);
             rzp.open();
-            return; // Don't clear cart here — cart clears in handler above
+            return;
 
         } else if (method === 'paypal') {
             const returnUrl = `${window.location.origin}/payment-success?order=${orderId}`;
             const cancelUrl = `${window.location.origin}/payment-fail`;
-            const url = `https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=seller@rivaansh.com&item_name=Rivaansh+Order&amount=${(amount/100).toFixed(2)}&currency_code=INR&return=${encodeURIComponent(returnUrl)}&cancel_return=${encodeURIComponent(cancelUrl)}&custom=${orderId}`;
+            const url = `https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=rivaanshlifesciences@gmail.com&item_name=Rivaansh+Pharma+Order&amount=${(amount/100).toFixed(2)}&currency_code=INR&return=${encodeURIComponent(returnUrl)}&cancel_return=${encodeURIComponent(cancelUrl)}&custom=${orderId}`;
             window.open(url, '_blank');
             toast('Redirected to PayPal checkout', 'info');
-        }
-
-            const confirmedOrder = {
+            
+            const pendingOrder = {
                 id: orderId,
                 items: [..._cart],
-                totalAmount: sub + delivery,
+                totalAmount: totalAmount,
                 status: 'Payment Pending (PayPal)',
                 date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
             };
-            _orders.unshift(confirmedOrder);
+            _orders.unshift(pendingOrder);
             localStorage.setItem('rv_orders', JSON.stringify(_orders));
             _cart = [];
             saveCart();
             renderOrders();
             showPage('orders');
+        }
 
     } catch (err) {
         console.error('Payment init error:', err);
-        toast('Payment initialization failed. Please try again.', 'error');
+        toast(`Payment failed: ${err.message}`, 'error');
     }
 };
 
@@ -808,7 +812,6 @@ window.switchAuthTab = function(tab) {
 async function updateAdminStats() {
     if (!document.getElementById('adminPanelPage')) return;
     const el = id => document.getElementById(id);
-    // Only update if elements exist on the page
     if (!el('adminOrdersCount')) return;
 
     if (_user && _user.isAdmin) {
@@ -820,10 +823,12 @@ async function updateAdminStats() {
                 });
                 if (res.ok) {
                     const stats = await res.json();
-                    if (el('adminOrdersCount'))         el('adminOrdersCount').textContent        = stats.orders        ?? _orders.length;
-                    if (el('adminPrescriptionsCount'))  el('adminPrescriptionsCount').textContent  = stats.prescriptions ?? _prescriptions.filter(r => r.status === 'Pending').length;
-                    if (el('adminUsersCount'))          el('adminUsersCount').textContent          = stats.users         ?? _users.length;
-                    if (el('adminProductsCount'))       el('adminProductsCount').textContent       = stats.products      ?? _allProducts.length;
+                    if (el('adminOrdersCount'))         el('adminOrdersCount').textContent        = stats.orders;
+                    if (el('adminPrescriptionsCount'))  el('adminPrescriptionsCount').textContent  = stats.prescriptions;
+                    if (el('adminUsersCount'))          el('adminUsersCount').textContent          = stats.users;
+                    if (el('adminProductsCount'))       el('adminProductsCount').textContent       = stats.products;
+                    
+                    renderAdminPrescriptions();
                     return;
                 }
             } catch (err) {
@@ -831,12 +836,89 @@ async function updateAdminStats() {
             }
         }
     }
-
+    // Fallback counts if offline
     if (el('adminOrdersCount'))        el('adminOrdersCount').textContent        = _orders.length;
     if (el('adminPrescriptionsCount')) el('adminPrescriptionsCount').textContent  = _prescriptions.filter(r => r.status === 'Pending').length;
     if (el('adminUsersCount'))         el('adminUsersCount').textContent          = _users.length;
     if (el('adminProductsCount'))      el('adminProductsCount').textContent       = _allProducts.length;
 }
+
+async function renderAdminPrescriptions() {
+    const list = document.getElementById('adminPrescriptionList');
+    if (!list) return;
+
+    try {
+        const res = await fetch(`${API}/api/admin/prescriptions`, {
+            headers: { 'x-admin-token': localStorage.getItem('rv_admin_token') }
+        });
+        const items = await res.json();
+        
+        if (!items || !items.length) {
+            list.innerHTML = `<p style="text-align:center; padding:20px; color:#999;">No pending prescriptions.</p>`;
+            return;
+        }
+
+        list.innerHTML = items.map(rx => `
+            <div class="prescription-item" style="padding:15px; border-bottom:1px solid #f0f0f0; display:flex; justify-content:space-between; align-items:center;">
+                <div class="rx-info">
+                    <strong style="display:block; color:var(--text);">${rx.fileName}</strong>
+                    <span style="font-size:0.75rem; color:#888;">Product: ${rx.productId} | ${rx.uploadedAt}</span>
+                </div>
+                <div class="rx-actions">
+                    <button class="rx-approve" onclick="adminReviewRx('${rx._id || rx.id}', 'Approved')">Approve</button>
+                    <button class="rx-reject" onclick="adminReviewRx('${rx._id || rx.id}', 'Rejected')">Reject</button>
+                </div>
+            </div>
+        `).join('');
+    } catch (err) {
+        console.error('Admin RX render failed:', err);
+    }
+}
+
+window.adminReviewRx = async function(id, status) {
+    try {
+        const res = await fetch(`${API}/api/prescriptions/${id}`, {
+            method: 'PATCH',
+            headers: { 
+                'Content-Type': 'application/json',
+                'x-admin-token': localStorage.getItem('rv_admin_token')
+            },
+            body: JSON.stringify({ status, comment: `${status} by Admin on ${new Date().toLocaleDateString()}` })
+        });
+        if (res.ok) {
+            toast(`🩺 Prescription ${status}!`, 'info');
+            updateAdminStats();
+        }
+    } catch (err) {
+        toast('Review failed', 'error');
+    }
+};
+
+window.adminAddProduct = async function() {
+    const name = document.getElementById('addProductName')?.value.trim();
+    const price = document.getElementById('addProductPrice')?.value.trim();
+    const cat = document.getElementById('addProductCategory')?.value.trim();
+    const desc = document.getElementById('addProductDesc')?.value.trim();
+
+    if (!name || !price || !cat) { toast('Please fill basic product info', 'error'); return; }
+
+    try {
+        const res = await fetch(`${API}/api/admin/products`, {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'x-admin-token': localStorage.getItem('rv_admin_token')
+            },
+            body: JSON.stringify({ name, price: Number(price), category: cat, description: desc, brand: 'Rivaansh', image: 'images/medicine_placeholder.jpg' })
+        });
+        if (res.ok) {
+            toast('📦 New Product Published!', 'success');
+            setTimeout(() => window.location.reload(), 1500);
+        }
+    } catch (err) {
+        toast('Publish failed', 'error');
+    }
+};
 
 function openAuthModal() {
     const modal = document.getElementById('authModal');
@@ -848,23 +930,30 @@ function closeAuthModal() {
     if (modal) modal.classList.remove('open');
 }
 
-window.registerUser = function() {
+window.registerUser = async function() {
     const name  = document.getElementById('regName')?.value.trim();
     const email = document.getElementById('regEmail')?.value.trim().toLowerCase();
     const pass  = document.getElementById('regPassword')?.value;
+    const phone = '9999999999'; // Default or add a field in HTML if needed
+
     if (!name || !email || !pass) { toast('Please fill all signup fields', 'error'); return; }
 
-    if (_users.find(u => u.email === email)) {
-        toast('User already exists', 'error');
-        return;
-    }
+    try {
+        const res = await fetch(`${API}/api/users/register`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, email, password: pass, phone })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || 'Registration failed');
 
-    const newUser = { uid: `u_${Date.now()}`, name, email, password: pass, role: 'user' };
-    _users.push(newUser);
-    _user = { uid: newUser.uid, name: newUser.name, email: newUser.email, isAdmin: false };
-    saveAuthState();
-    closeAuthModal();
-    toast('Signup successful', 'success');
+        _user = { uid: data.uid, name: data.name, email: data.email, isAdmin: data.isAdmin };
+        saveAuthState();
+        closeAuthModal();
+        toast('🎉 Signup successful! Welcome to Rivaansh.', 'success');
+    } catch (err) {
+        toast(err.message, 'error');
+    }
 };
 
 window.loginUser = async function() {
@@ -876,43 +965,39 @@ window.loginUser = async function() {
         return;
     }
 
-    let user = _users.find(u => u.email === email && u.password === pass);
+    try {
+        const res = await fetch(`${API}/api/users/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password: pass })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || 'Invalid credentials');
 
-    // Accept hard-coded admin credentials even if local storage got cleared
-    if (!user && email === ADMIN_CREDENTIALS.email && pass === ADMIN_CREDENTIALS.password) {
-        user = { ...ADMIN_CREDENTIALS, uid: 'admin_1' };
-        _users.push(user);
-    }
+        _user = { uid: data.uid, name: data.name, email: data.email, isAdmin: data.isAdmin };
 
-    if (!user) {
-        toast('Invalid email or password', 'error');
-        return;
-    }
-
-    _user = { uid: user.uid, name: user.name, email: user.email, isAdmin: user.role === 'admin' };
-
-    if (_user.isAdmin) {
-        try {
-            const res = await fetch(`${API}/api/admin/login`, {
+        if (_user.isAdmin) {
+            // Re-fetch admin token for the admin endpoints
+            const adminRes = await fetch(`${API}/api/admin/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password: pass })
             });
-            const data = await res.json();
-            if (res.ok && data.token) {
-                localStorage.setItem('rv_admin_token', data.token);
+            const adminData = await adminRes.json();
+            if (adminRes.ok && adminData.token) {
+                localStorage.setItem('rv_admin_token', adminData.token);
             }
-        } catch (err) {
-            console.warn('Admin login backend failed:', err);
         }
-    }
 
-    saveAuthState();
-    closeAuthModal();
-    toast('Login successful', 'success');
+        saveAuthState();
+        closeAuthModal();
+        toast(`Welcome back, ${_user.name.split(' ')[0]}!`, 'success');
 
-    if (_user.isAdmin) {
-        showPage('adminPanel');
+        if (_user.isAdmin) {
+            showPage('adminPanel');
+        }
+    } catch (err) {
+        toast(err.message, 'error');
     }
 };
 

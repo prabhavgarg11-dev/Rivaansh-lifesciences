@@ -13,6 +13,10 @@ const productSchema = mongoose.Schema({
     description: { type: String, required: true },
     composition: { type: String },
     image: { type: String },
+    uses: { type: String, default: 'Standard pharmaceutical application.' },
+    sideEffects: { type: String, default: 'Consult a physician if irritation occurs.' },
+    dosage: { type: String, default: 'As directed by a licensed medical practitioner.' },
+    storage: { type: String, default: 'Keep in a cool, dry place. Protect from light.' } 
 }, { timestamps: true });
 
 module.exports = mongoose.model('Product', productSchema);

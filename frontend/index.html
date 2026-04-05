@@ -658,6 +658,63 @@
         </div>
     </section>
 
+    <!-- ── ADMIN PANEL ─────────────────────────────────────────────── -->
+    <section id="adminPanelPage" class="page">
+        <div class="section admin-section">
+            <h2 class="section-title">Administrative Dashboard</h2>
+            <div class="admin-stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fa fa-boxes-stacked"></i></div>
+                    <div class="stat-info">
+                        <h4 id="adminProductsCount">0</h4>
+                        <span>Active Products</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fa fa-clipboard-list"></i></div>
+                    <div class="stat-info">
+                        <h4 id="adminOrdersCount">0</h4>
+                        <span>Total Orders</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <h4 id="adminPrescriptionsCount">0</h4>
+                        <span>Pending Rx</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <h4 id="adminUsersCount">0</h4>
+                        <span>Clinical Users</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="admin-controls" style="margin-top: 30px; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                <!-- Product Add Form -->
+                <div class="admin-card" style="background:#fff; padding:20px; border-radius:15px; border:1px solid #eee;">
+                    <h3 style="margin-bottom:15px; color:var(--text); font-size:1.1rem;"><i class="fa fa-plus-circle"></i> Add New Pharmaceutical</h3>
+                    <input type="text" id="addProductName" placeholder="Medicine Name" style="width:100%; padding:10px; margin-bottom:10px; border:1px solid #ddd; border-radius:8px;">
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px;">
+                        <input type="number" id="addProductPrice" placeholder="Market Price (₹)" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px;">
+                        <input type="text" id="addProductCategory" placeholder="Category" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px;">
+                    </div>
+                    <textarea id="addProductDesc" placeholder="Clinical Description..." style="width:100%; padding:10px; margin-bottom:10px; border:1px solid #ddd; border-radius:8px; min-height:60px;"></textarea>
+                    <button class="btn-primary" style="width:100%;" onclick="adminAddProduct()">Publish Medicine</button>
+                </div>
+
+                <!-- Prescription List -->
+                <div class="admin-card" style="background:#fff; padding:20px; border-radius:15px; border:1px solid #eee;">
+                    <h3 style="margin-bottom:15px; color:var(--text); font-size:1.1rem;"><i class="fa fa-file-medical"></i> Pending Approvals</h3>
+                    <div id="adminPrescriptionList" style="max-height: 250px; overflow-y: auto;">
+                        <p style="text-align:center; color:#999; padding:20px;">Fetching clinical data...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <section id="faqPage" class="page">
         <div class="section policy-section">
             <h2 class="section-title">Frequently Asked Questions</h2>
