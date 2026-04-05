@@ -9,15 +9,35 @@ require('dotenv').config({ path: require('path').join(__dirname, '.env') });
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const helmet = require('helmet');
+const compression = require('compression');
+const morgan = require('morgan');
 const crypto = require('crypto');
 const path = require('path');
 
 const app = express();
 
-// ── NEW: MANDATORY CORS AT START ───────────────────────────────────────────
-// Broad spectrum for local dev (localhost + 127.0.0.1) and Render prod.
+const ALLOWED_ORIGINS = [
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+    'http://localhost:5000',
+    'http://127.0.0.1:5000',
+    'http://localhost:5500', // Live Server common port
+    'http://127.0.0.1:5500',
+    'https://rivaansh-lifesciences.onrender.com',
+    'https://rivaansh-lifesciences.vercel.app'
+];
+
 app.use(cors({
-    origin: '*', 
+    origin: function (origin, callback) {
+        // Allow requests with no origin (like mobile apps or curl)
+        if (!origin) return callback(null, true);
+        if (ALLOWED_ORIGINS.indexOf(origin) !== -1 || origin.includes('vercel.app')) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'x-manual-token', 'x-admin-token'],
     credentials: true,
@@ -25,6 +45,11 @@ app.use(cors({
 }));
 app.options('*', cors()); 
 
+app.use(helmet({
+    contentSecurityPolicy: false, // Disable CSP for demo/root simplicity or configure specifically
+}));
+app.use(compression());
+app.use(morgan('dev'));
 const PORT = process.env.PORT || 5000;
 
 // Admin credentials for API control (demo purpose, replace with DB-backed auth in production)
