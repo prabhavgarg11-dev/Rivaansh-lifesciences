@@ -1,0 +1,20 @@
+{
+  "version": 2,
+  "name": "rivaansh-frontend",
+  "builds": [
+    {
+      "src": "*.{html,css,js,png,jpg,jpeg,svg,json}",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "images/**",
+      "use": "@vercel/static"
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "https://rivaansh-lifesciences.onrender.com/api/$1"
+    }
+  ]
+}

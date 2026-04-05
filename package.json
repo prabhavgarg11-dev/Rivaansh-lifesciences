@@ -1,15 +1,13 @@
 {
-<<<<<<< HEAD
-  "name": "rivaansh-lifesciences-root",
+  "name": "rivaansh-lifesciences",
   "version": "1.0.0",
   "description": "Premium Clinical Pharmacy Hub Management",
-  "main": "server.js",
+  "main": "backend/server.js",
   "scripts": {
     "start": "node backend/server.js",
-    "backend": "cd backend && npm start",
-    "frontend": "cd frontend-react && npm start",
     "dev": "nodemon backend/server.js",
-    "seed": "node backend/seeder.js"
+    "backend-dev": "cd backend && npm run dev",
+    "install-all": "npm install && cd backend && npm install"
   },
   "dependencies": {
     "cors": "^2.8.5",
@@ -20,26 +18,5 @@
   },
   "devDependencies": {
     "nodemon": "^3.0.1"
-=======
-  "name": "rivaansh-frontend",
-  "version": "1.0.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
-  "dependencies": {
-    "next": "14.2.3",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "framer-motion": "^11.0.0",
-    "lucide-react": "^0.360.0"
-  },
-  "devDependencies": {
-    "postcss": "^8.4.38",
-    "tailwindcss": "^3.4.3"
->>>>>>> 21970412ecbf6d4b7178bd47cc0127155b244e1f
   }
 }
