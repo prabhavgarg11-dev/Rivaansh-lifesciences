@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rivaansh Lifesciences - Your Health, Our Priority</title>
+    <link rel="icon" href="logo.png" type="image/png">
+    <link rel="shortcut icon" href="logo.png" type="image/png">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Loading Spinner -->
+    <div id="loading" class="loading-overlay">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-top">
+            <div class="container">
+                <div class="logo">
+                    <img src="images/logo.png" alt="Rivaansh Lifesciences Logo" class="logo-img">
+                    <span>Rivaansh Lifesciences</span>
+                </div>
+                <div class="search-bar">
+                    <input type="text" placeholder="Search medicines, symptoms, products..." id="searchInput">
+                    <button><i class="fas fa-search"></i></button>
+                </div>
+                <div class="header-actions">
+                    <button class="btn-outline" onclick="showAuthModal()">Login</button>
+                    <div class="cart-icon" onclick="toggleCart()">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-count" id="cartBadge">0</span>
+                    </div>
+                    <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <nav class="nav-secondary">
+            <div class="container">
+                <a href="#products" class="nav-link active">Medicines</a>
+                <a href="#products" class="nav-link">Lab Tests</a>
+                <a href="#products" class="nav-link">Healthcare Products</a>
+                <a href="#offers" class="nav-link">Offers</a>
+                <a href="#connect" class="nav-link">Consult Doctor</a>
+            </div>
+        </nav>
+        <nav class="mobile-menu" id="mobileMenu">
+            <div class="mobile-menu-header">
+                <span>Menu</span>
+                <button onclick="toggleMobileMenu()">&times;</button>
+            </div>
+            <a href="#products" class="mobile-nav-link" onclick="toggleMobileMenu()">Medicines</a>
+            <a href="#products" class="mobile-nav-link" onclick="toggleMobileMenu()">Lab Tests</a>
+            <a href="#products" class="mobile-nav-link" onclick="toggleMobileMenu()">Healthcare Products</a>
+            <a href="#offers" class="mobile-nav-link" onclick="toggleMobileMenu()">Offers</a>
+            <a href="#connect" class="mobile-nav-link" onclick="toggleMobileMenu()">Consult Doctor</a>
+            <a href="#certifications" class="mobile-nav-link" onclick="toggleMobileMenu()">Certifications</a>
+            <a href="#privacy" class="mobile-nav-link" onclick="toggleMobileMenu()">Privacy & Safety</a>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Your Health, Our Priority</h1>
+                <p>Get authentic medicines delivered to your doorstep with expert care and WHO-GMP certified products.</p>
+                <div class="hero-buttons">
+                    <button class="btn-primary" onclick="showUploadModal()">Upload Prescription</button>
+                    <button class="btn-secondary" onclick="scrollToProducts()">Shop Now</button>
+                </div>
+            </div>
+            <div class="hero-image">
+                <img src="images/logo.png" alt="Healthcare Professional">
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Actions -->
+    <section class="quick-actions">
+        <div class="container">
+            <div class="actions-grid">
+                <div class="action-card" onclick="showUploadModal()">
+                    <i class="fas fa-upload"></i>
+                    <h3>Upload Prescription</h3>
+                    <p>Get medicines delivered based on your prescription</p>
+                </div>
+                <div class="action-card" onclick="showLabTests()">
+                    <i class="fas fa-flask"></i>
+                    <h3>Book Lab Test</h3>
+                    <p>Home sample collection for all tests</p>
+                </div>
+                <div class="action-card" onclick="showConsult()">
+                    <i class="fas fa-user-md"></i>
+                    <h3>Consult Doctor</h3>
+                    <p>Online consultation with certified doctors</p>
+                </div>
+                <div class="action-card" onclick="showReorder()">
+                    <i class="fas fa-redo"></i>
+                    <h3>Reorder Medicines</h3>
+                    <p>Quick reorder from your previous purchases</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section class="products-section" id="products">
+        <div class="container">
+            <h2 class="section-title">Featured Products</h2>
+            <div class="category-filter" id="categoryFilter"></div>
+            <div class="products-grid" id="productsGrid">
+                <!-- Products will be loaded here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Health Categories -->
+    <section class="categories-section">
+        <div class="container">
+            <h2 class="section-title">Shop by Health Concern</h2>
+            <div class="categories-grid">
+                <div class="category-card">
+                    <img src="https://images.unsplash.com/photo-1559757175-0eb30cd8c063?w=300&h=200&fit=crop" alt="Diabetes" loading="lazy">
+                    <h3>Diabetes Care</h3>
+                </div>
+                <div class="category-card">
+                    <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=300&h=200&fit=crop" alt="Fever" loading="lazy">
+                    <h3>Fever & Cold</h3>
+                </div>
+                <div class="category-card">
+                    <img src="https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=300&h=200&fit=crop" alt="Skin Care" loading="lazy">
+                    <h3>Skin Care</h3>
+                </div>
+                <div class="category-card">
+                    <img src="https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=300&h=200&fit=crop" alt="Immunity" loading="lazy">
+                    <h3>Immunity Boosters</h3>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Certifications Section -->
+    <section class="certifications-section">
+        <div class="container">
+            <h2 class="section-title">Our Certifications & Quality Assurance</h2>
+            <p class="section-subtitle">Trusted by healthcare professionals worldwide with WHO-GMP certified manufacturing</p>
+            <div class="certifications-grid">
+                <div class="certification-card">
+                    <img src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=200&h=150&fit=crop" alt="WHO-GMP Certification" loading="lazy">
+                    <h3>WHO-GMP Certified</h3>
+                    <p>World Health Organization Good Manufacturing Practices certification ensuring highest quality standards.</p>
+                </div>
+                <div class="certification-card">
+                    <img src="https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=200&h=150&fit=crop" alt="ISO 9001" loading="lazy">
+                    <h3>ISO 9001:2015</h3>
+                    <p>International quality management system certification for consistent product excellence.</p>
+                </div>
+                <div class="certification-card">
+                    <img src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=200&h=150&fit=crop" alt="FDA Approved" loading="lazy">
+                    <h3>FDA Approved</h3>
+                    <p>United States Food and Drug Administration approval for safety and efficacy standards.</p>
+                </div>
+                <div class="certification-card">
+                    <img src="https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=200&h=150&fit=crop" alt="HACCP" loading="lazy">
+                    <h3>HACCP Certified</h3>
+                    <p>Hazard Analysis and Critical Control Points certification for food safety management.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pharmacist Support Section -->
+    <section class="pharmacist-section">
+        <div class="container">
+            <div class="pharmacist-content">
+                <div class="pharmacist-text">
+                    <h2>24/7 Pharmacist Support</h2>
+                    <p>Get expert advice from our licensed pharmacists. Available round the clock for your health queries and medicine guidance.</p>
+                    <div class="pharmacist-features">
+                        <div class="feature">
+                            <i class="fas fa-clock"></i>
+                            <span>24/7 Available</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-user-md"></i>
+                            <span>Licensed Pharmacists</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-shield-alt"></i>
+                            <span>Confidential & Safe</span>
+                        </div>
+                    </div>
+                    <button class="btn-primary" onclick="startChat()">Start Chat Now</button>
+                </div>
+                <div class="pharmacist-image">
+                    <img src="https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=400&h=400&fit=crop" alt="Pharmacist Support" loading="lazy">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Offers Section -->
+    <section class="offers-section" id="offers">
+        <div class="container">
+            <h2 class="section-title">Special Offers</h2>
+            <div class="offers-slider">
+                <div class="offer-card">
+                    <img src="https://images.unsplash.com/photo-1584308666744-24d5f400f905?w=400&h=200&fit=crop" alt="Offer 1" loading="lazy">
+                    <div class="offer-content">
+                        <h3>Up to 50% Off</h3>
+                        <p>On all vitamin supplements</p>
+                        <button class="btn-primary">Shop Now</button>
+                    </div>
+                </div>
+                <div class="offer-card">
+                    <img src="https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=400&h=200&fit=crop" alt="Offer 2" loading="lazy">
+                    <div class="offer-content">
+                        <h3>Free Delivery</h3>
+                        <p>On orders above ₹500</p>
+                        <button class="btn-primary">Order Now</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Prescription Upload Modal -->
+    <div id="uploadModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeUploadModal()">&times;</span>
+            <h2>Upload Prescription</h2>
+            <div class="upload-area" id="uploadArea">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <p>Drag & drop your prescription here or click to browse</p>
+                <input type="file" id="prescriptionFile" accept="image/*,.pdf" style="display: none;">
+                <button class="btn-primary" onclick="document.getElementById('prescriptionFile').click()">Choose File</button>
+            </div>
+            <div id="filePreview"></div>
+            <button class="btn-primary" id="submitPrescription" style="display: none;">Submit Prescription</button>
+        </div>
+    </div>
+
+    <!-- Auth Modal -->
+    <div id="authModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeAuthModal()">&times;</span>
+            <h2>Login / Sign Up</h2>
+            <div class="auth-tabs">
+                <button class="auth-tab active" onclick="switchTab('login')">Login</button>
+                <button class="auth-tab" onclick="switchTab('signup')">Sign Up</button>
+            </div>
+            <div id="loginForm" class="auth-form active">
+                <input type="email" placeholder="Email" id="loginEmail">
+                <input type="password" placeholder="Password" id="loginPassword">
+                <button class="btn-primary" onclick="login()">Login</button>
+            </div>
+            <div id="signupForm" class="auth-form">
+                <input type="text" placeholder="Full Name" id="signupName">
+                <input type="email" placeholder="Email" id="signupEmail">
+                <input type="password" placeholder="Password" id="signupPassword">
+                <button class="btn-primary" onclick="signup()">Sign Up</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cart Sidebar -->
+    <div id="cartSidebar" class="cart-sidebar">
+        <div class="cart-header">
+            <h3>Your Cart</h3>
+            <span class="close" onclick="toggleCart()">&times;</span>
+        </div>
+        <div id="cartItems" class="cart-items">
+            <!-- Cart items will be loaded here -->
+        </div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                <span>Total: ₹<span id="cartTotal">0</span></span>
+            </div>
+            <button class="btn-primary" onclick="checkout()">Checkout</button>
+        </div>
+    </div>
+
+    <!-- Checkout Page -->
+    <div id="checkoutPage" class="checkout-page" style="display: none;">
+        <div class="container">
+            <h2>Checkout</h2>
+            <div class="checkout-grid">
+                <div class="checkout-left">
+                    <div class="checkout-section">
+                        <h3>Delivery Address</h3>
+                        <input type="text" placeholder="Full Name" id="addressName">
+                        <input type="text" placeholder="Phone Number" id="addressPhone">
+                        <textarea placeholder="Complete Address" id="addressDetails"></textarea>
+                        <input type="text" placeholder="City" id="addressCity">
+                        <input type="text" placeholder="State" id="addressState">
+                        <input type="text" placeholder="PIN Code" id="addressPin">
+                    </div>
+                    <div class="checkout-section">
+                        <h3>Payment Method</h3>
+                        <div class="payment-options">
+                            <label class="payment-option">
+                                <input type="radio" name="payment" value="razorpay" checked>
+                                <span>Razorpay (UPI, Cards, Net Banking)</span>
+                            </label>
+                            <label class="payment-option">
+                                <input type="radio" name="payment" value="cod">
+                                <span>Cash on Delivery</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="checkout-right">
+                    <div class="order-summary">
+                        <h3>Order Summary</h3>
+                        <div id="checkoutItems"></div>
+                        <div class="summary-row">
+                            <span>Subtotal</span>
+                            <span id="checkoutSubtotal">₹0</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Delivery</span>
+                            <span id="checkoutDelivery">₹49</span>
+                        </div>
+                        <div class="summary-row total">
+                            <span>Total</span>
+                            <span id="checkoutTotal">₹49</span>
+                        </div>
+                        <button class="btn-primary" onclick="placeOrder()">Place Order</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Tracking -->
+    <div id="orderTracking" class="order-tracking" style="display: none;">
+        <div class="container">
+            <h2>Order Tracking</h2>
+            <div class="tracking-container">
+                <div class="tracking-steps">
+                    <div class="tracking-step completed">
+                        <div class="step-icon"><i class="fas fa-check"></i></div>
+                        <div class="step-content">
+                            <h4>Order Placed</h4>
+                            <p>Your order has been confirmed</p>
+                        </div>
+                    </div>
+                    <div class="tracking-step active">
+                        <div class="step-icon"><i class="fas fa-box"></i></div>
+                        <div class="step-content">
+                            <h4>Packed</h4>
+                            <p>Your order is being prepared</p>
+                        </div>
+                    </div>
+                    <div class="tracking-step">
+                        <div class="step-icon"><i class="fas fa-truck"></i></div>
+                        <div class="step-content">
+                            <h4>Shipped</h4>
+                            <p>Order is on the way</p>
+                        </div>
+                    </div>
+                    <div class="tracking-step">
+                        <div class="step-icon"><i class="fas fa-box-open"></i></div>
+                        <div class="step-content">
+                            <h4>Delivered</h4>
+                            <p>Order delivered successfully</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="mobile-nav">
+        <a href="#" class="nav-item active">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </a>
+        <a href="#products" class="nav-item">
+            <i class="fas fa-pills"></i>
+            <span>Products</span>
+        </a>
+        <a href="#" class="nav-item" onclick="toggleCart()">
+            <i class="fas fa-shopping-cart"></i>
+            <span>Cart</span>
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fas fa-user"></i>
+            <span>Account</span>
+        </a>
+    </nav>
+
+    <!-- Privacy & Safety Section -->
+    <section class="privacy-section">
+        <div class="container">
+            <h2 class="section-title">Your Privacy & Safety Matters</h2>
+            <div class="privacy-grid">
+                <div class="privacy-card">
+                    <i class="fas fa-lock"></i>
+                    <h3>Data Protection</h3>
+                    <p>Your personal and medical information is encrypted and securely stored. We never share your data with third parties.</p>
+                </div>
+                <div class="privacy-card">
+                    <i class="fas fa-shield-alt"></i>
+                    <h3>Secure Payments</h3>
+                    <p>All transactions are processed through PCI DSS compliant gateways with 256-bit SSL encryption.</p>
+                </div>
+                <div class="privacy-card">
+                    <i class="fas fa-user-secret"></i>
+                    <h3>Confidential Consultations</h3>
+                    <p>Doctor consultations and prescription uploads are completely confidential and HIPAA compliant.</p>
+                </div>
+                <div class="privacy-card">
+                    <i class="fas fa-check-circle"></i>
+                    <h3>Quality Assurance</h3>
+                    <p>Every product undergoes rigorous quality testing and comes with manufacturer warranty.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Connect With Us Section -->
+    <section class="connect-section" id="connect">
+        <div class="container">
+            <h2 class="section-title">Connect With Us</h2>
+            <p class="section-subtitle">Have a question, feedback, or need support? Send us a message and we’ll get back to you within 2 business hours.</p>
+            <div class="connect-grid">
+                <div class="connect-form">
+                    <input type="text" id="contactName" placeholder="Full Name" required>
+                    <input type="email" id="contactEmail" placeholder="Email Address" required>
+                    <input type="tel" id="contactPhone" placeholder="Phone Number (optional)">
+                    <textarea id="contactMessage" placeholder="Your message" rows="5" required></textarea>
+                    <button class="btn-primary" onclick="submitContactForm()">Send Message</button>
+                </div>
+                <div class="connect-details">
+                    <h4>Get in Touch</h4>
+                    <p><i class="fas fa-phone-alt"></i> +91-80000-12345</p>
+                    <p><i class="fas fa-envelope"></i> support@rivaanshlifesciences.com</p>
+                    <p><i class="fas fa-map-marker-alt"></i> 123 Health Ave, Mumbai, India</p>
+                    <p>Our support team is available 24/7 for urgent questions, and same-day responses for all contact form submissions.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Us Section -->
+    <section class="about-section" id="about">
+        <div class="container">
+            <h2 class="section-title">About Us</h2>
+            <p class="section-subtitle">Rivaansh Lifesciences is a leading full-stack e-pharmacy platform dedicated to safe medicine delivery and accessible health services.</p>
+            <div class="about-grid">
+                <div class="about-card">
+                    <h3>Our Mission</h3>
+                    <p>To make healthcare easy, affordable, and trustworthy by providing certified medications and expert guidance through a seamless online experience.</p>
+                </div>
+                <div class="about-card">
+                    <h3>Our Vision</h3>
+                    <p>To empower every household with reliable health products and pharmacy care while fostering wellbeing through digital innovation.</p>
+                </div>
+                <div class="about-card">
+                    <h3>Our Values</h3>
+                    <p>Integrity, quality, compliance, patient-centricity, and rapid support guide every decision we make.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section (expanded) -->
+    <section class="contact-section" id="contact">
+        <div class="container">
+            <h2 class="section-title">Contact Us</h2>
+            <p class="section-subtitle">Need help? Our customer care team is available 24/7 for order support, medical guidance, and pharmacy queries.</p>
+            <div class="contact-grid">
+                <div class="contact-card">
+                    <h4>Customer Support</h4>
+                    <p><i class="fas fa-phone-alt"></i> +91-80000-12345</p>
+                    <p><i class="fas fa-envelope"></i> support@rivaanshlifesciences.com</p>
+                </div>
+                <div class="contact-card">
+                    <h4>Order & Shipping</h4>
+                    <p><i class="fas fa-truck"></i> handling in 2-3 business days</p>
+                    <p><i class="fas fa-map-marker-alt"></i> Mumbai, India</p>
+                </div>
+                <div class="contact-card">
+                    <h4>Pharmacist Helpline</h4>
+                    <p><i class="fas fa-user-md"></i> pharmacy-care@rivaanshlifesciences.com</p>
+                    <p>Response time: within 1 hour</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Privacy Policy Section -->
+    <section class="policy-section" id="privacy-policy">
+        <div class="container">
+            <h2 class="section-title">Privacy Policy</h2>
+            <p>We respect your privacy. We collect minimal personal data required to process pharmacy orders, maintain records, and comply with regulatory standards. Data is encrypted, and we never share personal medical information with third parties without explicit consent.</p>
+            <ul>
+                <li>Personal data use: order fulfilment, customer support.</li>
+                <li>Data security: HTTPS, secure storage, restricted access.</li>
+                <li>Cookie usage: analytics, session management, personalization.</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Terms of Service Section -->
+    <section class="policy-section" id="terms-of-service">
+        <div class="container">
+            <h2 class="section-title">Terms of Service</h2>
+            <p>Rivaansh Lifesciences provides services subject to local pharmaceutical regulations. Orders are subject to product availability and validation. Prescription-required items are sold only after verification. By using our platform, you agree to the ordering terms and health policy guidelines.</p>
+            <ul>
+                <li>Order acceptance: confirmation by email/SMS.</li>
+                <li>Pricing: shown at checkout; delivery charge may apply.</li>
+                <li>Returns & cancellations: per policy, within eligible window.</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- FAQs Section -->
+    <section class="faq-section" id="faqs">
+        <div class="container">
+            <h2 class="section-title">Frequently Asked Questions</h2>
+            <div class="faq-card">
+                <h4>How long does delivery take?</h4>
+                <p>Standard delivery is 2-3 business days. Express same-day delivery is available in select areas.</p>
+            </div>
+            <div class="faq-card">
+                <h4>Do you deliver prescription medicines?</h4>
+                <p>Yes. Upload a valid prescription and our pharmacist team will verify before dispatch.</p>
+            </div>
+            <div class="faq-card">
+                <h4>Can I return a product?</h4>
+                <p>Non-prescription items are eligible for return within 7 days if unopened and in original condition. Prescription items are not returnable due to safety guidelines.</p>
+            </div>
+            <div class="faq-card">
+                <h4>How do I track my order?</h4>
+                <p>Use the order tracking section after checkout or click Track Order in the footer for updates.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-section">
+                    <h3>Rivaansh Lifesciences</h3>
+                    <p>Your trusted partner in healthcare since 2020. WHO-GMP certified products delivered with care.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <a href="#about">About Us</a>
+                    <a href="#contact">Contact</a>
+                    <a href="#privacy-policy">Privacy Policy</a>
+                    <a href="#terms-of-service">Terms of Service</a>
+                    <a href="#faqs">FAQs</a>
+                </div>
+                <div class="footer-section">
+                    <h3>Customer Care</h3>
+                    <a href="#">Help Center</a>
+                    <a href="#">Track Order</a>
+                    <a href="#">Returns</a>
+                    <a href="#">Order Policy</a>
+                </div>
+                <div class="footer-section">
+                    <h3>Connect With Us</h3>
+                    <div class="social-links">
+                        <a href="https://facebook.com" target="_blank"><i class="fab fa-facebook"></i></a>
+                        <a href="https://twitter.com" target="_blank"><i class="fab fa-twitter"></i></a>
+                        <a href="https://instagram.com" target="_blank"><i class="fab fa-instagram"></i></a>
+                        <a href="https://linkedin.com" target="_blank"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Rivaansh Lifesciences. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/script.js"></script>
+
+    <!-- Chat Widget -->
+    <div id="chatWidget" class="chat-widget">
+        <div class="chat-header">
+            <div class="chat-avatar">
+                <i class="fas fa-user-md"></i>
+            </div>
+            <div class="chat-info">
+                <h4>Pharmacist Support</h4>
+                <span class="chat-status online">Online</span>
+            </div>
+            <button class="chat-close" onclick="toggleChat()">&times;</button>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <div class="message bot">
+                <div class="message-content">
+                    <p>Hello! I'm here to help with your medicine queries. How can I assist you today?</p>
+                    <span class="message-time">Just now</span>
+                </div>
+            </div>
+        </div>
+        <div class="chat-input">
+            <input type="text" id="chatInput" placeholder="Type your message..." onkeypress="handleChatKeyPress(event)">
+            <button onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <!-- Chat Toggle Button -->
+    <button class="chat-toggle" id="chatToggle" onclick="toggleChat()">
+        <i class="fas fa-comments"></i>
+        <span class="chat-notification" id="chatNotification" style="display: none;"></span>
+    </button>
+
+    <!-- Quick Links Floating Panel -->
+    <div class="quick-links-float" id="quickLinksFloat">
+        <div class="quick-links-header">
+            <span>Quick Actions</span>
+            <button onclick="toggleQuickLinks()">&times;</button>
+        </div>
+        <div class="quick-links-content">
+            <button class="quick-link-btn" onclick="showUploadModal()">
+                <i class="fas fa-upload"></i>
+                <span>Upload Prescription</span>
+            </button>
+            <button class="quick-link-btn" onclick="showLabTests()">
+                <i class="fas fa-flask"></i>
+                <span>Book Lab Test</span>
+            </button>
+            <button class="quick-link-btn" onclick="showConsult()">
+                <i class="fas fa-user-md"></i>
+                <span>Consult Doctor</span>
+            </button>
+            <button class="quick-link-btn" onclick="showReorder()">
+                <i class="fas fa-redo"></i>
+                <span>Reorder Medicines</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Quick Links Toggle Button -->
+    <button class="quick-links-toggle" id="quickLinksToggle" onclick="toggleQuickLinks()">
+        <i class="fas fa-plus"></i>
+    </button>
+</body>
+</html>

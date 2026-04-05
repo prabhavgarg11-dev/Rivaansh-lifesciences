@@ -1,0 +1,167 @@
+[
+  {
+    "id": 1,
+    "name": "Paracetamol 500mg Tablets",
+    "category": "Medicines",
+    "composition": "Paracetamol IP 500mg",
+    "description": "Standard analgesic and antipyretic for fever/pain.",
+    "price": 40.00,
+    "discount": 10,
+    "rating": 4.5,
+    "image": ""https://rivaansh-lifesciences.onrender.com/images/paracetamol.jpg"
+  },
+  {
+    "id": 2,
+    "name": "Rivakold Multi-Symptom Relief",
+    "category": "Medicines",
+    "composition": "Chlorpheniramine + Phenylephrine",
+    "description": "Comprehensive cold and flu symptoms relief.",
+    "price": 85.00,
+    "discount": 15,
+    "rating": 4.2,
+    "image": ""https://rivaansh-lifesciences.onrender.com/images/rivakold.jpg"
+  },
+  {
+    "id": 3,
+    "name": "Vitamin C (Zinc Formulation)",
+    "category": "Vitamins & Supplements",
+    "composition": "Ascorbic Acid + Zinc",
+    "description": "Immunity booster for daily clinical wellness.",
+    "price": 120.00,
+    "discount": 20,
+    "rating": 4.8,
+    "image": ""https://rivaansh-lifesciences.onrender.com/images/vitaminc.jpg"
+  },
+  {
+    "id": 4,
+    "name": "Accu-Chek Test Strips",
+    "category": "Diabetes Care",
+    "composition": "Blood Glucose Monitors",
+    "description": "High-precision strips for diabetes management.",
+    "price": 950.00,
+    "discount": 5,
+    "rating": 4.7,
+    "image": ""https://rivaansh-lifesciences.onrender.com/images/accuchek.jpg"
+  },
+  {
+    "id": 5,
+    "name": "Azithromycin 500mg",
+    "category": "Medicines",
+    "composition": "Azithromycin IP 500mg",
+    "description": "Antibiotic for bacterial respiratory infections.",
+    "price": 150.00,
+    "discount": 12,
+    "rating": 4.3,
+    "image": ""https://rivaansh-lifesciences.onrender.com/images/azithromycin.jpg"
+  },
+  {
+    "id": 6,
+    "name": "Moov Pain Relief Ointment",
+    "category": "Personal Care",
+    "composition": "Turpentine + Wintergreen Oil",
+    "description": "Fast-acting relief for back pain and muscle pull.",
+    "price": 175.00,
+    "discount": 10,
+    "rating": 4.6,
+    "image": ""https://rivaansh-lifesciences.onrender.com/images/moov.jpg"
+  },
+  {
+    "id": 7,
+    "name": "Omega-3 Fish Oil Capsules",
+    "category": "Vitamins & Supplements",
+    "composition": "EPA + DHA 1000mg",
+    "description": "Heart and brain health essential fatty acids.",
+    "price": 550.00,
+    "discount": 25,
+    "rating": 4.9,
+    "image": ""https://rivaansh-lifesciences.onrender.com/images/omega3.jpg"
+  },
+  {
+    "id": 8,
+    "name": "Electrol ORS Powder",
+    "category": "Medicines",
+    "composition": "Sodium + Potassium Saline",
+    "description": "WHO-standard rehydration therapy.",
+    "price": 30.00,
+    "discount": 5,
+    "rating": 4.7,
+    "image": ""https://rivaansh-lifesciences.onrender.com/images/electrol.jpg"
+  },
+  {
+    "id": 9,
+    "name": "Dettol Antiseptic Solution",
+    "category": "Personal Care",
+    "composition": "Chloroxylenol 4.8% w/v",
+    "description": "Antiseptic liquid for first aid and hygiene.",
+    "price": 140.00,
+    "discount": 8,
+    "rating": 4.8,
+    "image": ""https://rivaansh-lifesciences.onrender.com/images/dettol.jpg"
+  },
+  {
+    "id": 10,
+    "name": "B-Complex Multivitamin",
+    "category": "Vitamins & Supplements",
+    "composition": "Vitamin B1, B2, B6, B12 Complex",
+    "description": "Neurological health and energy metabolism support.",
+    "price": 110.00,
+    "discount": 15,
+    "rating": 4.4,
+    "image": ""https://rivaansh-lifesciences.onrender.com/images/bcomplex.jpg"
+  },
+  {
+    "id": 11,
+    "name": "Nivea Soft Moisturizer",
+    "category": "Personal Care",
+    "composition": "Vitamin E + Jojoba Oil",
+    "description": "Quick absorbing soft cream for face and body.",
+    "price": 190.00,
+    "discount": 30,
+    "rating": 4.5,
+    "image": ""https://rivaansh-lifesciences.onrender.com/images/nivea.jpg"
+  },
+  {
+    "id": 12,
+    "name": "hcG Pregnancy Test Kit",
+    "category": "Lab Tests",
+    "composition": "Diagnostic Strip",
+    "description": "Rapid one-step qualitative maternal detection.",
+    "price": 110.00,
+    "discount": 5,
+    "rating": 4.1,
+    "image": ""https://rivaansh-lifesciences.onrender.com/images/hcgkit.jpg"
+  },
+  {
+    "id": 13,
+    "name": "Volini Pain Relief Spray",
+    "category": "Personal Care",
+    "composition": "Diclofenac Diethylamine",
+    "description": "Instant relief from back pain and sprains.",
+    "price": 230.00,
+    "discount": 10,
+    "rating": 4.7,
+    "image": ""https://rivaansh-lifesciences.onrender.com/images/volini.jpg"
+  },
+  {
+    "id": 14,
+    "name": "Himalaya Neem Face Wash",
+    "category": "Personal Care",
+    "composition": "Azadirachta Indica Extracts",
+    "description": "Cleanses skin and prevents acne/pimples.",
+    "price": 160.00,
+    "discount": 20,
+    "rating": 4.6,
+    "image": ""https://rivaansh-lifesciences.onrender.com/images/facewash.jpg"
+  },
+  {
+    "id": 15,
+    "name": "Zandu Balm Ultra Power",
+    "category": "Medicines",
+    "composition": "Menthol + Wintergreen",
+    "description": "No.1 Ayurvedic remedy for headache and cold.",
+    "price": 45.00,
+    "discount": 5,
+    "rating": 4.5,
+    "image": ""https://rivaansh-lifesciences.onrender.com/images/zandubalm.jpg"
+  }
+]
