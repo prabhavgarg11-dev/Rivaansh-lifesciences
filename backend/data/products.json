@@ -8,7 +8,11 @@
     "price": 120.0,
     "discount": 20,
     "rating": 4.9,
-    "image": "images/hcg_test.jpg"
+    "image": "images/hcg_test.jpg",
+    "uses": "Detection of hCG levels for pregnancy diagnosis.",
+    "sideEffects": "None (External use).",
+    "dosage": "As per instructions in kit.",
+    "storage": "Store between 2-30°C."
   },
   {
     "id": 2,
@@ -19,7 +23,11 @@
     "price": 85.0,
     "discount": 15,
     "rating": 4.2,
-    "image": "images/rivakold.jpg"
+    "image": "images/rivakold.jpg",
+    "uses": "Relief from nasal congestion and fever.",
+    "sideEffects": "Mild drowsiness.",
+    "dosage": "1-2 times daily after food.",
+    "storage": "Keep in dry place."
   },
   {
     "id": 3,
@@ -30,7 +38,11 @@
     "price": 120.0,
     "discount": 20,
     "rating": 4.8,
-    "image": "https://images.unsplash.com/photo-1505751171710-1f6d0ace5a85?w=400&h=300&fit=crop"
+    "image": "https://images.unsplash.com/photo-1505751171710-1f6d0ace5a85?w=400&h=300&fit=crop",
+    "uses": "Healthier immune system and collagen boost.",
+    "sideEffects": "Stomach cramp if taken excessive.",
+    "dosage": "1 tablet in 200ml water.",
+    "storage": "Airtight container."
   },
   {
     "id": 4,
@@ -41,7 +53,11 @@
     "price": 950.0,
     "discount": 5,
     "rating": 4.7,
-    "image": "https://images.unsplash.com/photo-1631549916768-4119b2e5f926?w=400&h=300&fit=crop"
+    "image": "https://images.unsplash.com/photo-1631549916768-4119b2e5f926?w=400&h=300&fit=crop",
+    "uses": "Self-monitoring blood glucose levels.",
+    "sideEffects": "Minor discomfort from prick.",
+    "dosage": "Use when checking sugar.",
+    "storage": "Room temperature."
   },
   {
     "id": 5,
@@ -52,7 +68,11 @@
     "price": 150.0,
     "discount": 12,
     "rating": 4.3,
-    "image": "https://images.unsplash.com/photo-1576671081837-49000212a370?w=400&h=300&fit=crop"
+    "image": "https://images.unsplash.com/photo-1576671081837-49000212a370?w=400&h=300&fit=crop",
+    "uses": "Respiratory bacterial treatment.",
+    "sideEffects": "Disturbed taste or nausea.",
+    "dosage": "1 tablet daily (Rx).",
+    "storage": "Cool, dry and safe."
   },
   {
     "id": 6,
@@ -63,7 +83,11 @@
     "price": 90.0,
     "discount": 10,
     "rating": 4.6,
-    "image": "images/rivadol_ap.jpg"
+    "image": "images/rivadol_ap.jpg",
+    "uses": "Pain and swelling relief.",
+    "sideEffects": "Avoid empty stomach.",
+    "dosage": "Every 12h (Rx).",
+    "storage": "Safe from children."
   },
   {
     "id": 7,
@@ -74,7 +98,11 @@
     "price": 550.0,
     "discount": 25,
     "rating": 4.9,
-    "image": "https://images.unsplash.com/photo-1547489432-cf93fa6c71ee?w=400&h=300&fit=crop"
+    "image": "https://images.unsplash.com/photo-1547489432-cf93fa6c71ee?w=400&h=300&fit=crop",
+    "uses": "Cardiovascular maintenance.",
+    "sideEffects": "Fishy aftertaste.",
+    "dosage": "1 daily after dinner.",
+    "storage": "Store below 25°C."
   },
   {
     "id": 8,
@@ -85,7 +113,11 @@
     "price": 30.0,
     "discount": 5,
     "rating": 4.7,
-    "image": "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&h=300&fit=crop"
+    "image": "https://images.unsplash.com/photo-1584308666744-24d5f400f905?w=400&h=400&fit=crop",
+    "uses": "Rehydration and mineral replenishment.",
+    "sideEffects": "Safe for everyone.",
+    "dosage": "Dissolve in water as per pack.",
+    "storage": "Store dry."
   },
   {
     "id": 9,
@@ -96,7 +128,11 @@
     "price": 140.0,
     "discount": 8,
     "rating": 4.8,
-    "image": "images/rivadol_ap.jpg"
+    "image": "images/rivadol_ap.jpg",
+    "uses": "Wound cleaning and hygiene.",
+    "sideEffects": "Dilute before use.",
+    "dosage": "Apply localized.",
+    "storage": "Safe from child reach."
   },
   {
     "id": 10,
@@ -107,7 +143,11 @@
     "price": 110.0,
     "discount": 15,
     "rating": 4.4,
-    "image": "https://images.unsplash.com/photo-1547489432-cf93fa6c71ee?w=400&h=300&fit=crop"
+    "image": "https://images.unsplash.com/photo-1547489432-cf93fa6c71ee?w=400&h=300&fit=crop",
+    "uses": "Energy and nervous system support.",
+    "sideEffects": "Yellow urination (normal).",
+    "dosage": "1 capsule daily.",
+    "storage": "Cool dry place."
   },
   {
     "id": 11,
@@ -118,7 +158,11 @@
     "price": 150.0,
     "discount": 30,
     "rating": 4.5,
-    "image": "images/rivasyne.jpg"
+    "image": "images/rivasyne.jpg",
+    "uses": "Fungal infection treatment.",
+    "sideEffects": "Temporary skin irritation.",
+    "dosage": "2 times daily.",
+    "storage": "Below 25°C."
   },
   {
     "id": 12,
@@ -129,7 +173,11 @@
     "price": 95.0,
     "discount": 10,
     "rating": 4.7,
-    "image": "images/rivapro_esr.jpg"
+    "image": "images/rivapro_esr.jpg",
+    "uses": "Caloric rehydration.",
+    "sideEffects": "No side effects.",
+    "dosage": "As per energy requirement.",
+    "storage": "Airtight container."
   },
   {
     "id": 13,
@@ -140,7 +188,11 @@
     "price": 165.0,
     "discount": 15,
     "rating": 4.8,
-    "image": "images/rivakold.jpg"
+    "image": "images/rivakold.jpg",
+    "uses": "Hypertension management.",
+    "sideEffects": "Back pain or dizziness.",
+    "dosage": "Daily (Rx).",
+    "storage": "Moisture-proof."
   },
   {
     "id": 14,
@@ -151,7 +203,11 @@
     "price": 200.0,
     "discount": 20,
     "rating": 4.6,
-    "image": "images/rivapro_esr.jpg"
+    "image": "images/rivapro_esr.jpg",
+    "uses": "Healthy gut support.",
+    "sideEffects": "Initial mild bloating.",
+    "dosage": "1 capsule daily.",
+    "storage": "Cool or refrigerated."
   },
   {
     "id": 15,
@@ -162,6 +218,10 @@
     "price": 45.0,
     "discount": 5,
     "rating": 4.5,
-    "image": "images/rivakold.jpg"
+    "image": "images/rivakold.jpg",
+    "uses": "Topical pain relief.",
+    "sideEffects": "None (External use).",
+    "dosage": "Apply locally.",
+    "storage": "Keep lid tight."
   }
 ]

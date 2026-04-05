@@ -11,21 +11,29 @@
     "badge": "Best Seller",
     "prescriptionRequired": false,
     "stock": 250,
-    "image": "images/hcg_test.jpg"
+    "image": "images/hcg_test.jpg",
+    "uses": "Detection of human chorionic gonadotropin (hCG) in urine for early pregnancy diagnosis.",
+    "sideEffects": "No side effects for external diagnostic use. Results should be confirmed by clinical tests.",
+    "dosage": "Collect mid-stream urine in a clean container; use dropper to place 3 drops on the test well.",
+    "storage": "Store between 2°C to 30°C. Do not freeze. Keep out of sunlight."
   },
   {
     "id": 2,
     "name": "Rivakold Multi-Symptom Tablets",
     "brand": "Rivaansh Pharma",
     "composition": "Paracetamol 500mg + Phenylephrine 10mg",
-    "description": "Triple-action relief for cold, flu, and sinus congestion. Non-drowsy formula.",
+    "description": "Triple-action relief for cold, flu, and sinus congestion.",
     "price": 80,
     "originalPrice": 95,
     "category": "medicines",
     "badge": "Trending",
     "prescriptionRequired": false,
     "stock": 300,
-    "image": "images/rivakold.jpg"
+    "image": "images/rivakold.jpg",
+    "uses": "Relief from common cold symptoms, fever, headache, and nasal congestion.",
+    "sideEffects": "Mild drowsiness, dry mouth, or nausea in some patients.",
+    "dosage": "1 tablet twice daily after meals, or as directed by a practitioner.",
+    "storage": "Store in a cool, dry place away from direct light and children."
   },
   {
     "id": 3,
@@ -39,7 +47,11 @@
     "badge": "New",
     "prescriptionRequired": false,
     "stock": 150,
-    "image": "images/rivasyne.jpg"
+    "image": "images/rivasyne.jpg",
+    "uses": "Treatment for athlete's foot, ringworm, and other fungal skin infections.",
+    "sideEffects": "Temporary skin irritation or redness at the site of application.",
+    "dosage": "Apply a thin layer to the affected area 2 times daily for 2-4 weeks.",
+    "storage": "Store below 25°C. Keep the tube tightly closed after use."
   },
   {
     "id": 4,
@@ -53,21 +65,29 @@
     "badge": "Natural",
     "prescriptionRequired": false,
     "stock": 180,
-    "image": "images/rivapro_esr.jpg"
+    "image": "images/rivapro_esr.jpg",
+    "uses": "Maintenance of healthy gut flora and improved digestive immunity.",
+    "sideEffects": "Initial mild bloating or gas as the gut microbiome adjusts.",
+    "dosage": "1 capsule daily before breakfast with plenty of water.",
+    "storage": "Refrigeration recommended for maximum potency; keep in a cool place below 25°C."
   },
   {
     "id": 5,
     "name": "Rivadol-AP Pain Relief Tablets",
     "brand": "Rivaansh Pharma",
     "composition": "Aceclofenac 100mg + Paracetamol 325mg",
-    "description": "Fast-acting triple-action pain relief for joint and muscular pain.",
+    "description": "Fast-acting relief for joint and muscular pain.",
     "price": 90,
     "originalPrice": 110,
     "category": "medicines",
     "badge": "Fast Relief",
     "prescriptionRequired": true,
     "stock": 200,
-    "image": "images/rivadol_ap.jpg"
+    "image": "images/rivadol_ap.jpg",
+    "uses": "Powerful relief for joint inflammation, acute musculoskeletal pain, and swelling.",
+    "sideEffects": "May cause gastric acidity or dizziness. Avoid taking on an empty stomach.",
+    "dosage": "1 tablet every 12 hours after food. Do not exceed 2 tablets in 24 hours.",
+    "storage": "Store in a location inaccessible to children and pets."
   },
   {
     "id": 6,
@@ -81,7 +101,11 @@
     "badge": "Immunity",
     "prescriptionRequired": false,
     "stock": 400,
-    "image": "https://images.unsplash.com/photo-1505751171710-1f6d0ace5a85?w=400&h=300&fit=crop"
+    "image": "https://images.unsplash.com/photo-1505751171710-1f6d0ace5a85?w=400&h=300&fit=crop",
+    "uses": "Daily immunity boost. Helps in collagen synthesis and skin health.",
+    "sideEffects": "Overconsumption may lead to mild stomach cramp and diarrhea.",
+    "dosage": "Dissolve 1 tablet in 200ml water daily.",
+    "storage": "Store in airtight tube to prevent moisture absorption."
   },
   {
     "id": 7,
@@ -95,7 +119,11 @@
     "badge": "Rx Required",
     "prescriptionRequired": true,
     "stock": 80,
-    "image": "https://images.unsplash.com/photo-1576671081837-49000212a370?w=400&h=300&fit=crop"
+    "image": "https://images.unsplash.com/photo-1576671081837-49000212a370?w=400&h=300&fit=crop",
+    "uses": "Clinical treatment for bacterial infections of throat, lungs, and skin.",
+    "sideEffects": "Nausea, diarrhea, or temporary loss of taste.",
+    "dosage": "1 tablet daily for 3 days or as prescribed.",
+    "storage": "Keep in a cool, dry place. Only use when prescribed by a doctor."
   },
   {
     "id": 8,
@@ -109,7 +137,11 @@
     "badge": "Premium",
     "prescriptionRequired": false,
     "stock": 160,
-    "image": "https://images.unsplash.com/photo-1547489432-cf93fa6c71ee?w=400&h=300&fit=crop"
+    "image": "https://images.unsplash.com/photo-1547489432-cf93fa6c71ee?w=400&h=300&fit=crop",
+    "uses": "Heart health maintenance and neurological support.",
+    "sideEffects": "Mild fishy aftertaste. Take with food to minimize.",
+    "dosage": "1 softgel daily after dinner.",
+    "storage": "Store in a cool place. Avoid exposure to high heat."
   },
   {
     "id": 9,
@@ -123,7 +155,11 @@
     "badge": "Diagnostic",
     "prescriptionRequired": false,
     "stock": 60,
-    "image": "images/hcg_test.jpg"
+    "image": "images/hcg_test.jpg",
+    "uses": "Home-based monitoring of blood glucose levels for diabetic patients.",
+    "sideEffects": "No chemical side effects. Minor prick discomfort.",
+    "dosage": "Use once daily in the morning fasting state for tracking.",
+    "storage": "Store strips in original container and keep meter dry."
   },
   {
     "id": 10,
@@ -137,7 +173,11 @@
     "badge": "Bestseller",
     "prescriptionRequired": false,
     "stock": 500,
-    "image": "images/rivakold.jpg"
+    "image": "images/rivakold.jpg",
+    "uses": "Relief from headache, toothache, and menstrual cramps.",
+    "sideEffects": "Dizziness or gastric irritation if taken on empty stomach.",
+    "dosage": "1 tablet twice daily with food.",
+    "storage": "Store in a dry place below 30°C."
   },
   {
     "id": 11,
@@ -151,7 +191,11 @@
     "badge": "Essential",
     "prescriptionRequired": false,
     "stock": 1000,
-    "image": "images/rivadol_ap.jpg"
+    "image": "images/rivadol_ap.jpg",
+    "uses": "Disinfecting wounds and surface cleaning.",
+    "sideEffects": "Skin irritation if used undiluted on sensitive areas.",
+    "dosage": "Dilute 1 part with 20 parts of water for topical use.",
+    "storage": "Store away from children and open flames."
   },
   {
     "id": 12,
@@ -165,7 +209,11 @@
     "badge": "Daily Care",
     "prescriptionRequired": false,
     "stock": 300,
-    "image": "images/rivasyne.jpg"
+    "image": "images/rivasyne.jpg",
+    "uses": "Relief from dental hypersensitivity and tooth decay protection.",
+    "sideEffects": "No side effects for topical oral use.",
+    "dosage": "Brush twice daily using a small amount on the toothbrush.",
+    "storage": "Store at room temperature with cap closed."
   },
   {
     "id": 13,
@@ -179,7 +227,11 @@
     "badge": "Popular",
     "prescriptionRequired": false,
     "stock": 800,
-    "image": "https://images.unsplash.com/photo-1547489432-cf93fa6c71ee?w=400&h=300&fit=crop"
+    "image": "https://images.unsplash.com/photo-1547489432-cf93fa6c71ee?w=400&h=300&fit=crop",
+    "uses": "Skin rejuvenation, immune support, and antioxidant intake.",
+    "sideEffects": "Rare; may cause mild nausea if taken without food.",
+    "dosage": "1 capsule daily after a meal.",
+    "storage": "Keep in a cool, dry place. Protect from heat."
   },
   {
     "id": 14,
@@ -189,11 +241,15 @@
     "description": "Treatment for nutritional deficiencies and nerve damage health.",
     "price": 190,
     "originalPrice": 220,
-    "category": "nutritional",
+    "category": "nutrition",
     "badge": "Health+",
     "prescriptionRequired": true,
     "stock": 120,
-    "image": "https://images.unsplash.com/photo-1576671081837-49000212a370?w=400&h=300&fit=crop"
+    "image": "https://images.unsplash.com/photo-1576671081837-49000212a370?w=400&h=300&fit=crop",
+    "uses": "Management of neuropathic pain and peripheral neuropathy.",
+    "sideEffects": "Muscle pain or diarrhea in rare instances.",
+    "dosage": "As prescribed by a doctor, usually 1 tablet daily.",
+    "storage": "Store below 25°C in a dry place."
   },
   {
     "id": 15,
@@ -207,20 +263,28 @@
     "badge": "Heart Care",
     "prescriptionRequired": true,
     "stock": 250,
-    "image": "images/rivakold.jpg"
+    "image": "images/rivakold.jpg",
+    "uses": "Lowering high blood pressure and preventing cardiovascular risk.",
+    "sideEffects": "Dizziness or back pain. Immediate medical help if swelling occurs.",
+    "dosage": "1 tablet daily precisely as prescribed.",
+    "storage": "Store in original moisture-proof packaging."
   },
   {
     "id": 16,
     "name": "Digital Infusion Glucose",
     "brand": "Rivaansh",
-    "composition": "Glucose Dextrose Hydrate",
-    "description": "Energy recovery solution for clinical rehydration and strength.",
+    "composition": "Dextrose Hydrate",
+    "description": "Energy recovery solution for rehydration.",
     "price": 95,
     "originalPrice": 120,
     "category": "nutrition",
     "badge": "Clinical",
     "prescriptionRequired": false,
     "stock": 400,
-    "image": "images/rivapro_esr.jpg"
+    "image": "images/rivapro_esr.jpg",
+    "uses": "Primary source of energy and rehydration for fatigue or diarrhea.",
+    "sideEffects": "No side effects if consumed in directed quantities.",
+    "dosage": "1-2 servings daily when required.",
+    "storage": "After opening, keep in an airtight container."
   }
 ]

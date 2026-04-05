@@ -602,6 +602,102 @@
         </div>
     </section>
 
+    <section id="refundPage" class="page">
+        <div class="section policy-section">
+            <h2 class="section-title">Refund & Cancellation Policy</h2>
+            <div class="policy-content">
+                <h3>1. Cancellation Policy</h3>
+                <p>Orders can be cancelled anytime before they are dispatched. Once an order is out for delivery or shipped, cancellation is not possible. For prescription medicines, cancellations are allowed until the prescription verification process is complete.</p>
+                
+                <h3>2. Returns & Refunds</h3>
+                <p>Due to the sensitive nature of pharmaceutical products, returns are only accepted if:</p>
+                <ul>
+                    <li>The product delivered is past its expiry date.</li>
+                    <li>The product is damaged during transit.</li>
+                    <li>An incorrect item was delivered.</li>
+                </ul>
+                <p>In such cases, please notify us within 24 hours of delivery with photographic evidence.</p>
+                
+                <h3>3. Refund Timeline</h3>
+                <p>Once a return is approved, your refund will be processed to the original payment method within 7-10 business days. Shipping charges are non-refundable unless the return is due to our error.</p>
+                
+                <p class="policy-footer">Last updated: April 2026. Your satisfaction and safety are our commitment.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="aboutPage" class="page">
+        <div class="section policy-section">
+            <h2 class="section-title">About Rivaansh Lifesciences</h2>
+            <div class="policy-content">
+                <p><strong>Rivaansh Lifesciences</strong> is a premier pharmaceutical enterprise dedicated to bridge the gap between quality clinical formulations and patient access. Based in Jaipur, Rajasthan, we specialize in <strong>WHO-GMP certified</strong> medicines and diagnostic kits.</p>
+                
+                <h3>Our Vision</h3>
+                <p>To become India's most trusted digital pharmacy by providing 100% authentic medicines, validated by stringent quality control protocols and licensed by CDSCO.</p>
+                
+                <h3>Why Rivaansh?</h3>
+                <ul>
+                    <li><strong>Clinical Grade:</strong> Every batch is tested for bio-availability and purity.</li>
+                    <li><strong>Direct Support:</strong> 24/7 access to pharmaceutical counseling via our medicine guide.</li>
+                    <li><strong>Ethical Sourcing:</strong> We partner only with verified manufacturers and licensed distributors.</li>
+                </ul>
+                
+                <div style="margin-top: 30px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div style="background: #f8fbff; padding: 15px; border-radius: 12px; border: 1px solid #e1ecf5;">
+                        <h4 style="color: #0a7c6e; margin-bottom: 5px;">300+</h4>
+                        <p style="font-size: 0.8rem; margin: 0;">Formulations</p>
+                    </div>
+                    <div style="background: #f8fbff; padding: 15px; border-radius: 12px; border: 1px solid #e1ecf5;">
+                        <h4 style="color: #0a7c6e; margin-bottom: 5px;">10k+</h4>
+                        <p style="font-size: 0.8rem; margin: 0;">Happy Patients</p>
+                    </div>
+                </div>
+
+                <p class="policy-footer">Empowering Health through Science and Care.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="faqPage" class="page">
+        <div class="section policy-section">
+            <h2 class="section-title">Frequently Asked Questions</h2>
+            <div class="policy-content">
+                <h3>1. How do I upload a prescription?</h3>
+                <p>You can upload a prescription while adding an 'Rx' product to your cart, or directly from the 'Prescriptions' tab in your dashboard.</p>
+                
+                <h3>2. How long does delivery take?</h3>
+                <p>Most local deliveries in Jaipur are completed within 4-6 hours. Outstation orders take 2-4 business days.</p>
+                
+                <h3>3. Are the medicines authentic?</h3>
+                <p>Yes, Rivaansh Lifesciences only sources WHO-GMP certified products. We provide batch-level authenticity certificates upon request.</p>
+                
+                <p class="policy-footer">Need more answers? Use our live chat support.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="contactPage" class="page">
+        <div class="section policy-section">
+            <h2 class="section-title">Contact Support</h2>
+            <div class="policy-content">
+                <p>Get in touch with our pharmaceutical experts for any clinical or order-related queries.</p>
+                
+                <div style="margin-top:20px; display:grid; gap:15px;">
+                    <div style="background:#f0f7ff; padding:15px; border-radius:12px; border:1px solid #cde2f7;">
+                        <h4 style="color:#0a7c6e;"><i class="fa fa-envelope"></i> Email Support</h4>
+                        <p>rivaanshlifesciences@gmail.com</p>
+                    </div>
+                    <div style="background:#f0f7ff; padding:15px; border-radius:12px; border:1px solid #cde2f7;">
+                        <h4 style="color:#0a7c6e;"><i class="fa fa-phone"></i> Direct Call</h4>
+                        <p>+91 8426033033</p>
+                    </div>
+                </div>
+
+                <p class="policy-footer">Available 10:00 AM - 8:00 PM (IST).</p>
+            </div>
+        </div>
+    </section>
+
     <section id="medicineInfoPage" class="page">
         <div class="section medicine-info-section">
             <div class="section-head">
@@ -692,25 +788,25 @@
     </div>
     <div class="footer-col">
         <h4>Company</h4>
-        <a href="#">About Us</a>
-        <a href="#">Our Products</a>
-        <a href="#">Quality Policy</a>
+        <a href="#" onclick="showPage('about')">About Us</a>
+        <a href="#" onclick="showPage('products')">Our Products</a>
+        <a href="#" onclick="showPage('about')">Quality Policy</a>
         <a href="#">Careers</a>
     </div>
     <div class="footer-col">
         <h4>Support</h4>
         <a href="#" onclick="showPage('medicineInfo')">Medicine Guide</a>
         <a href="#" onclick="showPage('orderTracking')">Track Order</a>
-        <a href="#">Returns</a>
-        <a href="#">FAQs</a>
-        <a href="#">Contact</a>
+        <a href="#" onclick="showPage('refund')">Returns & Refunds</a>
+        <a href="#" onclick="showPage('faq')">FAQs</a>
+        <a href="#" onclick="showPage('contact')">Support Center</a>
     </div>
     <div class="footer-col">
         <h4>Legal</h4>
         <a href="#" onclick="showPage('privacy')">Privacy Policy</a>
         <a href="#" onclick="showPage('terms')">Terms of Use</a>
         <a href="#" onclick="showPage('refund')">Refund Policy</a>
-        <a href="#">Cookie Policy</a>
+        <a href="#" onclick="showPage('privacy')">Cookie Policy</a>
     </div>
     <div class="footer-bottom">
         <p>© 2025 Rivaansh Lifesciences Pharmaceuticals. All rights reserved.</p>

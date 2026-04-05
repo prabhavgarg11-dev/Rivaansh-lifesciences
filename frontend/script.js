@@ -102,16 +102,16 @@ async function loadProducts() {
 
 function loadFallbackProducts() {
     _allProducts = [
-        { "id": 1, "name": "hCG Pregnancy Detection Kit", "brand": "Rivaansh Life", "composition": "Anti-hCG Antibodies", "description": "Clinically validated one-step urine pregnancy test.", "price": 120, "originalPrice": 150, "category": "kits", "badge": "Best Seller", "prescriptionRequired": false, "image": "images/hcg_test.jpg" },
-        { "id": 2, "name": "Rivakold Multi-Symptom Tablets", "brand": "Rivaansh Pharma", "composition": "Paracetamol + Phenylephrine", "description": "Triple-action relief for cold and flu symptoms.", "price": 80, "originalPrice": 95, "category": "medicines", "badge": "Trending", "prescriptionRequired": false, "image": "images/rivakold.jpg" },
-        { "id": 3, "name": "RIVASYNE Anti-Fungal Cream", "brand": "Rivaansh Derma", "composition": "Clotrimazole 1%", "description": "Dual-action antifungal and anti-inflammatory cream.", "price": 150, "originalPrice": 180, "category": "cream", "badge": "New", "prescriptionRequired": false, "image": "images/rivasyne.jpg" },
-        { "id": 4, "name": "Rivapro-ESR Probiotic Capsules", "brand": "Rivaansh Nutra", "composition": "Lactobacillus acidophilus", "description": "Advanced gut health formula for high immunity.", "price": 200, "originalPrice": 240, "category": "capsule", "badge": "Natural", "prescriptionRequired": false, "image": "images/rivapro_esr.jpg" },
-        { "id": 5, "name": "Rivadol-AP Pain Relief Tablets", "brand": "Rivaansh Pharma", "composition": "Aceclofenac + Paracetamol", "description": "Fast-acting triple-action relief for joint pain.", "price": 90, "originalPrice": 110, "category": "tablet", "badge": "Fast Relief", "prescriptionRequired": true, "image": "images/rivadol_ap.jpg" },
-        { "id": 6, "name": "RivaC Vitamin C 1000mg", "brand": "Rivaansh Nutra", "composition": "Ascorbic Acid + Zinc", "description": "High-potency immunity booster with Zinc.", "price": 130, "originalPrice": 155, "category": "vitamins", "badge": "Immunity", "prescriptionRequired": false, "image": "https://images.unsplash.com/photo-1505751171710-1f6d0ace5a85?w=400&h=300&fit=crop" },
-        { "id": 7, "name": "Rivazith Azithromycin 500mg", "brand": "Rivaansh Pharma", "composition": "Azithromycin 500mg", "description": "Broad-spectrum macrolide antibiotic.", "price": 150, "originalPrice": 175, "category": "tablet", "badge": "Rx Required", "prescriptionRequired": true, "image": "https://images.unsplash.com/photo-1576671081837-49000212a370?w=400&h=300&fit=crop" },
-        { "id": 8, "name": "Rivaoxy Omega-3 Softgels", "brand": "Rivaansh Nutra", "composition": "EPA + DHA", "description": "Pharmaceutical-grade fish oil for heart health.", "price": 220, "originalPrice": 280, "category": "capsule", "badge": "Premium", "prescriptionRequired": false, "image": "https://images.unsplash.com/photo-1547489432-cf93fa6c71ee?w=400&h=300&fit=crop" },
-        { "id": 9, "name": "Rivagluco Monitor Kit", "brand": "Rivaansh", "composition": "Glucometer + 25 Strips", "description": "Clinical-grade blood glucose monitoring system.", "price": 850, "originalPrice": 999, "category": "kit", "badge": "Diagnostic", "prescriptionRequired": false, "image": "images/hcg_test.jpg" },
-        { "id": 16, "name": "Digital Infusion Glucose", "brand": "Rivaansh", "composition": "Dextrose Hydrate", "description": "Energy recovery solution for rehydration.", "price": 95, "originalPrice": 120, "category": "nutrition", "badge": "Clinical", "prescriptionRequired": false, "image": "images/rivapro_esr.jpg" }
+        { "id": 1, "name": "hCG Pregnancy Detection Kit", "brand": "Rivaansh Life", "composition": "Anti-hCG Antibodies", "description": "Clinically validated one-step urine pregnancy test.", "price": 120, "originalPrice": 150, "category": "kits", "badge": "Best Seller", "prescriptionRequired": false, "image": "images/hcg_test.jpg", "uses": "Pregnancy diagnosis.", "sideEffects": "None.", "dosage": "3 drops on well.", "storage": "2-30°C" },
+        { "id": 2, "name": "Rivakold Multi-Symptom Tablets", "brand": "Rivaansh Pharma", "composition": "Paracetamol + Phenylephrine", "description": "Triple-action relief for cold and flu symptoms.", "price": 80, "originalPrice": 95, "category": "medicines", "badge": "Trending", "prescriptionRequired": false, "image": "images/rivakold.jpg", "uses": "Cold/Fever relief.", "sideEffects": "Drowsiness.", "dosage": "Twice daily.", "storage": "Dry place" },
+        { "id": 3, "name": "RIVASYNE Anti-Fungal Cream", "brand": "Rivaansh Derma", "composition": "Clotrimazole 1%", "description": "Dual-action antifungal and anti-inflammatory cream.", "price": 150, "originalPrice": 180, "category": "cream", "badge": "New", "prescriptionRequired": false, "image": "images/rivasyne.jpg", "uses": "Fungal skin issues.", "sideEffects": "Irritation.", "dosage": "2 times daily.", "storage": "Below 25°C" },
+        { "id": 4, "name": "Rivapro-ESR Probiotic Capsules", "brand": "Rivaansh Nutra", "composition": "Lactobacillus acidophilus", "description": "Advanced gut health formula for high immunity.", "price": 200, "originalPrice": 240, "category": "capsule", "badge": "Natural", "prescriptionRequired": false, "image": "images/rivapro_esr.jpg", "uses": "Gut health.", "sideEffects": "Bloating.", "dosage": "1 daily.", "storage": "Cool place" },
+        { "id": 5, "name": "Rivadol-AP Pain Relief Tablets", "brand": "Rivaansh Pharma", "composition": "Aceclofenac + Paracetamol", "description": "Fast-acting triple-action relief for joint pain.", "price": 90, "originalPrice": 110, "category": "tablet", "badge": "Fast Relief", "prescriptionRequired": true, "image": "images/rivadol_ap.jpg", "uses": "Pain relief.", "sideEffects": "Acidity.", "dosage": "Every 12h.", "storage": "Safe place" },
+        { "id": 6, "name": "RivaC Vitamin C 1000mg", "brand": "Rivaansh Nutra", "composition": "Ascorbic Acid + Zinc", "description": "High-potency immunity booster with Zinc.", "price": 130, "originalPrice": 155, "category": "vitamins", "badge": "Immunity", "prescriptionRequired": false, "image": "https://images.unsplash.com/photo-1505751171710-1f6d0ace5a85?w=400&h=300&fit=crop", "uses": "Immune boost.", "sideEffects": "Cramps.", "dosage": "1 daily.", "storage": "Airtight" },
+        { "id": 7, "name": "Rivazith Azithromycin 500mg", "brand": "Rivaansh Pharma", "composition": "Azithromycin 500mg", "description": "Broad-spectrum macrolide antibiotic.", "price": 150, "originalPrice": 175, "category": "tablet", "badge": "Rx Required", "prescriptionRequired": true, "image": "https://images.unsplash.com/photo-1576671081837-49000212a370?w=400&h=300&fit=crop", "uses": "Infection cure.", "sideEffects": "Nausea.", "dosage": "1 daily.", "storage": "Safe place" },
+        { "id": 8, "name": "Rivaoxy Omega-3 Softgels", "brand": "Rivaansh Nutra", "composition": "EPA + DHA", "description": "Pharmaceutical-grade fish oil for heart health.", "price": 220, "originalPrice": 280, "category": "capsule", "badge": "Premium", "prescriptionRequired": false, "image": "https://images.unsplash.com/photo-1547489432-cf93fa6c71ee?w=400&h=300&fit=crop", "uses": "Heart health.", "sideEffects": "Aftertaste.", "dosage": "1 daily.", "storage": "Cool dry" },
+        { "id": 9, "name": "Rivagluco Monitor Kit", "brand": "Rivaansh", "composition": "Glucometer + 25 Strips", "description": "Clinical-grade blood glucose monitoring system.", "price": 850, "originalPrice": 999, "category": "kit", "badge": "Diagnostic", "prescriptionRequired": false, "image": "images/hcg_test.jpg", "uses": "Sugar monitoring.", "sideEffects": "Prick pain.", "dosage": "Use as needed.", "storage": "Dry meter" },
+        { "id": 16, "name": "Digital Infusion Glucose", "brand": "Rivaansh", "composition": "Dextrose Hydrate", "description": "Energy recovery solution for rehydration.", "price": 95, "originalPrice": 120, "category": "nutrition", "badge": "Clinical", "prescriptionRequired": false, "image": "images/rivapro_esr.jpg", "uses": "Energy recovery.", "sideEffects": "None.", "dosage": "1-2 daily.", "storage": "Airtight" }
     ];
     _filtered = [..._allProducts];
     renderHome();
@@ -684,6 +684,8 @@ window.showPage = function(page) {
         'privacy': 'privacyPage',
         'terms': 'termsPage',
         'refund': 'refundPage',
+        'faq': 'faqPage',
+        'contact': 'contactPage',
         'orderTracking': 'orderTrackingPage'
     };
     
@@ -1368,6 +1370,10 @@ function closeChatbot() {
     const box = document.getElementById('chatbotBox');
     box.classList.remove('open');
 }
+
+window.showChatbot = function() {
+    openChatbot();
+};
 
 window.sendChatbotMessage = function() {
     const input = document.getElementById('chatInput');
