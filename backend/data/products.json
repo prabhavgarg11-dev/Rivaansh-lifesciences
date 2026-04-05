@@ -8,7 +8,7 @@
     "price": 40.00,
     "discount": 10,
     "rating": 4.5,
-    "image": ""https://rivaansh-lifesciences.onrender.com/images/paracetamol.jpg"
+    "image": "images/rivakold.jpg"
   },
   {
     "id": 2,
@@ -19,7 +19,7 @@
     "price": 85.00,
     "discount": 15,
     "rating": 4.2,
-    "image": ""https://rivaansh-lifesciences.onrender.com/images/rivakold.jpg"
+    "image": "images/rivakold.jpg"
   },
   {
     "id": 3,
@@ -30,7 +30,7 @@
     "price": 120.00,
     "discount": 20,
     "rating": 4.8,
-    "image": ""https://rivaansh-lifesciences.onrender.com/images/vitaminc.jpg"
+    "image": "https://images.unsplash.com/photo-1505751171710-1f6d0ace5a85?w=400&h=300&fit=crop"
   },
   {
     "id": 4,
@@ -41,7 +41,7 @@
     "price": 950.00,
     "discount": 5,
     "rating": 4.7,
-    "image": ""https://rivaansh-lifesciences.onrender.com/images/accuchek.jpg"
+    "image": "https://images.unsplash.com/photo-1631549916768-4119b2e5f926?w=400&h=300&fit=crop"
   },
   {
     "id": 5,
@@ -52,7 +52,7 @@
     "price": 150.00,
     "discount": 12,
     "rating": 4.3,
-    "image": ""https://rivaansh-lifesciences.onrender.com/images/azithromycin.jpg"
+    "image": "https://images.unsplash.com/photo-1576671081837-49000212a370?w=400&h=300&fit=crop"
   },
   {
     "id": 6,
@@ -63,7 +63,7 @@
     "price": 175.00,
     "discount": 10,
     "rating": 4.6,
-    "image": ""https://rivaansh-lifesciences.onrender.com/images/moov.jpg"
+    "image": "images/rivadol_ap.jpg"
   },
   {
     "id": 7,
@@ -74,7 +74,7 @@
     "price": 550.00,
     "discount": 25,
     "rating": 4.9,
-    "image": ""https://rivaansh-lifesciences.onrender.com/images/omega3.jpg"
+    "image": "https://images.unsplash.com/photo-1547489432-cf93fa6c71ee?w=400&h=300&fit=crop"
   },
   {
     "id": 8,
@@ -85,7 +85,7 @@
     "price": 30.00,
     "discount": 5,
     "rating": 4.7,
-    "image": ""https://rivaansh-lifesciences.onrender.com/images/electrol.jpg"
+    "image": "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&h=300&fit=crop"
   },
   {
     "id": 9,
@@ -96,7 +96,7 @@
     "price": 140.00,
     "discount": 8,
     "rating": 4.8,
-    "image": ""https://rivaansh-lifesciences.onrender.com/images/dettol.jpg"
+    "image": "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&h=300&fit=crop"
   },
   {
     "id": 10,
@@ -107,7 +107,7 @@
     "price": 110.00,
     "discount": 15,
     "rating": 4.4,
-    "image": ""https://rivaansh-lifesciences.onrender.com/images/bcomplex.jpg"
+    "image": "https://images.unsplash.com/photo-1547489432-cf93fa6c71ee?w=400&h=300&fit=crop"
   },
   {
     "id": 11,
@@ -118,7 +118,7 @@
     "price": 190.00,
     "discount": 30,
     "rating": 4.5,
-    "image": ""https://rivaansh-lifesciences.onrender.com/images/nivea.jpg"
+    "image": "images/rivasyne.jpg"
   },
   {
     "id": 12,
@@ -129,7 +129,7 @@
     "price": 110.00,
     "discount": 5,
     "rating": 4.1,
-    "image": ""https://rivaansh-lifesciences.onrender.com/images/hcgkit.jpg"
+    "image": "images/hcg_test.jpg"
   },
   {
     "id": 13,
@@ -140,7 +140,7 @@
     "price": 230.00,
     "discount": 10,
     "rating": 4.7,
-    "image": ""https://rivaansh-lifesciences.onrender.com/images/volini.jpg"
+    "image": "images/rivadol_ap.jpg"
   },
   {
     "id": 14,
@@ -151,7 +151,7 @@
     "price": 160.00,
     "discount": 20,
     "rating": 4.6,
-    "image": ""https://rivaansh-lifesciences.onrender.com/images/facewash.jpg"
+    "image": "images/rivasyne.jpg"
   },
   {
     "id": 15,
@@ -162,6 +162,6 @@
     "price": 45.00,
     "discount": 5,
     "rating": 4.5,
-    "image": ""https://rivaansh-lifesciences.onrender.com/images/zandubalm.jpg"
+    "image": "images/rivakold.jpg"
   }
 ]
