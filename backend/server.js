@@ -29,15 +29,7 @@ const ALLOWED_ORIGINS = [
 ];
 
 app.use(cors({
-    origin: function (origin, callback) {
-        // Allow requests with no origin (like mobile apps or curl)
-        if (!origin) return callback(null, true);
-        if (ALLOWED_ORIGINS.indexOf(origin) !== -1 || origin.includes('vercel.app')) {
-            callback(null, true);
-        } else {
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
+    origin: '*', // Allow all origins for simplicity and reliability during deployment
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'x-manual-token', 'x-admin-token'],
     credentials: true,
@@ -492,11 +484,11 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () => {
     console.log('\n╔═══════════════════════════════════════════════════════════╗');
     console.log('║                                                           ║');
-    console.log('║       ✓ Server running on https://rivaansh-lifesciences.onrender.com          ║');
+    console.log('║       ✓ Server running on port: ' + PORT + '                      ║');
     console.log('║       ✓ API Products: /api/products                      ║');
-    console.log('║       ✓ CORS enabled for frontend requests               ║');
+    console.log('║       ✓ CORS enabled with origin: *                      ║');
     console.log('║       ✓ Error handling middleware active                 ║');
-    console.log('║       ✓ 8 healthcare products loaded                     ║');
+    console.log('║       ✓ Clinical models synchronized                     ║');
     console.log('║                                                           ║');
     console.log('╚═══════════════════════════════════════════════════════════╝\n');
 });

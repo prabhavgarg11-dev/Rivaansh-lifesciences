@@ -1,20 +1,8 @@
 {
   "version": 2,
-  "name": "rivaansh-frontend",
-  "builds": [
-    {
-      "src": "frontend/**",
-      "use": "@vercel/static"
-    }
-  ],
   "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": "https://rivaansh-lifesciences.onrender.com/api/$1"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/frontend/$1"
-    }
+    { "source": "/api/:path*", "destination": "https://rivaansh-lifesciences.onrender.com/api/:path*" },
+    { "source": "/images/:path*", "destination": "/frontend/images/:path*" },
+    { "source": "/(.*)", "destination": "/frontend/index.html" }
   ]
-} 
+}

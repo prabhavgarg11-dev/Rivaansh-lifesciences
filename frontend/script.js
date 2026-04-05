@@ -81,6 +81,13 @@ async function loadProducts() {
         const res = await fetch(`${API}/api/products`);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         _allProducts = await res.json();
+        
+        // Ensure image paths are professional
+        _allProducts = _allProducts.map(p => ({
+            ...p,
+            image: getClinicalImageUrl(p.image)
+        }));
+
         if (!Array.isArray(_allProducts) || !_allProducts.length) {
             throw new Error('No products returned');
         }
@@ -94,10 +101,17 @@ async function loadProducts() {
         renderPrescriptionsPage();
     } catch (err) {
         console.error('❌ Fetch error:', err.message);
-        addNotification('Could not reach backend server, loading local fallback products.', 'error');
+        addNotification('Could not reach clinical backend, using emergency local fallback.', 'error');
         loadFallbackProducts();
-        showError(true);
     }
+}
+
+function getClinicalImageUrl(path) {
+    if (!path) return 'images/medicine_placeholder.jpg';
+    if (path.startsWith('http')) return path;
+    // For relative paths like "images/hcg.jpg", ensure they point to the current domain's images folder
+    // which Vercel serves via the /images/ rewrite.
+    return path; 
 }
 
 function loadFallbackProducts() {
@@ -1445,37 +1459,6 @@ window.startVoiceSearch = function() {
     recognition.start();
 };
 
-// ── CHATBOT SUPPORT ───────────────────────────────────────────────────────
-function openChatbot() {
-    const box = document.getElementById('chatbotBox');
-    box.classList.add('open');
-}
-
-function closeChatbot() {
-    const box = document.getElementById('chatbotBox');
-    box.classList.remove('open');
-}
-
-window.showChatbot = function() {
-    openChatbot();
-};
-
-window.sendChatbotMessage = function() {
-    const input = document.getElementById('chatInput');
-    const msg = input?.value.trim();
-    if (!msg) return;
-
-    const history = document.getElementById('chatHistory');
-    history.innerHTML += `<div class="chat-msg user-msg"><span>${msg}</span></div>`;
-    input.value = '';
-
-    setTimeout(() => {
-        const botResp = `Thanks for asking! I recommend: ${_allProducts.slice(0,1)[0]?.name || 'Explore our pharmacy'}.`;
-        history.innerHTML += `<div class="chat-msg bot-msg"><span>${botResp}</span></div>`;
-        history.scrollTop = history.scrollHeight;
-    }, 600);
-};
-
 // ── INITIAL UI ANCHOR ──────────────────────────────────────────────────────
 function initUI() {
     renderAuthButtons();
@@ -1686,11 +1669,31 @@ function addChatMessage(text, side) {
 }
 
 function getClinicalBotResponse(input) {
-    if (input.includes('order') || input.includes('track')) return "You can track your latest pharmacy orders from the 'My Orders' section in your dashboard. Would you like me to take you there?";
-    if (input.includes('medicine') || input.includes('info')) return "I can provide clinical details on over 300 formulations. Just use the 'Medicine Guide' link in the footer or search the catalogue.";
-    if (input.includes('doctor') || input.includes('expert')) return "Connecting you to our on-call pharmacist... Please wait. You can also call us directly at +91 8426033033 for urgent clinical queries.";
-    if (input.includes('hi') || input.includes('hello')) return "Hello! 👋 I'm here to assist with your medical queries, order status, or prescription uploads. What can I do for you?";
-    return "Thank you for reaching out. To better assist you with pharmaceutical queries, please use our quick suggestion buttons or call our direct helpline.";
+    // 1. Detect Clinical Search Intent
+    const meds = ['tablet', 'pill', 'capsule', 'skin', 'fever', 'pain', 'kit', 'vitamin', 'hvg', 'hcg', 'cream'];
+    const foundMed = meds.find(m => input.includes(m));
+    if (foundMed) {
+        return `I can help find ${foundMed}-related medicines. Please search for "${foundMed}" in our Medicines Catalogue for clinical details and pricing.`;
+    }
+
+    // 2. Clinical Contextual Responses
+    if (input.includes('order') || input.includes('track') || input.includes('status')) {
+        return "I can assist with that. Your pharmaceutical orders are tracked in real-time. Please navigate to 'My Orders' in your dashboard for the latest status.";
+    }
+    if (input.includes('medicine') || input.includes('composition') || input.includes('dosage')) {
+        return "Critical medicine details (composition, side effects, and dosage) are available in our Clinical Medicine Guide. You can find it in the footer support section.";
+    }
+    if (input.includes('prescription') || input.includes('rx') || input.includes('upload')) {
+        return "Valid prescriptions are required for Rx medicines. You can upload clinical documents directly during checkout or via the 'Prescriptions' tab.";
+    }
+    if (input.includes('doctor') || input.includes('pharmacist') || input.includes('expert')) {
+        return "Connecting you to a Rivaansh licensed pharmacist... For immediate assistance, please call our 24/7 clinical helpline at +91 8426033033.";
+    }
+    if (input.includes('hi') || input.includes('hello') || input.includes('hey')) {
+        return "Welcome to Rivaansh Clinical Support! 👋 I'm here to help with your medical queries, prescriptions, or order tracking. How may I serve you?";
+    }
+    
+    return "Thank you for reaching out. For specific medical queries or pharmaceutical guidance, please use our clinical suggestion buttons or contact our direct helpline.";
 }
 
 window.handleChatAction = function(action) {
