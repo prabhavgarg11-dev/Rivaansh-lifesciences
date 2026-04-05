@@ -1,0 +1,135 @@
+/**
+ * style.css — Tata 1mg Premium Healthcare Theme 💊
+ * Standard: Clean Medical Theme (White, Emerald Green, Experts Blue, Primary Coral)
+ */
+
+:root {
+  --pr: #ff6f61;        /* Tata 1mg Primary (Coral/Orange) */
+  --su: #1a7f64;        /* Tata 1mg Success (Healthcare Green) */
+  --bg: #f6f7fb;        /* Soft Background */
+  --white: #ffffff;
+  --txt: #1a1a1a;       /* Deep Slate */
+  --txt-l: #666666;     /* Muted Gray */
+  --sh: 0 1px 10px rgba(0,0,0,0.05);
+}
+
+/* 1. Global Premium Theme */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); font-family: 'Inter', sans-serif; color: var(--txt); line-height: 1.5; padding-bottom: 70px; }
+
+/* 1. Sticky Expert Header (Tata 1mg Style) */
+.sticky-nav {
+  position: sticky;
+  top: 0;
+  z-index: 2000;
+  background: var(--white);
+  box-shadow: var(--sh);
+}
+.header-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 8%;
+  border-bottom: 1px solid #f0f0f0;
+}
+.logo h2 { font-weight: 900; font-size: 1.8rem; cursor: pointer; color: var(--pr); }
+.logo h2 span { color: var(--txt); }
+
+.search-hub { flex: 1; margin: 0 40px; position: relative; }
+.search-bar { background: #f1f5f9; padding: 12px 20px; border-radius: 8px; display: flex; align-items: center; border: 1px solid #eee; }
+.search-bar i { color: #666; margin-right: 12px; }
+.search-bar input { background: none; border: none; width: 100%; outline: none; font-size: 14px; font-family: inherit; }
+
+.header-actions { display: flex; gap: 20px; }
+.login-btn { background: none; border: none; font-weight: 700; color: #444; border-right: 1px solid #eee; padding-right: 20px; cursor: pointer; }
+.cart-icon { background: none; border: none; font-size: 1.2rem; position: relative; cursor: pointer; color: #444; }
+#cart-count { 
+  position: absolute; top: -10px; right: -10px; background: var(--pr); color: #fff; font-size: 10px; padding: 2px 6px; border-radius: 50%; font-weight: 900;
+}
+
+.sub-nav { display: flex; gap: 30px; padding: 12px 8%; background: #fff; }
+.sub-nav button { background: none; border: none; font-weight: 800; color: #444; cursor: pointer; font-size: 14px; transition: .2s; }
+.sub-nav button:hover { color: var(--pr); }
+
+/* 2. Hero Section (Slider/Banner) */
+.hero-banner { padding: 40px 8%; }
+.banner-slider { 
+  background: linear-gradient(135deg, #10B981, #3b82f6); 
+  height: 220px; border-radius: 12px; display: flex; align-items: center; padding: 40px; color: #fff; 
+}
+.banner-slider h1 { font-size: 2rem; font-weight: 900; margin-bottom: 10px; }
+.btn-primary { background: #fff; color: var(--su); border: none; padding: 12px 30px; border-radius: 8px; font-weight: 900; cursor: pointer; margin-top: 15px; }
+
+/* 3. Category Matrix (Tata 1mg Standard) */
+.categories-hub {
+  display: flex;
+  justify-content: space-around;
+  padding: 40px 8%;
+  background: #fff;
+  margin-top: 20px;
+}
+.cat-card { text-align: center; cursor: pointer; transition: .2s; width: 120px; }
+.cat-card i { font-size: 2rem; margin-bottom: 10px; display: block; filter: drop-shadow(0 4px 5px rgba(0,0,0,0.1)); }
+.cat-card span { font-size: 13px; font-weight: 800; color: #333; }
+.cat-card:hover { transform: translateY(-5px); }
+
+/* 4. Product Section: Matrix Based Grid */
+.products-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 20px;
+  padding: 20px 0;
+}
+
+/* 4. Premium Cards UI (8-12px radius, Soft shadow) */
+.product-card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 16px;
+  border: 1px solid #f0f0f0;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+  transition: .3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+.product-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+
+.product-card img { width: 100%; height: 160px; object-fit: contain; background: #fff; padding: 10px; transition: .3s; }
+.product-card:hover img { transform: scale(1.05); }
+
+.product-card h4 { font-size: 15px; font-weight: 700; color: #333; height: 40px; overflow: hidden; margin: 10px 0; }
+.product-card .composition { font-size: 11px; color: #888; margin-bottom: 10px; height: 28px; overflow: hidden; }
+.product-card .rating { color: #f59e0b; font-size: 11px; margin-bottom: 10px; font-weight: 900; }
+
+.product-card .price-row { margin-top: auto; display: flex; align-items: baseline; gap: 8px; }
+.product-card .price { font-size: 18px; font-weight: 900; color: #1a1a1a; }
+.product-card .discount { background: #e6fff5; color: var(--su); font-size: 10px; font-weight: 900; padding: 2px 6px; border-radius: 4px; }
+
+.product-card .add-btn { 
+  margin-top: 15px; width: 100%; padding: 10px; border: none; background: #fff; border: 1.5px solid var(--pr); color: var(--pr); font-weight: 900; border-radius: 8px; cursor: pointer; transition: .2s;
+}
+.product-card .add-btn:hover { background: var(--pr); color: #fff; }
+
+/* 5. Mobile App Feeling Utilities */
+.page { display: none; min-height: 80vh; padding-bottom: 100px; }
+.page.active { display: block; animation: fadeIn .4s; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } }
+
+/* Footer Design */
+.footer { background: #fff; border-top: 1px solid #eee; padding: 60px 8%; color: #333; margin-top: 60px; }
+.footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px; }
+.footer h3 { color: var(--pr); font-weight: 900; }
+.footer p { color: #666; font-size: 13px; margin: 10px 0; cursor: pointer; }
+.btn-app { border: 1.5px solid #000; padding: 10px 20px; border-radius: 8px; font-weight: 800; cursor: pointer; }
+
+/* 🔎 Live Search Dropdown */
+.search-dropdown {
+  position: absolute; top: 100%; left: 0; width: 100%; background: #fff; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border-radius: 0 0 12px 12px; display: none; z-index: 5000; max-height: 400px; overflow-y: auto;
+}
+.search-item { padding: 12px 20px; display: flex; gap: 15px; align-items: center; border-bottom: 1px solid #f9f9f9; cursor: pointer; }
+.search-item img { width: 40px; height: 40px; object-fit: contain; }
+.search-item:hover { background: #f1f5f9; }
