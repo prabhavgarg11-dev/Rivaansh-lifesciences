@@ -108,9 +108,9 @@ const Order = mongoose.models.Order || mongoose.model('Order', OrderSchema);
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Serve static frontend files from root
-app.use(express.static(path.join(__dirname, '..')));
-app.use('/images', express.static(path.join(__dirname, '..', 'images')));
+// Serve static frontend files and images (linked to the new frontend/ folder)
+app.use(express.static(path.join(__dirname, '..', 'frontend')));
+app.use('/images', express.static(path.join(__dirname, '..', 'frontend', 'images')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // ═══════════════════════════════════════════════════════════════════════════

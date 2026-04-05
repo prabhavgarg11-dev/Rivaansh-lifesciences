@@ -8,6 +8,7 @@
     "dev": "nodemon backend/server.js",
     "backend": "cd backend && npm run dev",
     "frontend": "cd frontend && npm start",
+    "build": "echo 'Skipping build step as this is a vanilla JS project'",
     "install-all": "npm install && cd backend && npm install && cd ../frontend && npm install"
   },
   "dependencies": {
