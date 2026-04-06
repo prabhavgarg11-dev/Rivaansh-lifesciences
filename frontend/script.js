@@ -323,34 +323,31 @@ function animateCards(grid) {
 // ── FILTER BY CATEGORY ─────────────────────────────────────────────────────
 
 
-window.filterCat = async function (cat, el) {
+window.filterCat = function (cat, el) {
   _currentCat = cat;
   if (el) {
     document.querySelectorAll(".cgrid-item, .cat-btn").forEach((b) => b.classList.remove("active"));
     el.classList.add("active");
+  } else {
+    // If called from a direct link/page change, try to find and highlight the button
+    document.querySelectorAll(".cgrid-item, .cat-btn").forEach((b) => {
+      const btnText = b.querySelector('span')?.innerText || b.innerText;
+      if (btnText.toLowerCase().includes(cat.toLowerCase())) b.classList.add("active");
+      else b.classList.remove("active");
+    });
   }
 
   const select = document.getElementById("filterCategory");
   if (select) select.value = cat;
 
   showPage("products");
-
-  // High-Performance Clinical Fetch
-  if (!_isLocal || _allProducts.length < 5) {
-    try {
-      const res = await fetch(`${API}/api/products/category/${cat.toLowerCase()}`);
-      if (res.ok) {
-        const data = await res.json();
-        if (data && data.length) {
-          _filtered = data.map(p => ({ ...p, image: getClinicalImageUrl(p.image) }));
-          renderProductsPage();
-        }
-      }
-    } catch (e) { console.warn("Category fetch bypass: using local clinical cache."); }
-  }
-  
   applyFilters();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  window.scrollTo({ top: 0, behavior: "smooth" });
+};
+
+window.filterCatDirect = function (cat) {
+  _currentCat = cat;
+  applyFilters();
 };
 
 window.filterCatDirect = function (cat) {
