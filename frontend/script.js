@@ -194,41 +194,24 @@ function renderAISuggestions() {
 }
 
 function getClinicalImageUrl(path) {
-  if (!path) return "images/medicine_placeholder.jpg";
+  if (!path) return "images/rivakold.jpg";
   if (path.startsWith("http")) return path;
-  // For relative paths like "images/hcg.jpg", ensure they point to the current domain's images folder
+  if (!path.startsWith("images/")) return `images/${path}`;
   return path;
 }
 
 function loadFallbackProducts() {
   _allProducts = [
-    // TABLETS
-    { id: 1, name: "Rivakold Multi-Symptom", brand: "Rivaansh Pharma", composition: "Paracetamol + Phenylephrine", description: "Relief for clinical cold and flu symptoms.", price: 85, originalPrice: 110, category: "tablet", badge: "Fast Relief", prescriptionRequired: false, image: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400", uses: "Cold/Fever.", sideEffects: "Drowsiness.", dosage: "2 daily.", storage: "Dry Place" },
-    { id: 2, name: "Rivadol-AP Pain Relief", brand: "Rivaansh Pharma", composition: "Aceclofenac + Paracetamol", description: "Clinical joint and muscle pain solution.", price: 120, originalPrice: 150, category: "tablet", badge: "Bestseller", prescriptionRequired: true, image: "https://images.unsplash.com/photo-1471864190281-ad5fe9afef77?w=400", uses: "Pain/Inflammation.", sideEffects: "Acidity.", dosage: "Twice daily.", storage: "Cool Place" },
-    { id: 3, name: "Rivazith-500 Antibiotic", brand: "Rivaansh Pharma", composition: "Azithromycin 500mg", description: "Broad-spectrum macrolide clinical antibiotic.", price: 165, originalPrice: 210, category: "tablet", badge: "Clinical ID", prescriptionRequired: true, image: "https://images.unsplash.com/photo-1607619056574-7b8d3ee536b2?w=400", uses: "Bacterial infections.", sideEffects: "Nausea.", dosage: "1 daily.", storage: "Safe Place" },
-    { id: 4, name: "RivaPru-E 100mg", brand: "Rivaansh Pharma", composition: "Erythromycin", description: "Standard clinical bacterial therapy.", price: 90, originalPrice: 120, category: "tablet", badge: "Rx", prescriptionRequired: true, image: "https://images.unsplash.com/photo-1550572017-ed20bb7f9785?w=400", uses: "Throat infection.", sideEffects: "Stomach ache.", dosage: "3 daily.", storage: "Below 30°C" },
-    
-    // CAPSULES
-    { id: 5, name: "Rivapro-ESR Probiotic", brand: "Rivaansh Nutra", composition: "Lactobacillus 5B CFU", description: "Clinical gut-health and immunity booster.", price: 299, originalPrice: 380, category: "capsule", badge: "Innovation", prescriptionRequired: false, image: "https://images.unsplash.com/photo-1471864190281-ad5fe9afef77?w=400", uses: "Digestion/Immunity.", sideEffects: "Bloating.", dosage: "1 daily.", storage: "Refrigerate" },
-    { id: 6, name: "RivaOmega Gold Softgels", brand: "Rivaansh Nutra", composition: "Omega-3 1000mg", description: "Triple-strength clinical heart and brain fuel.", price: 450, originalPrice: 599, category: "capsule", badge: "Premium", prescriptionRequired: false, image: "https://images.unsplash.com/photo-1547489432-cf93fa6c71ee?w=400", uses: "Cardiac health.", sideEffects: "None.", dosage: "2 daily.", storage: "Dry/Dark" },
-    { id: 7, name: "RivaCal-D3 Clinical", brand: "Rivaansh Nutra", composition: "Calcium + Vit D3", description: "Strategic bone-density clinical supplement.", price: 180, originalPrice: 240, category: "capsule", badge: "Essential", prescriptionRequired: false, image: "https://images.unsplash.com/photo-1550572017-ed20bb7f9785?w=400", uses: "Bone strength.", sideEffects: "None.", dosage: "1 daily.", storage: "Cool Place" },
-    
-    // SYRUPS
-    { id: 8, name: "RivaKof-D Clinical Syrup", brand: "Rivaansh Pharma", composition: "Dextromethorphan + CPM", description: "Sugar-free clinical dry cough suppressant.", price: 115, originalPrice: 145, category: "syrup", badge: "Sugar Free", prescriptionRequired: false, image: "https://images.unsplash.com/photo-1555633514-abcee6ad93e1?w=400", uses: "Dry cough.", sideEffects: "Drowsiness.", dosage: "10ml thrice.", storage: "Normal" },
-    { id: 9, name: "RivaGel Ultra Antacid", brand: "Rivaansh Pharma", composition: "Aluminium/Magnesium Hydroxide", description: "Instant clinical relief from hyperacidity.", price: 95, originalPrice: 125, category: "syrup", badge: "Instant", prescriptionRequired: false, image: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400", uses: "Acidity/Gas.", sideEffects: "Laxative.", dosage: "2 spoonfuls.", storage: "Cool Place" },
-    { id: 10, name: "RivaVital Iron Complex", brand: "Rivaansh Nutra", composition: "Iron + B12 Syrup", description: "Max-absorption clinical hematinic syrup.", price: 185, originalPrice: 230, category: "syrup", badge: "Hematology", prescriptionRequired: false, image: "https://images.unsplash.com/photo-1512428559083-a4014d5931bd?w=400", uses: "Iron deficiency.", sideEffects: "Black stool.", dosage: "10ml daily.", storage: "Dark Bottle" },
-    
-    // KITS & DIAGNOSTICS
-    { id: 11, name: "RivaCheck Glucometer Kit", brand: "Rivaansh Lab", composition: "Digital Hub + 25 Strips", description: "Clinical-grade blood glucose management system.", price: 999, originalPrice: 1499, category: "kit", badge: "Lab Grade", prescriptionRequired: false, image: "https://images.unsplash.com/photo-1559757175-0eb30cd8c063?w=400", uses: "Sugar monitoring.", sideEffects: "None.", dosage: "As needed.", storage: "Dry Meter" },
-    { id: 12, name: "hCG Instant Detection Kit", brand: "Rivaansh Life", composition: "Anti-hCG Antibodies", description: "99% accurate clinical one-step diagnostic.", price: 140, originalPrice: 180, category: "kit", badge: "99% Accurate", prescriptionRequired: false, image: "https://images.unsplash.com/photo-1583946099379-f9c9cb8bc030?w=400", uses: "Pregnancy.", sideEffects: "None.", dosage: "3 drops.", storage: "2-30°C" },
-    
-    // SKINCARE & TOPICALS
-    { id: 13, name: "RivaSyne Derma Cream", brand: "Rivaansh Derma", composition: "Clotrimazole 1%", description: "Clinical-grade antifungal and healing cream.", price: 160, originalPrice: 200, category: "cream", badge: "Dermatological", prescriptionRequired: false, image: "https://images.unsplash.com/photo-1556229010-6c3f2c9ca5f8?w=400", uses: "Skin infection.", sideEffects: "Redness.", dosage: "Twice daily.", storage: "Below 25°C" },
-    { id: 14, name: "RivaClear Benzoyl Wash", brand: "Rivaansh Derma", composition: "Benzoyl Peroxide 2.5%", description: "Clinical acne clearance therapy.", price: 290, originalPrice: 350, category: "cream", badge: "Face Therapy", prescriptionRequired: true, image: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=400", uses: "Acne therapy.", sideEffects: "Dryness.", dosage: "Night only.", storage: "Cool Place" },
-    
-    // VITAMINS
-    { id: 15, name: "RivaC-Zinc 1000mg", brand: "Rivaansh Nutra", composition: "Vitamin C + Zinc", description: "Double-action high-fidelity immunity support.", price: 145, originalPrice: 199, category: "vitamins", badge: "Immune Hub", prescriptionRequired: false, image: "https://images.unsplash.com/photo-1505751171710-1f6d0ace5a85?w=400", uses: "General Wellness.", sideEffects: "None.", dosage: "1 chewable.", storage: "Airtight" },
-    { id: 16, name: "RivaB-Complex High Potency", brand: "Rivaansh Nutra", composition: "B1, B6, B12 Complex", description: "Strategic clinical energy and nerve therapy.", price: 210, originalPrice: 275, category: "vitamins", badge: "Neuro Support", prescriptionRequired: false, image: "https://images.unsplash.com/photo-1626307411219-c81ca359f0fc?w=400", uses: "Nerve health.", sideEffects: "Urine color.", dosage: "1 daily.", storage: "Dry Place" }
+    { id: 1, name: "Rivakold™ Antikold Tablets", brand: "Rivaansh™ Pharma", composition: "Paracetamol + Phenylephrine", description: "Clinically superior multi-symptom cold and flu relief.", price: 85, originalPrice: 110, category: "tablet", badge: "Trending", prescriptionRequired: false, image: "images/rivakold.jpg", uses: "Cold, Fever, Congestion.", sideEffects: "Drowsiness.", dosage: "1-2 tablets daily.", storage: "Dry Place" },
+    { id: 2, name: "Rivasyne™ Cream", brand: "Rivaansh™ Derma", composition: "Clotrimazole 1%", description: "Strategic clinical-grade antifungal and healing therapy.", price: 150, originalPrice: 180, category: "cream", badge: "Pharmacist Choice", prescriptionRequired: false, image: "images/rivasyne.jpg", uses: "Fungal infection, Skin rash.", sideEffects: "Mild redness.", dosage: "Apply twice daily.", storage: "Below 25°C" },
+    { id: 3, name: "Rivapro-ESR™ Capsules", brand: "Rivaansh™ Nutra", composition: "Lactobacillus 5B CFU", description: "Advanced clinical gut-health and high-fidelity immunity booster.", price: 299, originalPrice: 380, category: "capsule", badge: "Premium Hub", prescriptionRequired: false, image: "images/rivapro_esr.jpg", uses: "Digestive health, Immunity.", sideEffects: "None.", dosage: "1 daily.", storage: "Refrigerate" },
+    { id: 4, name: "Rivadol-AP™ Pain Relief", brand: "Rivaansh™ Pharma", composition: "Aceclofenac + Paracetamol", description: "High-performance joint and muscle pain solution.", price: 120, originalPrice: 150, category: "tablet", badge: "Bestseller", prescriptionRequired: true, image: "images/rivadol_ap.jpg", uses: "Pain/Inflammation.", sideEffects: "Acidity.", dosage: "Twice daily.", storage: "Cool Place" },
+    { id: 5, name: "Rivayne™ Face Wash", brand: "Rivaansh™ Derma", composition: "Salicylic Acid + Zinc", description: "Clinical acne clearance and skin-purifying therapy.", price: 290, originalPrice: 350, category: "cream", badge: "Dermatological", prescriptionRequired: false, image: "images/Products_page-0005.jpg", uses: "Acne, Deep cleaning.", sideEffects: "Dryness.", dosage: "Twice daily.", storage: "Cool Place" },
+    { id: 6, name: "Rivaderm™ Anti-Itch Cream", brand: "Rivaansh™ Derma", composition: "Hydrocortisone 1%", description: "Clinical-grade relief for skin irritation and redness.", price: 175, originalPrice: 220, category: "cream", badge: "Skin Relief", prescriptionRequired: false, image: "images/Products_page-0006.jpg", uses: "Itching, Inflammation.", sideEffects: "Thinning skin.", dosage: "Apply thinly twice.", storage: "Below 30°C" },
+    { id: 7, name: "Rivoxy™ Softgel Capsules", brand: "Rivaansh™ Nutra", composition: "Omega-3 1000mg + Antioxidants", description: "Triple-strength clinical heart and brain fuel.", price: 450, originalPrice: 599, category: "capsule", badge: "Neuro Support", prescriptionRequired: false, image: "https://images.unsplash.com/photo-1547489432-cf93fa6c71ee?w=400", uses: "Cardiac health, Memory.", sideEffects: "None.", dosage: "2 daily.", storage: "Dry/Dark" },
+    { id: 8, name: "hCG™ Pregnancy Detection Kit", brand: "Rivaansh™ Life", composition: "Anti-hCG Antibodies", description: "99.9% accurate clinical one-step diagnostic hub.", price: 140, originalPrice: 180, category: "kit", badge: "Instant Hub", prescriptionRequired: false, image: "images/hcg_test.jpg", uses: "Pregnancy detection.", sideEffects: "None.", dosage: "3 drops of urine.", storage: "2-30°C" },
+    { id: 9, name: "Rivacold-Multi™ Extra Strength", brand: "Rivaansh™ Pharma", composition: "Paracetamol + Caffeine", description: "Accelerated cold and clinical headache relief.", price: 95, originalPrice: 125, category: "tablet", badge: "Fast Hit", prescriptionRequired: false, image: "images/rivakold.jpg", uses: "Headache, Flu.", sideEffects: "Alertness.", dosage: "1-2 daily.", storage: "Dry Place" },
+    { id: 10, name: "RivaCheck™ Glucometer Kit", brand: "Rivaansh™ Lab", composition: "Digital Hub + 25 Strips", description: "Clinical-grade blood glucose management system.", price: 999, originalPrice: 1499, category: "kit", badge: "Lab Grade", prescriptionRequired: false, image: "images/hcg_test.jpg", uses: "Sugar monitoring.", sideEffects: "None.", dosage: "As needed.", storage: "Dry Meter" }
   ];
   _filtered = [..._allProducts];
   renderHome();
@@ -339,18 +322,32 @@ function animateCards(grid) {
 // ── FILTER BY CATEGORY ─────────────────────────────────────────────────────
 
 
-window.filterCat = function (cat) {
+window.filterCat = async function (cat) {
   _currentCat = cat;
   showPage("products");
+  
+  // High-Performance Clinical Fetch
+  if (!_isLocal || _allProducts.length < 5) {
+    try {
+      const res = await fetch(`${API}/api/products/category/${cat.toLowerCase()}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.length) {
+          _filtered = data.map(p => ({ ...p, image: getClinicalImageUrl(p.image) }));
+          renderProductsPage();
+        }
+      }
+    } catch (e) { console.warn("Category fetch bypass: using local clinical cache."); }
+  }
+  
   applyFilters();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
 window.filterCatDirect = function (cat) {
   _currentCat = cat;
-  document.querySelectorAll(".cat-btn").forEach((b) => {
-    b.classList.toggle("active", b.dataset.cat === cat);
-  });
+  const select = document.getElementById("filterCategory");
+  if (select) select.value = cat;
   applyFilters();
 };
 
@@ -380,7 +377,7 @@ function applyFilters() {
   let list = [..._allProducts];
 
   if (_currentCat && _currentCat !== "all") {
-    list = list.filter((p) => p.category?.toLowerCase() === _currentCat);
+    list = list.filter((p) => p.category?.toLowerCase() === _currentCat.toLowerCase());
   }
   if (_currentBrand && _currentBrand !== "all") {
     list = list.filter(
@@ -763,14 +760,14 @@ window.startPayment = async function (method) {
           );
 
         const options = {
-          key: rzpData.key || 'rzp_test_YourRazorpayKeyHere',
+          key: rzpData.key || "rzp_test_YourRazorpayKeyHere",
           amount: rzpData.amount || amount,
           currency: rzpData.currency || "INR",
           name: "Rivaansh Lifesciences",
           description: "Safe & Secure Clinical Purchase",
-          order_id: rzpData.simulated ? undefined : rzpData.id,
+          order_id: rzpData.simulated ? null : rzpData.id,
           prefill: { email: _user?.email || "", name: _user?.name || "Guest" },
-          notes: { orderId },
+          notes: { orderId: String(orderId) },
           handler: async function (response) {
             await confirmPayment(
               orderId,
@@ -1024,29 +1021,21 @@ function saveAuthState() {
 }
 
 function renderAuthButtons() {
-  const authBtn = document.getElementById("authBtn");
   const userName = document.getElementById("authUserName");
   const adminNav = document.getElementById("adminNavLink");
-  if (!authBtn || !userName) return;
+  if (!userName) return;
 
   if (_user) {
-    authBtn.textContent = "Logout";
-    authBtn.onclick = logout;
-    userName.textContent = `Hi, ${_user.name}`;
-
+    userName.textContent = `Hi, ${_user.name.split(" ")[0]}`;
     if (_user.isAdmin) {
       adminNav?.classList.remove("hidden");
-      adminNav?.classList.add("active");
     } else {
       adminNav?.classList.add("hidden");
     }
   } else {
-    authBtn.textContent = "Login";
-    authBtn.onclick = openAuthModal;
-    userName.textContent = "Guest";
+    userName.textContent = "Profile";
     adminNav?.classList.add("hidden");
   }
-  updateAdminStats();
 }
 
 window.switchAuthTab = function (tab) {
@@ -1203,90 +1192,79 @@ function closeAuthModal() {
   if (modal) modal.classList.remove("open");
 }
 
-window.registerUser = async function () {
-  const name = document.getElementById("regName")?.value.trim();
-  const email = document.getElementById("regEmail")?.value.trim().toLowerCase();
-  const pass = document.getElementById("regPassword")?.value;
-  const phone = "9999999999"; // Default or add a field in HTML if needed
+window.handleAuth = async function (type) {
+  if (type === "login") {
+    const email = document.getElementById("loginEmail")?.value.trim().toLowerCase();
+    const pass = document.getElementById("loginPass")?.value;
 
-  if (!name || !email || !pass) {
-    toast("Please fill all signup fields", "error");
-    return;
-  }
+    if (!email || !pass) return toast("Please enter email and password", "error");
 
-  try {
-    const res = await fetch(`${API}/api/users/register`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, email, password: pass, phone }),
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.message || "Registration failed");
-
-    _user = {
-      uid: data.uid,
-      name: data.name,
-      email: data.email,
-      isAdmin: data.isAdmin,
-    };
-    saveAuthState();
-    closeAuthModal();
-    toast("🎉 Signup successful! Welcome to Rivaansh.", "success");
-  } catch (err) {
-    toast(err.message, "error");
-  }
-};
-
-window.loginUser = async function () {
-  const email = document
-    .getElementById("loginEmail")
-    ?.value.trim()
-    .toLowerCase();
-  const pass = document.getElementById("loginPassword")?.value;
-
-  if (!email || !pass) {
-    toast("Please enter email and password", "error");
-    return;
-  }
-
-  try {
-    const res = await fetch(`${API}/api/users/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password: pass }),
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.message || "Invalid credentials");
-
-    _user = {
-      uid: data.uid,
-      name: data.name,
-      email: data.email,
-      isAdmin: data.isAdmin,
-    };
-
-    if (_user.isAdmin) {
-      // Re-fetch admin token for the admin endpoints
-      const adminRes = await fetch(`${API}/api/admin/login`, {
+    try {
+      const res = await fetch(`${API}/api/users/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password: pass }),
       });
-      const adminData = await adminRes.json();
-      if (adminRes.ok && adminData.token) {
-        localStorage.setItem("rv_admin_token", adminData.token);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Invalid credentials");
+
+      _user = {
+        uid: data.uid,
+        name: data.name,
+        email: data.email,
+        isAdmin: data.isAdmin,
+      };
+
+      if (_user.isAdmin) {
+        const adminRes = await fetch(`${API}/api/admin/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password: pass }),
+        });
+        const adminData = await adminRes.json();
+        if (adminRes.ok && adminData.token) {
+          localStorage.setItem("rv_admin_token", adminData.token);
+        }
       }
-    }
 
-    saveAuthState();
-    closeAuthModal();
-    toast(`Welcome back, ${_user.name.split(" ")[0]}!`, "success");
-
-    if (_user.isAdmin) {
-      showPage("adminPanel");
+      saveAuthState();
+      closeAuthModal();
+      toast(`Welcome back, ${_user.name.split(" ")[0]}!`, "success");
+      if (_user.isAdmin) showPage("adminPanel");
+      else showPage("dashboard");
+    } catch (err) {
+      toast(err.message, "error");
     }
-  } catch (err) {
-    toast(err.message, "error");
+  } else {
+    const name = document.getElementById("signupName")?.value.trim();
+    const email = document.getElementById("signupEmail")?.value.trim().toLowerCase();
+    const pass = document.getElementById("signupPass")?.value;
+
+    if (!name || !email || !pass) return toast("Please fill all signup fields", "error");
+
+    try {
+      const res = await fetch(`${API}/api/users/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password: pass, phone: "9999999999" }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Registration failed");
+
+      _user = {
+        uid: data.uid,
+        name: data.name,
+        email: data.email,
+        isAdmin: data.isAdmin,
+      };
+
+      saveAuthState();
+      closeAuthModal();
+      toast("🎉 Health ID Created! Welcome to Rivaansh.", "success");
+      showPage("dashboard");
+    } catch (err) {
+      toast(err.message, "error");
+    }
   }
 };
 
@@ -2547,26 +2525,4 @@ window.switchAuthTab = function(type, el) {
     document.getElementById(type + 'Form').classList.add('active');
 };
 
-window.showDashboardOrAuth = function() {
-    if (_user) {
-        showPage('dashboard');
-        updateDashboard();
-    } else {
-        openAuthModal();
-    }
-};
-
-function updateDashboard() {
-    if (!_user) return;
-    const el = (id) => document.getElementById(id);
-    if (el('dashName')) el('dashName').textContent = _user.name;
-    if (el('dashEmail')) el('dashEmail').textContent = _user.email;
-    
-    // Modern Dashboard Stats
-    if (el('dashOrdersCount')) el('dashOrdersCount').textContent = `${_orders.length} Active`;
-    if (el('dashPrescCount')) el('dashPrescCount').textContent = `${_prescriptions.length} Records`;
-    if (el('dashWishCount')) el('dashWishCount').textContent = `${_wishlist.length} Items`;
-    
-    renderRecentActivity();
-}
 

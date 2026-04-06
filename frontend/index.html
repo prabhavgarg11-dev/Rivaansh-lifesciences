@@ -86,38 +86,6 @@
 
 <div id="notificationsPanel" class="notifications-panel"></div>
 
-<div id="authModal" class="modal-overlay" onclick="if(event.target===this) closeAuthModal()">
-    <div class="auth-modal-card auth-card-lg">
-        <button class="modal-close" onclick="closeAuthModal()"><i class="fa fa-xmark"></i></button>
-        <div class="auth-inner-grid">
-            <div class="auth-intro">
-                <h3>Rivaansh Lifesciences</h3>
-                <p>Secure login for customers and administrators. Get access to order management, prescription approvals, and inventory monitoring.</p>
-                <div class="auth-social">
-                    <span>Login fast with</span>
-                    <button><i class="fa-brands fa-google"></i></button>
-                    <button><i class="fa-brands fa-facebook-f"></i></button>
-                </div>
-            </div>
-            <div class="auth-forms">
-                <div class="auth-tabs">
-                    <button class="auth-tab active" data-tab="login" onclick="switchAuthTab('login')">Login</button>
-                    <button class="auth-tab" data-tab="register" onclick="switchAuthTab('register')">Register</button>
-                </div>
-                <div class="auth-tab-content active" id="loginTab">
-                    <input id="loginEmail" type="email" placeholder="Email" />
-                    <input id="loginPassword" type="password" placeholder="Password" />
-                    <button class="btn-primary" onclick="loginUser()">Login</button>
-                    <small>Admin? Use <strong>admin@rivaansh.com</strong> / <strong>Admin@123</strong> to enter dashboard.</small>
-                </div>
-                <div class="auth-tab-content" id="registerTab">
-                    <input id="regName" type="text" placeholder="Full Name" />
-                    <input id="regEmail" type="email" placeholder="Email" />
-                    <input id="regPassword" type="password" placeholder="Password" />
-                    <button class="btn-secondary" onclick="registerUser()">Register</button>
-                </div>
-            </div>
-        </div>
     </div>
 </div>
 
@@ -132,7 +100,7 @@
     </div>
     <div class="search-bar">
         <i class="fa fa-magnifying-glass"></i>
-        <input type="text" id="mainSearch" placeholder="Search medicines, vitamins, kits..." oninput="handleLiveSuggest(this.value)">
+        <input type="text" id="mainSearch" placeholder="Search tablets, capsules, syrups, kits..." oninput="handleLiveSuggest(this.value)">
         <div id="liveSuggest" class="live-suggest-results hidden"></div>
     </div>
     <div class="header-actions">
@@ -145,14 +113,9 @@
             <span>Wishlist</span>
             <span id="wishlistBadge" class="badge-dot"></span>
         </div>
-        <div class="icon-group" onclick="toggleCart()">
-            <i class="fa fa-bag-shopping"></i>
-            <span>Cart</span>
-            <span id="cartBadge" class="cart-badge-dot"></span>
-        </div>
-        <div class="icon-group" onclick="showDashboardOrAuth()">
+        <div class="icon-group" id="headerProfileBtn" onclick="showDashboardOrAuth()">
             <i class="fa fa-user-doctor"></i>
-            <span>Profile</span>
+            <span id="authUserName">Profile</span>
         </div>
     </div>
 
@@ -200,7 +163,6 @@
 
         <!-- HERO -->
         <div class="hero">
-            <span class="p-badge"><i class="fa fa-certificate"></i> WHO-GMP Certified Pharmacy</span>
             <h1>Rivaansh Lifesciences</h1>
             <p>Your Trusted Gateway to 100% Genuine Clinical Medicines & Wellness Kits.</p>
             <div class="hero-btns">
@@ -211,27 +173,27 @@
 
         <!-- QUICK CATEGORIES GRID (MODERN UI KIT) -->
         <div class="category-grid-modern">
-            <div class="cgrid-item" onclick="filterCat('tablet', this)">
+            <div class="cgrid-item" onclick="filterCat('Tablet', this)">
                 <div class="c-icon"><i class="fa fa-pills"></i></div>
                 <span>Tablets</span>
             </div>
-            <div class="cgrid-item" onclick="filterCat('capsule', this)">
+            <div class="cgrid-item" onclick="filterCat('Capsule', this)">
                 <div class="c-icon"><i class="fa fa-capsules"></i></div>
                 <span>Capsules</span>
             </div>
-            <div class="cgrid-item" onclick="filterCat('syrup', this)">
+            <div class="cgrid-item" onclick="filterCat('Syrup', this)">
                 <div class="c-icon"><i class="fa fa-bottle-droplet"></i></div>
                 <span>Syrups</span>
             </div>
-            <div class="cgrid-item" onclick="filterCat('kit', this)">
+            <div class="cgrid-item" onclick="filterCat('Diagnostic Kit', this)">
                 <div class="c-icon"><i class="fa fa-vial"></i></div>
                 <span>Diagnostic Kits</span>
             </div>
-            <div class="cgrid-item" onclick="filterCat('cream', this)">
+            <div class="cgrid-item" onclick="filterCat('Skincare', this)">
                 <div class="c-icon"><i class="fa fa-hand-holding-medical"></i></div>
                 <span>Skincare</span>
             </div>
-            <div class="cgrid-item" onclick="filterCat('vitamins', this)">
+            <div class="cgrid-item" onclick="filterCat('Vitamins', this)">
                 <div class="c-icon"><i class="fa fa-apple-whole"></i></div>
                 <span>Vitamins</span>
             </div>
@@ -247,7 +209,7 @@
                 <div class="feature-card">
                     <i class="fa fa-shield-virus"></i>
                     <h4>Clinical Authenticity</h4>
-                    <p>100% genuine medicines sourced directly from WHO-GMP certified clinical hubs.</p>
+                    <p>100% genuine medicines sourced directly from verified clinical hubs.</p>
                 </div>
                 <div class="feature-card">
                     <i class="fa fa-truck-fast"></i>
@@ -418,13 +380,12 @@
                         <label style="font-size: 0.85rem; font-weight: 600; margin-bottom: 5px; display: block; color: var(--text);">Category</label>
                         <select id="filterCategory" onchange="filterCatDirect(this.value)" style="padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: #fff; min-width: 150px; font-family: inherit;">
                             <option value="all">All Categories</option>
-                            <option value="tablet">Tablets</option>
-                            <option value="capsule">Capsules</option>
-                            <option value="cream">Creams</option>
-                            <option value="kit">Kits</option>
-                            <option value="vitamins">Vitamins</option>
-                            <option value="nutrition">Nutrition</option>
-                            <option value="medicines">Medicines</option>
+                            <option value="Tablet">Tablets</option>
+                            <option value="Capsule">Capsules</option>
+                            <option value="Syrup">Syrups</option>
+                            <option value="Diagnostic Kit">Diagnostic Kits</option>
+                            <option value="Skincare">Skincare</option>
+                            <option value="Vitamins">Vitamins</option>
                         </select>
                     </div>
                     
@@ -1046,8 +1007,8 @@
             </div>
             <div class="auth-form-side">
                 <div class="auth-tabs-modern">
-                    <div class="a-tab active" onclick="switchAuthTab('login', this)">Patient Login</div>
-                    <div class="a-tab" onclick="switchAuthTab('signup', this)">Register ID</div>
+                    <div class="a-tab active" id="loginTabBtn" onclick="switchAuthTab('login', this)">Patient Login</div>
+                    <div class="a-tab" id="signupTabBtn" onclick="switchAuthTab('signup', this)">Register ID</div>
                 </div>
 
                 <div id="loginForm" class="auth-form-content active">
@@ -1076,6 +1037,7 @@
                         <button class="btn-social google"><i class="fa-brands fa-google"></i> Google</button>
                         <button class="btn-social apple"><i class="fa-brands fa-apple"></i> Apple</button>
                     </div>
+                    <small style="display:block; margin-top:15px; color:#94a3b8; text-align:center;">Admin? Use <strong>admin@rivaansh.com</strong> / <strong>Admin@123</strong></small>
                 </div>
 
                 <div id="signupForm" class="auth-form-content">
