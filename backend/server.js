@@ -15,7 +15,6 @@ const morgan = require('morgan');
 const crypto = require('crypto');
 const path = require('path');
 const fs = require('fs');
-
 const app = express();
 
 const ALLOWED_ORIGINS = [
@@ -30,7 +29,18 @@ const ALLOWED_ORIGINS = [
 ];
 
 app.use(cors({
-    origin: '*', // Allow all origins for simplicity and reliability during deployment
+    origin: (origin, callback) => {
+        const allowed = [
+            'http://localhost:3000', 'http://127.0.0.1:3000',
+            'http://localhost:5000', 'http://127.0.0.1:5000',
+            'http://localhost:5500', 'http://127.0.0.1:5500'
+        ];
+        if (!origin || allowed.includes(origin) || origin.includes('render.com') || origin.includes('vercel.app')) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'x-manual-token', 'x-admin-token'],
     credentials: true,
@@ -278,7 +288,7 @@ app.post('/api/payment/razorpay-create', async (req, res) => {
         };
 
         const order = await razorpayInstance.orders.create(options);
-        res.status(200).json(order);
+        res.status(200).json({ ...order, key: process.env.RAZORPAY_KEY });
     } catch (error) {
         console.error('❌ Razorpay Create Error:', error);
         res.status(500).json({ error: 'Could not generate Razorpay order ID' });

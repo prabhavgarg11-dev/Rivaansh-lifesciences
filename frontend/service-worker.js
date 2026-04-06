@@ -9,16 +9,16 @@ const STATIC_CACHE  = `${CACHE_VERSION}-static`;
 const API_CACHE     = `${CACHE_VERSION}-api`;
 
 const STATIC_ASSETS = [
-    '/index(1).html',
+    '/',
+    '/index.html',
     '/script.js',
     '/api.js',
     '/auth.js',
     '/cart.js',
     '/order.js',
-    '/errorHandler.js',
-    '/styles.css',
+    '/style.css',
     '/manifest.json',
-    '/logo.png.jpeg',
+    '/logo.png',
     '/offline.html',
     // Add critical fonts and icons
     'https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap',
@@ -136,8 +136,8 @@ self.addEventListener('push', event => {
     event.waitUntil(
         self.registration.showNotification(data.title || 'Rivaansh', {
             body: data.body || 'You have a new update.',
-            icon: '/logo.png.jpeg',
-            badge: '/logo.png.jpeg',
+            icon: '/logo.png',
+            badge: '/logo.png',
             data: { url: data.url || '/' },
         })
     );

@@ -2,6 +2,7 @@
   "version": 2,
   "rewrites": [
     { "source": "/api/:path*", "destination": "https://rivaansh-lifesciences.onrender.com/api/:path*" },
+    { "source": "/uploads/:path*", "destination": "https://rivaansh-lifesciences.onrender.com/uploads/:path*" },
     { "source": "/images/:path*", "destination": "/frontend/images/:path*" },
     { "source": "/(.*)", "destination": "/frontend/index.html" }
   ]

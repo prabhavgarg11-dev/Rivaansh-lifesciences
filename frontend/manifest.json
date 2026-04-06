@@ -2,21 +2,21 @@
   "name": "Rivaansh Lifesciences Pharmacy",
   "short_name": "Rivaansh",
   "description": "Premium Healthcare Pharmacy & Medicine Delivery",
-  "start_url": "/index(1).html",
+  "start_url": "/index.html",
   "display": "standalone",
   "background_color": "#f5fafa",
   "theme_color": "#006767",
   "icons": [
     {
-      "src": "logo.png.jpeg",
+      "src": "logo.png",
       "sizes": "192x192",
-      "type": "image/jpeg",
+      "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "logo.png.jpeg",
+      "src": "logo.png",
       "sizes": "512x512",
-      "type": "image/jpeg",
+      "type": "image/png",
       "purpose": "any maskable"
     }
   ]
