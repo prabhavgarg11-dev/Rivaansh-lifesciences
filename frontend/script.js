@@ -143,9 +143,10 @@ async function loadProducts() {
       image: getClinicalImageUrl(p.image),
     }));
 
-    if (!Array.isArray(_allProducts) || !_allProducts.length) {
-      throw new Error("No products returned");
+    if (!_allProducts || !_allProducts.length) {
+      throw new Error("Catalogue empty or corrupted");
     }
+    
     _filtered = [..._allProducts];
     renderHome();
     renderProductsPage();
@@ -202,16 +203,16 @@ function getClinicalImageUrl(path) {
 
 function loadFallbackProducts() {
   _allProducts = [
-    { id: 1, name: "Rivakold™ Antikold Tablets", brand: "Rivaansh™ Pharma", composition: "Paracetamol + Phenylephrine", description: "Clinically superior multi-symptom cold and flu relief.", price: 85, originalPrice: 110, category: "tablet", badge: "Trending", prescriptionRequired: false, image: "images/rivakold.jpg", uses: "Cold, Fever, Congestion.", sideEffects: "Drowsiness.", dosage: "1-2 tablets daily.", storage: "Dry Place" },
-    { id: 2, name: "Rivasyne™ Cream", brand: "Rivaansh™ Derma", composition: "Clotrimazole 1%", description: "Strategic clinical-grade antifungal and healing therapy.", price: 150, originalPrice: 180, category: "cream", badge: "Pharmacist Choice", prescriptionRequired: false, image: "images/rivasyne.jpg", uses: "Fungal infection, Skin rash.", sideEffects: "Mild redness.", dosage: "Apply twice daily.", storage: "Below 25°C" },
-    { id: 3, name: "Rivapro-ESR™ Capsules", brand: "Rivaansh™ Nutra", composition: "Lactobacillus 5B CFU", description: "Advanced clinical gut-health and high-fidelity immunity booster.", price: 299, originalPrice: 380, category: "capsule", badge: "Premium Hub", prescriptionRequired: false, image: "images/rivapro_esr.jpg", uses: "Digestive health, Immunity.", sideEffects: "None.", dosage: "1 daily.", storage: "Refrigerate" },
-    { id: 4, name: "Rivadol-AP™ Pain Relief", brand: "Rivaansh™ Pharma", composition: "Aceclofenac + Paracetamol", description: "High-performance joint and muscle pain solution.", price: 120, originalPrice: 150, category: "tablet", badge: "Bestseller", prescriptionRequired: true, image: "images/rivadol_ap.jpg", uses: "Pain/Inflammation.", sideEffects: "Acidity.", dosage: "Twice daily.", storage: "Cool Place" },
-    { id: 5, name: "Rivayne™ Face Wash", brand: "Rivaansh™ Derma", composition: "Salicylic Acid + Zinc", description: "Clinical acne clearance and skin-purifying therapy.", price: 290, originalPrice: 350, category: "cream", badge: "Dermatological", prescriptionRequired: false, image: "images/Products_page-0005.jpg", uses: "Acne, Deep cleaning.", sideEffects: "Dryness.", dosage: "Twice daily.", storage: "Cool Place" },
-    { id: 6, name: "Rivaderm™ Anti-Itch Cream", brand: "Rivaansh™ Derma", composition: "Hydrocortisone 1%", description: "Clinical-grade relief for skin irritation and redness.", price: 175, originalPrice: 220, category: "cream", badge: "Skin Relief", prescriptionRequired: false, image: "images/Products_page-0006.jpg", uses: "Itching, Inflammation.", sideEffects: "Thinning skin.", dosage: "Apply thinly twice.", storage: "Below 30°C" },
-    { id: 7, name: "Rivoxy™ Softgel Capsules", brand: "Rivaansh™ Nutra", composition: "Omega-3 1000mg + Antioxidants", description: "Triple-strength clinical heart and brain fuel.", price: 450, originalPrice: 599, category: "capsule", badge: "Neuro Support", prescriptionRequired: false, image: "https://images.unsplash.com/photo-1547489432-cf93fa6c71ee?w=400", uses: "Cardiac health, Memory.", sideEffects: "None.", dosage: "2 daily.", storage: "Dry/Dark" },
-    { id: 8, name: "hCG™ Pregnancy Detection Kit", brand: "Rivaansh™ Life", composition: "Anti-hCG Antibodies", description: "99.9% accurate clinical one-step diagnostic hub.", price: 140, originalPrice: 180, category: "kit", badge: "Instant Hub", prescriptionRequired: false, image: "images/hcg_test.jpg", uses: "Pregnancy detection.", sideEffects: "None.", dosage: "3 drops of urine.", storage: "2-30°C" },
-    { id: 9, name: "Rivacold-Multi™ Extra Strength", brand: "Rivaansh™ Pharma", composition: "Paracetamol + Caffeine", description: "Accelerated cold and clinical headache relief.", price: 95, originalPrice: 125, category: "tablet", badge: "Fast Hit", prescriptionRequired: false, image: "images/rivakold.jpg", uses: "Headache, Flu.", sideEffects: "Alertness.", dosage: "1-2 daily.", storage: "Dry Place" },
-    { id: 10, name: "RivaCheck™ Glucometer Kit", brand: "Rivaansh™ Lab", composition: "Digital Hub + 25 Strips", description: "Clinical-grade blood glucose management system.", price: 999, originalPrice: 1499, category: "kit", badge: "Lab Grade", prescriptionRequired: false, image: "images/hcg_test.jpg", uses: "Sugar monitoring.", sideEffects: "None.", dosage: "As needed.", storage: "Dry Meter" }
+    { id: 1, name: "Rivakold™ Antikold Tablets", brand: "Rivaansh™ Pharma", composition: "Paracetamol + Phenylephrine", description: "Clinically superior multi-symptom cold and flu relief.", price: 85, originalPrice: 110, category: "Tablet", badge: "Trending", prescriptionRequired: false, image: "images/rivakold.jpg", uses: "Cold, Fever, Congestion.", sideEffects: "Drowsiness.", dosage: "1-2 tablets daily.", storage: "Dry Place" },
+    { id: 2, name: "Rivasyne™ Cream", brand: "Rivaansh™ Derma", composition: "Clotrimazole 1%", description: "Strategic clinical-grade antifungal and healing therapy.", price: 150, originalPrice: 180, category: "Skincare", badge: "Pharmacist Choice", prescriptionRequired: false, image: "images/rivasyne.jpg", uses: "Fungal infection, Skin rash.", sideEffects: "Mild redness.", dosage: "Apply twice daily.", storage: "Below 25°C" },
+    { id: 3, name: "Rivapro-ESR™ Capsules", brand: "Rivaansh™ Nutra", composition: "Lactobacillus 5B CFU", description: "Advanced clinical gut-health and high-fidelity immunity booster.", price: 299, originalPrice: 380, category: "Capsule", badge: "Premium Hub", prescriptionRequired: false, image: "images/rivapro_esr.jpg", uses: "Digestive health, Immunity.", sideEffects: "None.", dosage: "1 daily.", storage: "Refrigerate" },
+    { id: 4, name: "Rivadol-AP™ Pain Relief", brand: "Rivaansh™ Pharma", composition: "Aceclofenac + Paracetamol", description: "High-performance joint and muscle pain solution.", price: 120, originalPrice: 150, category: "Tablet", badge: "Bestseller", prescriptionRequired: true, image: "images/rivadol_ap.jpg", uses: "Pain/Inflammation.", sideEffects: "Acidity.", dosage: "Twice daily.", storage: "Cool Place" },
+    { id: 5, name: "Rivayne™ Face Wash", brand: "Rivaansh™ Derma", composition: "Salicylic Acid + Zinc", description: "Clinical acne clearance and skin-purifying therapy.", price: 290, originalPrice: 350, category: "Skincare", badge: "Dermatological", prescriptionRequired: false, image: "images/Products_page-0005.jpg", uses: "Acne, Deep cleaning.", sideEffects: "Dryness.", dosage: "Twice daily.", storage: "Cool Place" },
+    { id: 6, name: "Rivaderm™ Anti-Itch Cream", brand: "Rivaansh™ Derma", composition: "Hydrocortisone 1%", description: "Clinical-grade relief for skin irritation and redness.", price: 175, originalPrice: 220, category: "Skincare", badge: "Skin Relief", prescriptionRequired: false, image: "images/Products_page-0006.jpg", uses: "Itching, Inflammation.", sideEffects: "Thinning skin.", dosage: "Apply thinly twice.", storage: "Below 30°C" },
+    { id: 7, name: "Rivoxy™ Softgel Capsules", brand: "Rivaansh™ Nutra", composition: "Omega-3 1000mg + Antioxidants", description: "Triple-strength clinical heart and brain fuel.", price: 450, originalPrice: 599, category: "Capsule", badge: "Neuro Support", prescriptionRequired: false, image: "https://images.unsplash.com/photo-1547489432-cf93fa6c71ee?w=400", uses: "Cardiac health, Memory.", sideEffects: "None.", dosage: "2 daily.", storage: "Dry/Dark" },
+    { id: 8, name: "hCG™ Pregnancy Detection Kit", brand: "Rivaansh™ Life", composition: "Anti-hCG Antibodies", description: "99.9% accurate clinical one-step diagnostic hub.", price: 140, originalPrice: 180, category: "Diagnostic Kit", badge: "Instant Hub", prescriptionRequired: false, image: "images/hcg_test.jpg", uses: "Pregnancy detection.", sideEffects: "None.", dosage: "3 drops of urine.", storage: "2-30°C" },
+    { id: 9, name: "Rivacold-Multi™ Extra Strength", brand: "Rivaansh™ Pharma", composition: "Paracetamol + Caffeine", description: "Accelerated cold and clinical headache relief.", price: 95, originalPrice: 125, category: "Tablet", badge: "Fast Hit", prescriptionRequired: false, image: "images/rivakold.jpg", uses: "Headache, Flu.", sideEffects: "Alertness.", dosage: "1-2 daily.", storage: "Dry Place" },
+    { id: 10, name: "RivaCheck™ Glucometer Kit", brand: "Rivaansh™ Lab", composition: "Digital Hub + 25 Strips", description: "Clinical-grade blood glucose management system.", price: 999, originalPrice: 1499, category: "Diagnostic Kit", badge: "Lab Grade", prescriptionRequired: false, image: "images/hcg_test.jpg", uses: "Sugar monitoring.", sideEffects: "None.", dosage: "As needed.", storage: "Dry Meter" }
   ];
   _filtered = [..._allProducts];
   renderHome();
@@ -322,10 +323,18 @@ function animateCards(grid) {
 // ── FILTER BY CATEGORY ─────────────────────────────────────────────────────
 
 
-window.filterCat = async function (cat) {
+window.filterCat = async function (cat, el) {
   _currentCat = cat;
+  if (el) {
+    document.querySelectorAll(".cgrid-item, .cat-btn").forEach((b) => b.classList.remove("active"));
+    el.classList.add("active");
+  }
+
+  const select = document.getElementById("filterCategory");
+  if (select) select.value = cat;
+
   showPage("products");
-  
+
   // High-Performance Clinical Fetch
   if (!_isLocal || _allProducts.length < 5) {
     try {
@@ -937,13 +946,19 @@ window.showPage = function (page) {
     }
   });
 
-  // Sync nav
+  // Sync nav & Bottom Nav (App Experience)
   document.querySelectorAll(".nav-link").forEach((l) => {
     l.classList.toggle("active", l.dataset.page === page);
   });
-  document.querySelectorAll(".bnav-btn").forEach((b) => {
-    b.classList.toggle("active", b.dataset.page === page);
-  });
+  
+  // Mobile Nav Active State Hub
+  const btnHome = document.getElementById("navHome");
+  const btnShop = document.getElementById("navShop");
+  const btnProfile = document.getElementById("navProfile");
+  
+  if (btnHome) btnHome.classList.toggle("active", page === "home");
+  if (btnShop) btnShop.classList.toggle("active", page === "products");
+  if (btnProfile) btnProfile.classList.toggle("active", page === "dashboard");
 
   if (pageId === "orderTrackingPage") renderOrderTracking();
   if (pageId === "adminPanelPage") updateAdminStats();

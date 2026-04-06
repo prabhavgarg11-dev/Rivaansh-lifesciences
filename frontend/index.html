@@ -1073,6 +1073,26 @@
     </div>
 </div>
 
+<!-- ── MOBILE BOTTOM NAVIGATION (App Experience) ────────────────────────── -->
+<div class="bottom-nav">
+    <button class="nav-item active" id="navHome" onclick="showPage('home')">
+        <i class="fa fa-house-medical"></i>
+        <span>Home</span>
+    </button>
+    <button class="nav-item" id="navShop" onclick="showPage('products')">
+        <i class="fa fa-pills"></i>
+        <span>Shop</span>
+    </button>
+    <button class="nav-item" id="navAI" onclick="toggleAIPanel()">
+        <i class="fa fa-wand-magic-sparkles"></i>
+        <span>AI Hub</span>
+    </button>
+    <button class="nav-item" id="navProfile" onclick="showDashboardOrAuth()">
+        <i class="fa fa-user-doctor"></i>
+        <span>Profile</span>
+    </button>
+</div>
+
 <script src="script.js"></script>
 <script>
 if ('serviceWorker' in navigator) {
