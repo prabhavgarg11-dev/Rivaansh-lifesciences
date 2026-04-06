@@ -14,7 +14,7 @@
     <!-- Syne (display) + DM Sans (body) — clinical precision meets warmth -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Icons (preloaded for fast render) -->
     <link rel="shortcut icon" href="logo.png" type="image/png">
@@ -27,15 +27,12 @@
 <body>
 
 <!-- ── LOADER ─────────────────────────────────────────────────────────── -->
-<div id="loader" class="loader-overlay">
-    <div class="loader-ring">
-        <div></div><div></div><div></div><div></div>
-    </div>
-    <p class="loader-text">Loading Clinical Catalogue…</p>
+<div id="loader">
+    <div class="loader-ring"></div>
+    <p class="loader-text">Rivaansh Lifesciences Hub</p>
 </div>
 
-<!-- ── TOAST ──────────────────────────────────────────────────────────── -->
-<div id="toast" class="toast"></div>
+<!-- ── TOAST CONTAINER (Handled dynamically) ──────────────────────────── -->
 
 <!-- ── PRODUCT MODAL ──────────────────────────────────────────────────── -->
 <div id="modal" class="modal-overlay" onclick="closeModal(event)">
@@ -124,124 +121,74 @@
     </div>
 </div>
 
-<section id="adminPanelPage" class="page">
-    <div class="section admin-panel">
-        <div class="admin-panel-header">
-            <h2>Admin Dashboard</h2>
-            <p>Manage orders, prescriptions, products, and users from one place.</p>
-        </div>
-        <div class="admin-widgets">
-            <div class="widget card-gradient">
-                <h3>Live Orders</h3>
-                <p id="adminOrdersCount">0</p>
-            </div>
-            <div class="widget card-gradient">
-                <h3>Pending Prescriptions</h3>
-                <p id="adminPrescriptionsCount">0</p>
-            </div>
-            <div class="widget card-gradient">
-                <h3>Active Users</h3>
-                <p id="adminUsersCount">0</p>
-            </div>
-            <div class="widget card-gradient">
-                <h3>Products</h3>
-                <p id="adminProductsCount">0</p>
-            </div>
-        </div>
-        <div class="admin-actions">
-            <button onclick="showPage('orders')"><i class="fa fa-boxes-stacked"></i> All Orders</button>
-            <button onclick="showPage('prescriptions')"><i class="fa fa-file-prescription"></i> Review Rx</button>
-            <button onclick="toggleAdminView('addProduct')"><i class="fa fa-plus"></i> Add Product</button>
-            <button onclick="logout()"><i class="fa fa-right-from-bracket"></i> Logout</button>
-        </div>
-
-        <div id="adminProductForm" class="admin-form-card hidden" style="margin-top:25px; background:#fff; padding:25px; border-radius:18px; border:1px solid var(--bd);">
-            <h3>Add New Product</h3>
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-top:15px;">
-                <input type="text" id="apName" placeholder="Product Name (e.g. Paracetamol 500mg)" style="padding:12px; border:1px solid #ddd; border-radius:8px;">
-                <input type="number" id="apPrice" placeholder="Selling Price (₹)" style="padding:12px; border:1px solid #ddd; border-radius:8px;">
-                <input type="number" id="apOrigPrice" placeholder="Original Price (for discount)" style="padding:12px; border:1px solid #ddd; border-radius:8px;">
-                <select id="apCat" style="padding:12px; border:1px solid #ddd; border-radius:8px;">
-                    <option value="medicines">Medicines</option>
-                    <option value="vitamins">Vitamins</option>
-                    <option value="nutrition">Nutrition</option>
-                    <option value="cream">Creams</option>
-                    <option value="capsule">Capsules</option>
-                    <option value="tablet">Tablets</option>
-                </select>
-                <input type="text" id="apBrand" placeholder="Brand Name" style="padding:12px; border:1px solid #ddd; border-radius:8px;">
-                <input type="text" id="apComp" placeholder="Composition (e.g. Paracetamol IP)" style="padding:12px; border:1px solid #ddd; border-radius:8px;">
-                <input type="text" id="apImg" placeholder="Image URL (Unsplash or Local)" style="grid-column: span 2; padding:12px; border:1px solid #ddd; border-radius:8px;">
-                <textarea id="apDesc" placeholder="Product Description..." style="grid-column: span 2; padding:12px; border:1px solid #ddd; border-radius:8px; min-height:80px;"></textarea>
-            </div>
-            <button class="btn-primary" onclick="adminAddProduct()" style="margin-top:20px; width:100%;">Create Product Entry</button>
-        </div>
-    </div>
-</section>
-
-<!-- Chatbot moved to bottom for improved accessibility -->
-
-
-<!-- ══════════════════════════════════════════════════════════════════════
-     HEADER
-══════════════════════════════════════════════════════════════════════ -->
-<header id="header">
-    <a class="logo-wrapper" href="#" onclick="showPage('home')" title="Rivaansh Lifesciences - Clinical Pharmacy">
-        <img src="logo.png" alt="Rivaansh Lifesciences Brand Logo" class="logo-image" onerror="this.src='logo.svg'; this.onerror=null;">
+<!-- ── HEADER ─────────────────────────────────────────────────────────── -->
+<header>
+    <div class="logo-wrapper" onclick="showPage('home')">
+        <img src="logo.png" alt="Rivaansh" class="logo-image">
         <div class="logo-text">
             <span class="logo-name">Rivaansh</span>
-            <span class="logo-sub">Lifesciences</span>
+            <span class="logo-tag">Lifesciences</span>
         </div>
-    </a>
-
-    <div class="search-wrap">
-        <i class="fa fa-magnifying-glass search-icon"></i>
-        <input type="text" id="searchInput" placeholder="Search medicines, vitamins, kits…" autocomplete="off">
-        <button id="searchClear" onclick="clearSearch()" style="display:none;"><i class="fa fa-xmark"></i></button>
     </div>
-
-    <nav class="desktop-nav">
-        <a href="#" class="nav-link active" data-page="home" onclick="showPage('home')">Home</a>
-        <a href="#" class="nav-link" data-page="products" onclick="showPage('products')">Products</a>
-        <a href="#" class="nav-link" data-page="orders" onclick="showPage('orders')">Orders</a>
-        <a href="#" class="nav-link" data-page="prescriptions" onclick="showPage('prescriptions')">Prescriptions</a>
-        <a href="#" class="nav-link" data-page="medicineInfo" onclick="showPage('medicineInfo')">Medicine Info</a>
-        <a href="#" class="nav-link" data-page="wishlist" onclick="showPage('wishlist')">Wishlist</a>
-        <a href="#" class="nav-link hidden" id="adminNavLink" data-page="adminPanel" onclick="showPage('adminPanel')">Admin</a>
-    </nav>
-
+    <div class="search-bar">
+        <i class="fa fa-magnifying-glass"></i>
+        <input type="text" id="mainSearch" placeholder="Search medicines, vitamins, kits..." oninput="handleLiveSuggest(this.value)">
+        <div id="liveSuggest" class="live-suggest-results hidden"></div>
+    </div>
     <div class="header-actions">
-        <button id="voiceSearchBtn" class="icon-btn" onclick="startVoiceSearch()" title="Voice search"><i class="fa fa-microphone"></i></button>
-        <button id="notifBtn" class="icon-btn" onclick="toggleNotifications()" title="Notifications"><i class="fa fa-bell"></i><span id="notifBadge" class="badge"></span></button>
-        <button id="wishlistToggle" class="icon-btn" onclick="showPage('wishlist')" title="Wishlist"><i class="fa fa-heart"></i><span id="wishlistBadge" class="badge"></span></button>
-        <button id="authBtn" class="auth-btn">Login</button>
-        <span id="authUserName" class="user-name">Guest</span>
+        <div class="ai-tools-btn" onclick="toggleAIPanel()">
+            <i class="fa fa-microchip"></i>
+            <span>AI Lab</span>
+        </div>
+        <div class="icon-group" onclick="showPage('wishlist')">
+            <i class="fa fa-heart"></i>
+            <span>Wishlist</span>
+            <span id="wishlistBadge" class="badge-dot"></span>
+        </div>
+        <div class="icon-group" onclick="toggleCart()">
+            <i class="fa fa-bag-shopping"></i>
+            <span>Cart</span>
+            <span id="cartBadge" class="cart-badge-dot"></span>
+        </div>
+        <div class="icon-group" onclick="showDashboardOrAuth()">
+            <i class="fa fa-user-doctor"></i>
+            <span>Profile</span>
+        </div>
     </div>
 
-    <button class="cart-btn" onclick="toggleCart()">
-        <i class="fa fa-bag-shopping"></i>
-        <span id="cartBadge" class="cart-badge hidden">0</span>
-    </button>
+    <!-- AI TOOLS SEPARATE PANEL (HEADER DROPDOWN) -->
+    <div id="headerAIPanel" class="header-ai-panel hidden">
+        <div class="ai-panel-header">
+            <h4><i class="fa fa-wand-magic-sparkles"></i> Clinical AI Suite</h4>
+            <button onclick="toggleAIPanel()"><i class="fa fa-xmark"></i></button>
+        </div>
+        <div class="ai-panel-grid">
+            <div class="ai-hub-item" onclick="showPage('symptomChecker'); toggleAIPanel()">
+                <i class="fa fa-stethoscope"></i>
+                <div>
+                    <strong>Symptom Screening</strong>
+                    <p>AI-driven diagnostic help</p>
+                </div>
+            </div>
+            <div class="ai-hub-item" onclick="showPage('prescriptionAnalysis'); toggleAIPanel()">
+                <i class="fa fa-file-waveform"></i>
+                <div>
+                    <strong>RX Analyzer</strong>
+                    <p>Instant clinical guide</p>
+                </div>
+            </div>
+            <div class="ai-hub-item" onclick="toggleChatbot(); toggleAIPanel()">
+                <i class="fa fa-comment-medical"></i>
+                <div>
+                    <strong>Medical Assistant</strong>
+                    <p>24/7 Clinical support</p>
+                </div>
+            </div>
+        </div>
+    </div>
 </header>
 
-<!-- ── CATEGORY BAR ───────────────────────────────────────────────────── -->
-<div class="category-bar" id="categoryBar">
-    <button class="cat-btn active" data-cat="all" onclick="filterCat('all',this)">
-        <i class="fa fa-grid-2"></i> All
-    </button>
-    <button class="cat-btn" data-cat="tablet" onclick="filterCat('tablet',this)">
-        <i class="fa fa-tablets"></i> Tablets
-    </button>
-    <button class="cat-btn" data-cat="capsule" onclick="filterCat('capsule',this)">
-        <i class="fa fa-capsules"></i> Capsules
-    </button>
-    <button class="cat-btn" data-cat="cream" onclick="filterCat('cream',this)">
-        <i class="fa fa-pump-soap"></i> Creams
-    </button>
-    <button class="cat-btn" data-cat="kit" onclick="filterCat('kit',this)">
-        <i class="fa fa-kit-medical"></i> Kits
-    </button>
-</div>
+
 
 <!-- ══════════════════════════════════════════════════════════════════════
      PAGES
@@ -253,35 +200,88 @@
 
         <!-- HERO -->
         <div class="hero">
-            <div class="hero-noise"></div>
-            <div class="hero-content">
-                <span class="hero-eyebrow">WHO-GMP Certified</span>
-                <h1 class="hero-title">Rivaansh,<br><em>Lifesciences</em></h1>
-                <p class="hero-sub">Authentic pharmaceutical formulations from Rivaansh hub — straight to your doorstep.</p>
-                <div class="hero-actions">
-                    <button class="btn-primary" onclick="showPage('products')">
-                        Shop Now <i class="fa fa-arrow-right"></i>
-                    </button>
-                    <button class="btn-ghost" onclick="document.getElementById('trending').scrollIntoView({behavior:'smooth'})">
-                        View Catalogue
-                    </button>
-                </div>
-                <div class="hero-stats">
-                    <div class="stat"><strong>500+</strong><span>Products</span></div>
-                    <div class="stat-div"></div>
-                    <div class="stat"><strong>50K+</strong><span>Customers</span></div>
-                    <div class="stat-div"></div>
-                    <div class="stat"><strong>99.9%</strong><span>Purity</span></div>
-                </div>
-            </div>
-            <div class="hero-visual">
-                <div class="hero-pill pill-1"><i class="fa fa-capsules"></i></div>
-                <div class="hero-pill pill-2"><i class="fa fa-dna"></i></div>
-                <div class="hero-pill pill-3"><i class="fa fa-heart-pulse"></i></div>
-                <div class="hero-circle c1"></div>
-                <div class="hero-circle c2"></div>
+            <span class="p-badge"><i class="fa fa-certificate"></i> WHO-GMP Certified Pharmacy</span>
+            <h1>Rivaansh Lifesciences</h1>
+            <p>Your Trusted Gateway to 100% Genuine Clinical Medicines & Wellness Kits.</p>
+            <div class="hero-btns">
+                <button class="btn-primary" onclick="showPage('products')">Explore Medicines <i class="fa fa-pills ml-2"></i></button>
+                <button class="btn-outline" onclick="toggleAIPanel()" style="background: white;">AI Health Lab <i class="fa fa-wand-magic-sparkles ml-2"></i></button>
             </div>
         </div>
+
+        <!-- QUICK CATEGORIES GRID (MODERN UI KIT) -->
+        <div class="category-grid-modern">
+            <div class="cgrid-item" onclick="filterCat('tablet', this)">
+                <div class="c-icon"><i class="fa fa-pills"></i></div>
+                <span>Tablets</span>
+            </div>
+            <div class="cgrid-item" onclick="filterCat('capsule', this)">
+                <div class="c-icon"><i class="fa fa-capsules"></i></div>
+                <span>Capsules</span>
+            </div>
+            <div class="cgrid-item" onclick="filterCat('syrup', this)">
+                <div class="c-icon"><i class="fa fa-bottle-droplet"></i></div>
+                <span>Syrups</span>
+            </div>
+            <div class="cgrid-item" onclick="filterCat('kit', this)">
+                <div class="c-icon"><i class="fa fa-vial"></i></div>
+                <span>Diagnostic Kits</span>
+            </div>
+            <div class="cgrid-item" onclick="filterCat('cream', this)">
+                <div class="c-icon"><i class="fa fa-hand-holding-medical"></i></div>
+                <span>Skincare</span>
+            </div>
+            <div class="cgrid-item" onclick="filterCat('vitamins', this)">
+                <div class="c-icon"><i class="fa fa-apple-whole"></i></div>
+                <span>Vitamins</span>
+            </div>
+        </div>
+
+        <!-- WHY CHOOSE US -->
+        <div class="section" id="why- Rivaansh">
+            <div class="section-head">
+                <h2 class="section-title">Why Rivaansh Lifesciences?</h2>
+                <p class="section-sub">Standardized clinical excellence with a patient-first approach.</p>
+            </div>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <i class="fa fa-shield-virus"></i>
+                    <h4>Clinical Authenticity</h4>
+                    <p>100% genuine medicines sourced directly from WHO-GMP certified clinical hubs.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fa fa-truck-fast"></i>
+                    <h4>Priority Dispatch</h4>
+                    <p>Safe and temperature-controlled logistics for sensitive pharmaceutical cargo.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fa fa-user-doctor"></i>
+                    <h4>AI Clinical Guide</h4>
+                    <p>Smart diagnostic assistance for symptom screening and prescription analysis.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- TESTIMONIALS -->
+        <div class="section" id="testimonials">
+            <div class="section-head">
+                <h2 class="section-title">Patient Voice</h2>
+                <p class="section-sub">Trusted by thousands across the clinical landscape.</p>
+            </div>
+            <div class="testimonial-slider">
+                <div class="testi-card">
+                    <div class="testi-stars">★★★★★</div>
+                    <p>"The AI prescription analyzer saved me so much time. Truly a futuristic pharmacy hub."</p>
+                    <div class="testi-user">- Dr. Sameer, Jaipur</div>
+                </div>
+                <div class="testi-card">
+                    <div class="testi-stars">★★★★★</div>
+                    <p>"Reliable delivery and authentic medicines. Rivaansh is my go-to for clinical wellness."</p>
+                    <div class="testi-user">- Anjali M., Delhi</div>
+                </div>
+            </div>
+        </div>
+
 
         <!-- VALUE PROPOSITION (TRUST BUILDERS) -->
         <div class="value-prop section">
@@ -399,28 +399,6 @@
             </div>
         </div>
 
-        <!-- CATEGORIES SECTION -->
-        <div class="section cat-section">
-            <h2 class="section-title">Shop by Category</h2>
-            <div class="cat-cards">
-                <div class="cat-card" onclick="filterCat('tablet',document.querySelector('[data-cat=tablet]')); showPage('products')">
-                    <div class="cat-icon"><i class="fa fa-tablets"></i></div>
-                    <span>Tablets</span>
-                </div>
-                <div class="cat-card" onclick="filterCat('capsule',document.querySelector('[data-cat=capsule]')); showPage('products')">
-                    <div class="cat-icon"><i class="fa fa-capsules"></i></div>
-                    <span>Capsules</span>
-                </div>
-                <div class="cat-card" onclick="filterCat('cream',document.querySelector('[data-cat=cream]')); showPage('products')">
-                    <div class="cat-icon"><i class="fa fa-pump-soap"></i></div>
-                    <span>Creams</span>
-                </div>
-                <div class="cat-card" onclick="filterCat('kit',document.querySelector('[data-cat=kit]')); showPage('products')">
-                    <div class="cat-icon"><i class="fa fa-kit-medical"></i></div>
-                    <span>Diagnostic Kits</span>
-                </div>
-            </div>
-        </div>
 
     </section>
 
@@ -520,6 +498,32 @@
         </div>
     </section>
 
+    <!-- ── AI SYMPTOM CHECKER ────────────────────────────────────────── -->
+    <section id="symptomCheckerPage" class="page">
+        <div class="section symptom-section">
+            <h2 class="section-title">AI Symptom Checker</h2>
+            <div class="ai-diagnostic-panel">
+                <p class="diagnostic-intro">Describe your symptoms below. Our clinical AI will analyze them and suggest possible conditions. <strong>(This is not a substitute for professional medical advice.)</strong></p>
+                <textarea id="symptomInput" placeholder="e.g., I have a high fever and a persistent dry cough for 3 days..."></textarea>
+                <button class="btn-primary" onclick="checkSymptoms()"><i class="fa fa-stethoscope"></i> Analyze Symptoms</button>
+                <div id="symptomResult" class="ai-result-box hidden"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ── AI PRESCRIPTION ANALYZER ───────────────────────────────────── -->
+    <section id="prescriptionAnalysisPage" class="page">
+        <div class="section diagnostic-section">
+            <h2 class="section-title">Prescription Analyzer</h2>
+            <div class="ai-diagnostic-panel">
+                <p class="diagnostic-intro">Enter the text from your prescription (names of medicines, dosage, etc.) for a clinical explanation of your treatment plan.</p>
+                <textarea id="prescriptionTextInput" placeholder="e.g., Tab. Rivakold twice daily after meals, Cap. Rivapro once daily..."></textarea>
+                <button class="btn-primary" onclick="analyzePrescription()"><i class="fa fa-file-waveform"></i> Analyze Treatment</button>
+                <div id="prescriptionAnalysisResult" class="ai-result-box hidden"></div>
+            </div>
+        </div>
+    </section>
+
     <!-- ── ORDERS ────────────────────────────────────────────────────── -->
     <section id="ordersPage" class="page">
         <div class="section orders-section">
@@ -538,9 +542,102 @@
     <!-- ── ORDER TRACKING ─────────────────────────────────────────────── -->
     <section id="orderTrackingPage" class="page">
         <div class="section order-tracking-section">
-            <h2 class="section-title">Order Tracking</h2>
+            <h2 class="section-title">Clinical Logistics Tracking</h2>
             <div id="trackingContainer" class="tracking-container">
-                <p style="text-align: center; color: #999; padding: 30px;">Select an order to view detailed tracking information.</p>
+                <!-- If no order selected -->
+                <div class="tracking-empty">
+                    <i class="fa fa-truck-ramp-box"></i>
+                    <h3>Track your shipment in real-time</h3>
+                    <p>Enter your Order ID or select from your dashboard to view precise delivery milestones from Rivaansh Hub.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="dashboardPage" class="page">
+        <div class="section dashboard-section-new">
+            <div class="dash-profile-header">
+                <div class="dash-profile-main">
+                    <div class="dash-avatar-main"><i class="fa fa-user-doctor"></i></div>
+                    <div class="dash-profile-meta">
+                        <h2 id="dashName">Healthcare Profile</h2>
+                        <div class="dash-badges-row">
+                            <span class="p-badge"><i class="fa fa-shield-check"></i> CDSCO Verified Account</span>
+                            <span class="p-badge"><i class="fa fa-heart-pulse"></i> Patient ID: #RV-882</span>
+                        </div>
+                        <p id="dashEmail">clinical@rivaansh.in</p>
+                    </div>
+                </div>
+                <div class="dash-header-actions">
+                    <button class="btn-outline" onclick="showPage('prescriptionAnalysis')">Analyze Prescription</button>
+                    <button class="btn-primary" onclick="logout()">Secure Logout <i class="fa fa-power-off"></i></button>
+                </div>
+            </div>
+
+            <div class="dash-stats-modern">
+                <div class="dash-stat-box" onclick="showPage('orders')">
+                    <div class="stat-icon-wrap blue"><i class="fa fa-clipboard-check"></i></div>
+                    <div class="stat-labels">
+                        <h3 id="dashOrdersCount">0 Active</h3>
+                        <span>Orders</span>
+                    </div>
+                </div>
+                <div class="dash-stat-box" onclick="showPage('prescriptions')">
+                    <div class="stat-icon-wrap teal"><i class="fa fa-file-waveform"></i></div>
+                    <div class="stat-labels">
+                        <h3 id="dashPrescCount">0 Records</h3>
+                        <span>Clinical Documents</span>
+                    </div>
+                </div>
+                <div class="dash-stat-box" onclick="showPage('wishlist')">
+                    <div class="stat-icon-wrap orange"><i class="fa fa-heart"></i></div>
+                    <div class="stat-labels">
+                        <h3 id="dashWishCount">0 Items</h3>
+                        <span>Saved for Later</span>
+                    </div>
+                </div>
+                <div class="dash-stat-box">
+                    <div class="stat-icon-wrap green"><i class="fa fa-truck-medical"></i></div>
+                    <div class="stat-labels">
+                        <h3>No Active</h3>
+                        <span>Shipments</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dash-content-grid">
+                <div class="dash-activity-panel">
+                    <h3><i class="fa fa-history"></i> Clinical Event Log</h3>
+                    <div id="dashRecentList" class="activity-timeline">
+                        <p class="empty-text">Your medical session history is private and secure.</p>
+                    </div>
+                </div>
+                <div class="dash-tools-panel">
+                    <h3>Health Tools</h3>
+                    <div class="tool-links">
+                        <a href="#" onclick="showPage('symptomChecker')" class="tool-link-item">
+                            <div class="tool-icon"><i class="fa fa-microscope"></i></div>
+                            <div>
+                                <strong>Symptom Screening</strong>
+                                <span>AI-based health check</span>
+                            </div>
+                        </a>
+                        <a href="#" onclick="showPage('prescriptionAnalysis')" class="tool-link-item">
+                            <div class="tool-icon"><i class="fa fa-file-medical"></i></div>
+                            <div>
+                                <strong>RX Analysis Hub</strong>
+                                <span>Instant medicine guide</span>
+                            </div>
+                        </a>
+                        <a href="#" onclick="showPage('orders')" class="tool-link-item">
+                            <div class="tool-icon"><i class="fa fa-clock-rotate-left"></i></div>
+                            <div>
+                                <strong>Order Archive</strong>
+                                <span>Past medical purchases</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -832,8 +929,8 @@
 <!-- ── FOOTER ─────────────────────────────────────────────────────────── -->
 <footer>
     <div class="footer-brand">
-        <div class="footer-logo"><i class="fa fa-dna"></i> Rivaansh</div>
-        <p>Clinical pharmaceutical formulations delivered with precision and care.</p>
+        <div class="footer-logo"><i class="fa fa-dna"></i> Rivaansh Lifesciences</div>
+        <p>Premium pharmaceutical formulations delivered with precision and clinical care.</p>
         <p class="footer-addr"><i class="fa fa-location-dot"></i> Jaipur, Rajasthan, India</p>
         <p class="footer-contact"><i class="fa fa-envelope"></i> <a href="mailto:rivaanshlifesciences@gmail.com">rivaanshlifesciences@gmail.com</a></p>
         <p class="footer-contact"><i class="fa fa-phone"></i> <a href="tel:+918426033033">+91 8426033033</a></p>
@@ -855,11 +952,11 @@
     <div class="footer-col">
         <h4>Support</h4>
         <a href="#" onclick="showPage('medicineInfo')">Medicine Guide</a>
+        <a href="#" onclick="showPage('symptomChecker')">AI Symptom Checker</a>
+        <a href="#" onclick="showPage('prescriptionAnalysis')">Prescription Analyzer</a>
         <a href="#" onclick="toggleChatbot()">Live Chat Support</a>
         <a href="#" onclick="showPage('orderTracking')">Track Order</a>
         <a href="#" onclick="showPage('refund')">Returns & Refunds</a>
-        <a href="#" onclick="showPage('faq')">FAQs</a>
-        <a href="#" onclick="showPage('contact')">Support Center</a>
     </div>
     <div class="footer-col">
         <h4>Legal</h4>
@@ -869,8 +966,14 @@
         <a href="#" onclick="showPage('privacy')">Cookie Policy</a>
     </div>
     <div class="footer-bottom">
-        <p>© 2025 Rivaansh Lifesciences Pharmaceuticals. All rights reserved.</p>
-        <p>Licenced under CDSCO. WHO-GMP Certified.</p>
+        <div class="trust-badges">
+            <div class="trust-badge"><i class="fa fa-shield-halved"></i> 100% Genuine</div>
+            <div class="trust-badge"><i class="fa fa-certificate"></i> ISO Certified</div>
+            <div class="trust-badge"><i class="fa fa-microscope"></i> WHO-GMP</div>
+            <div class="trust-badge"><i class="fa fa-lock"></i> SSL Secured</div>
+        </div>
+        <p>© 2026 Rivaansh Lifesciences. All rights reserved.</p>
+        <p>Licensed under CDSCO. WHO-GMP Certified Pharmaceutical Facility.</p>
     </div>
 </footer>
 
@@ -887,8 +990,8 @@
             <div class="chat-header-info">
                 <div class="chat-avatar"><i class="fa fa-user-doctor"></i></div>
                 <div>
-                    <div class="chat-name">Rivaansh Assistant</div>
-                    <div class="chat-status">Typically replies in 1 minute</div>
+                    <div class="chat-name">Rivaansh Lifesciences Assistant</div>
+                    <div class="chat-status">Clinical Expert • Online Now</div>
                 </div>
             </div>
             <button class="chat-close" onclick="toggleChatbot()"><i class="fa fa-minus"></i></button>
@@ -897,7 +1000,7 @@
         <div id="chatMessages" class="chat-messages">
             <!-- Initial bot message is here or injected by JS -->
             <div class="chat-msg bot">
-                <p>Hello! 👋 I'm your Rivaansh Clinical Assistant. How can I help you today?</p>
+                <p>Hello! 👋 I'm your Rivaansh Lifesciences Assistant. How can I help you today?</p>
             </div>
             <div class="chat-suggestions">
                 <button onclick="handleChatAction('track')">📦 Track my order</button>
@@ -914,6 +1017,99 @@
     </div>
 </div>
 
+
+<div class="floating-cart" onclick="toggleCart()">
+    <i class="fa fa-cart-shopping"></i>
+</div>
+
+</nav>
+
+<!-- ── PROFESSIONAL CLINICAL AUTH MODAL (SPLIT PANEL) ────────────────────── -->
+<div id="authModal" class="modal-overlay">
+    <div class="auth-modal-card-professional">
+        <button class="auth-modal-close" onclick="closeAuthModal()"><i class="fa fa-xmark"></i></button>
+        <div class="auth-split">
+            <div class="auth-visual-side">
+                <div class="auth-visual-content">
+                    <div class="auth-logo-white">
+                        <i class="fa fa-shield-heart"></i>
+                        <span>Rivaansh Secure ID</span>
+                    </div>
+                    <h3>Start Your Clinical Wellness Journey</h3>
+                    <p>Log in to access personalized medical records, WHO-GMP certified treatments, and AI-driven health diagnostic tools.</p>
+                    <div class="auth-features-list">
+                        <div class="auth-feature-item"><i class="fa fa-circle-check"></i> SSL Secured Clinical Data</div>
+                        <div class="auth-feature-item"><i class="fa fa-circle-check"></i> WHO-GMP Product Sourcing</div>
+                        <div class="auth-feature-item"><i class="fa fa-circle-check"></i> CDSCO Licensed Pharmacy</div>
+                    </div>
+                </div>
+            </div>
+            <div class="auth-form-side">
+                <div class="auth-tabs-modern">
+                    <div class="a-tab active" onclick="switchAuthTab('login', this)">Patient Login</div>
+                    <div class="a-tab" onclick="switchAuthTab('signup', this)">Register ID</div>
+                </div>
+
+                <div id="loginForm" class="auth-form-content active">
+                    <h2>Welcome Back</h2>
+                    <p class="auth-form-sub">Sign in to your patient portal hub.</p>
+                    
+                    <div class="form-field">
+                        <label>Email Address</label>
+                        <div class="input-wrap">
+                            <i class="fa fa-envelope"></i>
+                            <input type="email" id="loginEmail" placeholder="patient@rivaansh.in">
+                        </div>
+                    </div>
+                    <div class="form-field">
+                        <label>Secure Password</label>
+                        <div class="input-wrap">
+                            <i class="fa fa-lock"></i>
+                            <input type="password" id="loginPass" placeholder="••••••••">
+                        </div>
+                    </div>
+                    
+                    <button class="btn-primary auth-submit" onclick="handleAuth('login')">Access Portal <i class="fa fa-arrow-right-to-bracket"></i></button>
+                    
+                    <div class="auth-divider-modern"><span>OR CONTINUE WITH</span></div>
+                    <div class="auth-social-modern">
+                        <button class="btn-social google"><i class="fa-brands fa-google"></i> Google</button>
+                        <button class="btn-social apple"><i class="fa-brands fa-apple"></i> Apple</button>
+                    </div>
+                </div>
+
+                <div id="signupForm" class="auth-form-content">
+                    <h2>New Patient ID</h2>
+                    <p class="auth-form-sub">Join India's most clinical pharmacy hub.</p>
+                    
+                    <div class="form-field">
+                        <label>Full Name</label>
+                        <div class="input-wrap">
+                            <i class="fa fa-user"></i>
+                            <input type="text" id="signupName" placeholder="Dr./Mr./Ms. Patient Name">
+                        </div>
+                    </div>
+                    <div class="form-field">
+                        <label>Email Address</label>
+                        <div class="input-wrap">
+                            <i class="fa fa-envelope"></i>
+                            <input type="email" id="signupEmail" placeholder="patient@rivaansh.in">
+                        </div>
+                    </div>
+                    <div class="form-field">
+                        <label>Create Secure Password</label>
+                        <div class="input-wrap">
+                            <i class="fa fa-lock"></i>
+                            <input type="password" id="signupPass" placeholder="••••••••">
+                        </div>
+                    </div>
+                    
+                    <button class="btn-primary auth-submit" onclick="handleAuth('signup')">Create Health ID <i class="fa fa-user-plus"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script src="script.js"></script>
 <script>

@@ -229,37 +229,97 @@ app.post('/api/orders/:id/payment-confirmation', async (req, res) => {
 });
 
 // ═══════════════════════════════════════════════════════════════════════════
-// AI CHATBOT INTEGRATION (Gemini API)
+// OPENAI CLINICAL AI HUB — Rivaansh Lifesciences
 // ═══════════════════════════════════════════════════════════════════════════
-const { GoogleGenerativeAI } = require('@google/generative-ai');
-const genAI = process.env.GEMINI_API_KEY ? new GoogleGenerativeAI(process.env.GEMINI_API_KEY) : null;
+const OpenAI = require('openai');
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
 
-app.post('/api/chat', async (req, res) => {
+// Healthcare Assistant — Main Clinical Hub (Supports old and new routes)
+const aiHandler = async (req, res) => {
     try {
         const { message } = req.body;
-        if (!message) return res.status(400).json({ error: 'Message is required' });
+        if (!message) return res.status(400).json({ error: 'Clinical message is required' });
 
-        if (!genAI) {
-            return res.status(503).json({ error: 'AI capabilities are currently offline. Please set GEMINI_API_KEY in the backend.' });
+        if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY.includes('your_api_key_here')) {
+            return res.status(503).json({ error: 'OpenAI API key is missing. Please configure healthcare credentials.' });
         }
 
-        const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
-        
-        const prompt = `You are Rivaansh Clinical Assistant, an expert AI pharmacist on the Rivaansh Lifesciences platform.
-        Provide professional, empathetic, and factual medical and pharmaceutical advice. 
-        Always remind users to consult a real human doctor for serious symptoms.
-        Limit your professional response to 3-4 sentences.
-        User Query: "${message}"`;
+        const response = await openai.chat.completions.create({
+            model: "gpt-4o-mini",
+            messages: [
+              {
+                role: "system",
+                content: `You are the Rivaansh Lifesciences Clinical Assistant. 
+                Provide expert, medical-grade, pharmaceutical advice with empathy.
+                Always remind patients to consult a licensed medical practitioner for emergencies.
+                Current Clinical Hub: Rivaansh Lifesciences. 
+                Format: 3-4 professional sentences.`
+              },
+              { role: "user", content: message }
+            ]
+        });
 
-        const result = await model.generateContent(prompt);
-        const text = result.response.text();
-        
-        res.status(200).json({ reply: text });
-    } catch (error) {
-        console.error('❌ AI Chat Error:', error);
-        res.status(500).json({ error: 'Failed to process AI chat request' });
+        res.json({ reply: response.choices[0].message.content });
+    } catch (err) {
+        console.error('❌ OpenAI Clinical Hub Error:', err);
+        res.status(500).json({ reply: "A clinical AI synchronization error occurred. Please try again or call our helpline." });
+    }
+};
+
+app.post('/api/chat', aiHandler);
+app.post('/api/ai/chat', aiHandler);
+
+// Symptom Checker — Advanced Clinical Diagnostics
+app.post("/api/ai/symptom", async (req, res) => {
+    try {
+        const { symptoms } = req.body;
+        if (!symptoms) return res.status(400).json({ error: 'Symptoms required for analysis' });
+
+        const response = await openai.chat.completions.create({
+            model: "gpt-4o-mini",
+            messages: [
+              {
+                role: "system",
+                content: "You are the Rivaansh Lifesciences Symptom Checker. Analyze clinical patterns and suggest possible conditions with safe medical disclaimers. Suggest specialized care if needed."
+              },
+              { role: "user", content: symptoms }
+            ]
+        });
+
+        res.json({ result: response.choices[0].message.content });
+    } catch (err) {
+        console.error('❌ Symptom Checker Error:', err);
+        res.status(500).json({ error: "Symptom analysis failed." });
     }
 });
+
+// Prescription Analyzer — Clinical OCR Simulation
+app.post("/api/ai/prescription", async (req, res) => {
+    try {
+        const { text } = req.body;
+        if (!text) return res.status(400).json({ error: 'Prescription text is required' });
+
+        const response = await openai.chat.completions.create({
+            model: "gpt-4o-mini",
+            messages: [
+              {
+                role: "system",
+                content: "You are the Rivaansh Lifesciences Prescription Analyzer. Decipher medical handwriting patterns and suggest possible medicine matches from the pharmaceutical catalogue. Mention side-effects if certain."
+              },
+              { role: "user", content: text }
+            ]
+        });
+
+        res.json({ result: response.choices[0].message.content });
+    } catch (err) {
+        console.error('❌ Prescription Analyzer Error:', err);
+        res.status(500).json({ error: "Clinical analysis failed." });
+    }
+});
+
+// ═══════════════════════════════════════════════════════════════════════════
 
 // ═══════════════════════════════════════════════════════════════════════════
 // RAZORPAY INTEGRATION

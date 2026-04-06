@@ -71,9 +71,16 @@ document.addEventListener("DOMContentLoaded", async () => {
 function hideLoader() {
   const l = document.getElementById("loader");
   if (l) {
-    l.classList.add("hidden");
+    l.style.transition = "opacity 0.6s ease, visibility 0.6s ease";
+    l.style.opacity = "0";
+    l.style.visibility = "hidden";
+    setTimeout(() => (l.style.display = "none"), 600);
   }
 }
+
+window.addEventListener("load", () => {
+    setTimeout(hideLoader, 500); // Aesthetic delay for clinical feel
+});
 
 // ── FETCH PRODUCTS ─────────────────────────────────────────────────────────
 async function loadPrescriptions() {
@@ -142,7 +149,11 @@ async function loadProducts() {
     _filtered = [..._allProducts];
     renderHome();
     renderProductsPage();
-    renderAISuggestions();
+    try {
+      renderAISuggestions();
+    } catch (e) {
+      console.warn("AI Suggestions module not ready.");
+    }
     renderWishlistPage();
     populatePrescriptionProductOptions();
     await loadPrescriptions();
@@ -154,7 +165,32 @@ async function loadProducts() {
       "error",
     );
     loadFallbackProducts();
+  } finally {
+    hideLoader();
   }
+}
+
+// ── AI SUGGESTIONS ENGINE ───────────────────────────────────────────────────
+function renderAISuggestions() {
+  const container = document.getElementById("aiSuggestions");
+  if (!container) return;
+  // Pick 3 high-impact clinical products for the AI strip
+  const picks = _allProducts.slice(0, 4);
+  if (!picks.length) {
+    container.innerHTML = '<p class="diag-loading">Analyzing your personalized healthcare path...</p>';
+    return;
+  }
+  
+  container.innerHTML = picks.map(p => `
+    <div class="ai-card" onclick="openModal(${p.id})">
+      <div class="ai-badge"><i class="fa fa-sparkles"></i> AI Suggested</div>
+      <img src="${p.image}" alt="${p.name}" onerror="this.src='https://placehold.co/100x100/e0f5f2/0a7c6e?text=${p.name.charAt(0)}'">
+      <div class="ai-info">
+        <div class="ai-name">${p.name}</div>
+        <div class="ai-price">₹${p.price}</div>
+      </div>
+    </div>
+  `).join("");
 }
 
 function getClinicalImageUrl(path) {
@@ -166,179 +202,33 @@ function getClinicalImageUrl(path) {
 
 function loadFallbackProducts() {
   _allProducts = [
-    {
-      id: 1,
-      name: "hCG Pregnancy Detection Kit",
-      brand: "Rivaansh Life",
-      composition: "Anti-hCG Antibodies",
-      description: "Clinically validated one-step urine pregnancy test.",
-      price: 120,
-      originalPrice: 150,
-      category: "kits",
-      badge: "Best Seller",
-      prescriptionRequired: false,
-      image: "images/hcg_test.jpg",
-      uses: "Pregnancy diagnosis.",
-      sideEffects: "None.",
-      dosage: "3 drops on well.",
-      storage: "2-30°C",
-    },
-    {
-      id: 2,
-      name: "Rivakold Multi-Symptom Tablets",
-      brand: "Rivaansh Pharma",
-      composition: "Paracetamol + Phenylephrine",
-      description: "Triple-action relief for cold and flu symptoms.",
-      price: 80,
-      originalPrice: 95,
-      category: "medicines",
-      badge: "Trending",
-      prescriptionRequired: false,
-      image: "images/rivakold.jpg",
-      uses: "Cold/Fever relief.",
-      sideEffects: "Drowsiness.",
-      dosage: "Twice daily.",
-      storage: "Dry place",
-    },
-    {
-      id: 3,
-      name: "RIVASYNE Anti-Fungal Cream",
-      brand: "Rivaansh Derma",
-      composition: "Clotrimazole 1%",
-      description: "Dual-action antifungal and anti-inflammatory cream.",
-      price: 150,
-      originalPrice: 180,
-      category: "cream",
-      badge: "New",
-      prescriptionRequired: false,
-      image: "images/rivasyne.jpg",
-      uses: "Fungal skin issues.",
-      sideEffects: "Irritation.",
-      dosage: "2 times daily.",
-      storage: "Below 25°C",
-    },
-    {
-      id: 4,
-      name: "Rivapro-ESR Probiotic Capsules",
-      brand: "Rivaansh Nutra",
-      composition: "Lactobacillus acidophilus",
-      description: "Advanced gut health formula for high immunity.",
-      price: 200,
-      originalPrice: 240,
-      category: "capsule",
-      badge: "Natural",
-      prescriptionRequired: false,
-      image: "images/rivapro_esr.jpg",
-      uses: "Gut health.",
-      sideEffects: "Bloating.",
-      dosage: "1 daily.",
-      storage: "Cool place",
-    },
-    {
-      id: 5,
-      name: "Rivadol-AP Pain Relief Tablets",
-      brand: "Rivaansh Pharma",
-      composition: "Aceclofenac + Paracetamol",
-      description: "Fast-acting triple-action relief for joint pain.",
-      price: 90,
-      originalPrice: 110,
-      category: "tablet",
-      badge: "Fast Relief",
-      prescriptionRequired: true,
-      image: "images/rivadol_ap.jpg",
-      uses: "Pain relief.",
-      sideEffects: "Acidity.",
-      dosage: "Every 12h.",
-      storage: "Safe place",
-    },
-    {
-      id: 6,
-      name: "RivaC Vitamin C 1000mg",
-      brand: "Rivaansh Nutra",
-      composition: "Ascorbic Acid + Zinc",
-      description: "High-potency immunity booster with Zinc.",
-      price: 130,
-      originalPrice: 155,
-      category: "vitamins",
-      badge: "Immunity",
-      prescriptionRequired: false,
-      image:
-        "https://images.unsplash.com/photo-1505751171710-1f6d0ace5a85?w=400&h=300&fit=crop",
-      uses: "Immune boost.",
-      sideEffects: "Cramps.",
-      dosage: "1 daily.",
-      storage: "Airtight",
-    },
-    {
-      id: 7,
-      name: "Rivazith Azithromycin 500mg",
-      brand: "Rivaansh Pharma",
-      composition: "Azithromycin 500mg",
-      description: "Broad-spectrum macrolide antibiotic.",
-      price: 150,
-      originalPrice: 175,
-      category: "tablet",
-      badge: "Rx Required",
-      prescriptionRequired: true,
-      image:
-        "https://images.unsplash.com/photo-1576671081837-49000212a370?w=400&h=300&fit=crop",
-      uses: "Infection cure.",
-      sideEffects: "Nausea.",
-      dosage: "1 daily.",
-      storage: "Safe place",
-    },
-    {
-      id: 8,
-      name: "Rivaoxy Omega-3 Softgels",
-      brand: "Rivaansh Nutra",
-      composition: "EPA + DHA",
-      description: "Pharmaceutical-grade fish oil for heart health.",
-      price: 220,
-      originalPrice: 280,
-      category: "capsule",
-      badge: "Premium",
-      prescriptionRequired: false,
-      image:
-        "https://images.unsplash.com/photo-1547489432-cf93fa6c71ee?w=400&h=300&fit=crop",
-      uses: "Heart health.",
-      sideEffects: "Aftertaste.",
-      dosage: "1 daily.",
-      storage: "Cool dry",
-    },
-    {
-      id: 9,
-      name: "Rivagluco Monitor Kit",
-      brand: "Rivaansh",
-      composition: "Glucometer + 25 Strips",
-      description: "Clinical-grade blood glucose monitoring system.",
-      price: 850,
-      originalPrice: 999,
-      category: "kit",
-      badge: "Diagnostic",
-      prescriptionRequired: false,
-      image: "images/hcg_test.jpg",
-      uses: "Sugar monitoring.",
-      sideEffects: "Prick pain.",
-      dosage: "Use as needed.",
-      storage: "Dry meter",
-    },
-    {
-      id: 16,
-      name: "Digital Infusion Glucose",
-      brand: "Rivaansh",
-      composition: "Dextrose Hydrate",
-      description: "Energy recovery solution for rehydration.",
-      price: 95,
-      originalPrice: 120,
-      category: "nutrition",
-      badge: "Clinical",
-      prescriptionRequired: false,
-      image: "images/rivapro_esr.jpg",
-      uses: "Energy recovery.",
-      sideEffects: "None.",
-      dosage: "1-2 daily.",
-      storage: "Airtight",
-    },
+    // TABLETS
+    { id: 1, name: "Rivakold Multi-Symptom", brand: "Rivaansh Pharma", composition: "Paracetamol + Phenylephrine", description: "Relief for clinical cold and flu symptoms.", price: 85, originalPrice: 110, category: "tablet", badge: "Fast Relief", prescriptionRequired: false, image: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400", uses: "Cold/Fever.", sideEffects: "Drowsiness.", dosage: "2 daily.", storage: "Dry Place" },
+    { id: 2, name: "Rivadol-AP Pain Relief", brand: "Rivaansh Pharma", composition: "Aceclofenac + Paracetamol", description: "Clinical joint and muscle pain solution.", price: 120, originalPrice: 150, category: "tablet", badge: "Bestseller", prescriptionRequired: true, image: "https://images.unsplash.com/photo-1471864190281-ad5fe9afef77?w=400", uses: "Pain/Inflammation.", sideEffects: "Acidity.", dosage: "Twice daily.", storage: "Cool Place" },
+    { id: 3, name: "Rivazith-500 Antibiotic", brand: "Rivaansh Pharma", composition: "Azithromycin 500mg", description: "Broad-spectrum macrolide clinical antibiotic.", price: 165, originalPrice: 210, category: "tablet", badge: "Clinical ID", prescriptionRequired: true, image: "https://images.unsplash.com/photo-1607619056574-7b8d3ee536b2?w=400", uses: "Bacterial infections.", sideEffects: "Nausea.", dosage: "1 daily.", storage: "Safe Place" },
+    { id: 4, name: "RivaPru-E 100mg", brand: "Rivaansh Pharma", composition: "Erythromycin", description: "Standard clinical bacterial therapy.", price: 90, originalPrice: 120, category: "tablet", badge: "Rx", prescriptionRequired: true, image: "https://images.unsplash.com/photo-1550572017-ed20bb7f9785?w=400", uses: "Throat infection.", sideEffects: "Stomach ache.", dosage: "3 daily.", storage: "Below 30°C" },
+    
+    // CAPSULES
+    { id: 5, name: "Rivapro-ESR Probiotic", brand: "Rivaansh Nutra", composition: "Lactobacillus 5B CFU", description: "Clinical gut-health and immunity booster.", price: 299, originalPrice: 380, category: "capsule", badge: "Innovation", prescriptionRequired: false, image: "https://images.unsplash.com/photo-1471864190281-ad5fe9afef77?w=400", uses: "Digestion/Immunity.", sideEffects: "Bloating.", dosage: "1 daily.", storage: "Refrigerate" },
+    { id: 6, name: "RivaOmega Gold Softgels", brand: "Rivaansh Nutra", composition: "Omega-3 1000mg", description: "Triple-strength clinical heart and brain fuel.", price: 450, originalPrice: 599, category: "capsule", badge: "Premium", prescriptionRequired: false, image: "https://images.unsplash.com/photo-1547489432-cf93fa6c71ee?w=400", uses: "Cardiac health.", sideEffects: "None.", dosage: "2 daily.", storage: "Dry/Dark" },
+    { id: 7, name: "RivaCal-D3 Clinical", brand: "Rivaansh Nutra", composition: "Calcium + Vit D3", description: "Strategic bone-density clinical supplement.", price: 180, originalPrice: 240, category: "capsule", badge: "Essential", prescriptionRequired: false, image: "https://images.unsplash.com/photo-1550572017-ed20bb7f9785?w=400", uses: "Bone strength.", sideEffects: "None.", dosage: "1 daily.", storage: "Cool Place" },
+    
+    // SYRUPS
+    { id: 8, name: "RivaKof-D Clinical Syrup", brand: "Rivaansh Pharma", composition: "Dextromethorphan + CPM", description: "Sugar-free clinical dry cough suppressant.", price: 115, originalPrice: 145, category: "syrup", badge: "Sugar Free", prescriptionRequired: false, image: "https://images.unsplash.com/photo-1555633514-abcee6ad93e1?w=400", uses: "Dry cough.", sideEffects: "Drowsiness.", dosage: "10ml thrice.", storage: "Normal" },
+    { id: 9, name: "RivaGel Ultra Antacid", brand: "Rivaansh Pharma", composition: "Aluminium/Magnesium Hydroxide", description: "Instant clinical relief from hyperacidity.", price: 95, originalPrice: 125, category: "syrup", badge: "Instant", prescriptionRequired: false, image: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400", uses: "Acidity/Gas.", sideEffects: "Laxative.", dosage: "2 spoonfuls.", storage: "Cool Place" },
+    { id: 10, name: "RivaVital Iron Complex", brand: "Rivaansh Nutra", composition: "Iron + B12 Syrup", description: "Max-absorption clinical hematinic syrup.", price: 185, originalPrice: 230, category: "syrup", badge: "Hematology", prescriptionRequired: false, image: "https://images.unsplash.com/photo-1512428559083-a4014d5931bd?w=400", uses: "Iron deficiency.", sideEffects: "Black stool.", dosage: "10ml daily.", storage: "Dark Bottle" },
+    
+    // KITS & DIAGNOSTICS
+    { id: 11, name: "RivaCheck Glucometer Kit", brand: "Rivaansh Lab", composition: "Digital Hub + 25 Strips", description: "Clinical-grade blood glucose management system.", price: 999, originalPrice: 1499, category: "kit", badge: "Lab Grade", prescriptionRequired: false, image: "https://images.unsplash.com/photo-1559757175-0eb30cd8c063?w=400", uses: "Sugar monitoring.", sideEffects: "None.", dosage: "As needed.", storage: "Dry Meter" },
+    { id: 12, name: "hCG Instant Detection Kit", brand: "Rivaansh Life", composition: "Anti-hCG Antibodies", description: "99% accurate clinical one-step diagnostic.", price: 140, originalPrice: 180, category: "kit", badge: "99% Accurate", prescriptionRequired: false, image: "https://images.unsplash.com/photo-1583946099379-f9c9cb8bc030?w=400", uses: "Pregnancy.", sideEffects: "None.", dosage: "3 drops.", storage: "2-30°C" },
+    
+    // SKINCARE & TOPICALS
+    { id: 13, name: "RivaSyne Derma Cream", brand: "Rivaansh Derma", composition: "Clotrimazole 1%", description: "Clinical-grade antifungal and healing cream.", price: 160, originalPrice: 200, category: "cream", badge: "Dermatological", prescriptionRequired: false, image: "https://images.unsplash.com/photo-1556229010-6c3f2c9ca5f8?w=400", uses: "Skin infection.", sideEffects: "Redness.", dosage: "Twice daily.", storage: "Below 25°C" },
+    { id: 14, name: "RivaClear Benzoyl Wash", brand: "Rivaansh Derma", composition: "Benzoyl Peroxide 2.5%", description: "Clinical acne clearance therapy.", price: 290, originalPrice: 350, category: "cream", badge: "Face Therapy", prescriptionRequired: true, image: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=400", uses: "Acne therapy.", sideEffects: "Dryness.", dosage: "Night only.", storage: "Cool Place" },
+    
+    // VITAMINS
+    { id: 15, name: "RivaC-Zinc 1000mg", brand: "Rivaansh Nutra", composition: "Vitamin C + Zinc", description: "Double-action high-fidelity immunity support.", price: 145, originalPrice: 199, category: "vitamins", badge: "Immune Hub", prescriptionRequired: false, image: "https://images.unsplash.com/photo-1505751171710-1f6d0ace5a85?w=400", uses: "General Wellness.", sideEffects: "None.", dosage: "1 chewable.", storage: "Airtight" },
+    { id: 16, name: "RivaB-Complex High Potency", brand: "Rivaansh Nutra", composition: "B1, B6, B12 Complex", description: "Strategic clinical energy and nerve therapy.", price: 210, originalPrice: 275, category: "vitamins", badge: "Neuro Support", prescriptionRequired: false, image: "https://images.unsplash.com/photo-1626307411219-c81ca359f0fc?w=400", uses: "Nerve health.", sideEffects: "Urine color.", dosage: "1 daily.", storage: "Dry Place" }
   ];
   _filtered = [..._allProducts];
   renderHome();
@@ -383,8 +273,8 @@ function cardHTML(p) {
   const discount = p.originalPrice
     ? Math.round((1 - p.price / p.originalPrice) * 100)
     : 0;
-  const badgeHTML = p.badge ? `<div class="card-badge">${p.badge}</div>` : "";
-  const rxHTML = p.prescriptionRequired ? `<div class="rx-flag">Rx</div>` : "";
+  const badgeHTML = `<div class="badge">Trending</div>`;
+  const rxHTML = p.prescriptionRequired ? `<div class="rx-flag">Rx Required</div>` : "";
   const wishClass = isWished ? "wish active" : "wish";
   const whatsappMsg = encodeURIComponent(
     `Check out ${p.name} at Rivaansh Lifesciences! ${window.location.href}`,
@@ -415,7 +305,7 @@ function cardHTML(p) {
             ${rxHTML}
         </div>
         <div class="card-body">
-            <div class="card-brand">${p.brand || "Rivaansh"}</div>
+            <div class="card-brand">Rivaansh Lifesciences</div>
             <div class="card-name">${p.name}</div>
             <div class="card-comp">${p.composition}</div>
             ${getProductReviewsHTML(p.id)}
@@ -447,18 +337,13 @@ function animateCards(grid) {
 }
 
 // ── FILTER BY CATEGORY ─────────────────────────────────────────────────────
-window.filterCat = function (cat, btn) {
+
+
+window.filterCat = function (cat) {
   _currentCat = cat;
-  // Update active button
-  document
-    .querySelectorAll(".cat-btn")
-    .forEach((b) => b.classList.remove("active"));
-  if (btn) btn.classList.add("active");
-
-  const catSelect = document.getElementById("filterCategory");
-  if (catSelect) catSelect.value = cat;
-
+  showPage("products");
   applyFilters();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
 window.filterCatDirect = function (cat) {
@@ -527,7 +412,7 @@ function applyFilters() {
 
 // ── SEARCH ─────────────────────────────────────────────────────────────────
 function attachSearch() {
-  const input = document.getElementById("searchInput");
+  const input = document.getElementById("mainSearch") || document.getElementById("searchInput");
   const clear = document.getElementById("searchClear");
   if (!input) return;
 
@@ -537,11 +422,21 @@ function attachSearch() {
     debounce = setTimeout(() => {
       _currentSearch = input.value.trim();
       if (clear) clear.style.display = _currentSearch ? "block" : "none";
-      if (_currentSearch) showPage("products");
+      if (_currentSearch && document.getElementById("homePage")?.classList.contains("active")) {
+        showPage("products");
+      }
       applyFilters();
     }, 280);
   });
 }
+
+window.handleSearch = function (val) {
+  _currentSearch = val.trim();
+  if (_currentSearch && document.getElementById("homePage")?.classList.contains("active")) {
+    showPage("products");
+  }
+  applyFilters();
+};
 
 window.clearSearch = function () {
   const input = document.getElementById("searchInput");
@@ -1016,6 +911,8 @@ window.showPage = function (page) {
     faq: "faqPage",
     contact: "contactPage",
     orderTracking: "orderTrackingPage",
+    prescriptionAnalysis: "prescriptionAnalysisPage",
+    dashboard: "dashboardPage",
   };
 
   const pageId = pageMap[page] || page + "Page";
@@ -1027,11 +924,21 @@ window.showPage = function (page) {
     toast("⚠️ Admin access required", "info"); // for demo, we show info and allow entry if they just clicked
   }
 
-  document
-    .querySelectorAll(".page")
-    .forEach((p) => p.classList.remove("active"));
-  const el = document.getElementById(pageId);
-  if (el) el.classList.add("active");
+  document.querySelectorAll(".page").forEach((p) => {
+    p.classList.remove("active");
+    // Ensure display is block while animating in
+    if (p.id === pageId) {
+      p.style.display = "block";
+      // Tiny delay to trigger CSS transition
+      setTimeout(() => p.classList.add("active"), 10);
+    } else {
+      p.classList.remove("active");
+      // Hide after transition
+      setTimeout(() => {
+        if (!p.classList.contains("active")) p.style.display = "none";
+      }, 500);
+    }
+  });
 
   // Sync nav
   document.querySelectorAll(".nav-link").forEach((l) => {
@@ -2070,15 +1977,19 @@ function showOrderTracking() {
 initUI();
 
 // ── TOAST ──────────────────────────────────────────────────────────────────
-function toast(msg, type = "info") {
-  const el = document.getElementById("toast");
-  if (!el) return;
-  el.textContent = msg;
-  el.className = `toast show ${type}`;
-  clearTimeout(toast._t);
-  toast._t = setTimeout(() => el.classList.remove("show"), 2800);
-}
-window.st = toast; // global alias for other modules
+window.toast = function (msg, type = "info") {
+  const t = document.createElement("div");
+  t.className = `toast-startup toast-${type}`;
+  const icon = type === "success" ? "fa-circle-check" : type === "error" ? "fa-circle-xmark" : "fa-circle-info";
+  t.innerHTML = `<i class="fa ${icon}"></i> <span>${msg}</span>`;
+  document.body.appendChild(t);
+  
+  setTimeout(() => {
+    t.style.animation = "toastDown 0.4s ease forwards";
+    setTimeout(() => t.remove(), 450);
+  }, 3500);
+};
+window.st = window.toast;
 
 // ── ERROR STATE ────────────────────────────────────────────────────────────
 function showError(isFallback = false) {
@@ -2149,7 +2060,7 @@ window.sendChatMsg = async function () {
   );
 
   try {
-    const res = await fetch(`${API}/api/chat`, {
+    const res = await fetch(`${API}/api/ai/chat`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ message: msg }),
@@ -2249,14 +2160,14 @@ function getClinicalBotResponse(input) {
     input.includes("pharmacist") ||
     input.includes("expert")
   ) {
-    return "Connecting you to a Rivaansh licensed pharmacist... For immediate assistance, please call our 24/7 clinical helpline at +91 8426033033.";
+    return "Connecting you to a Rivaansh Lifesciences licensed pharmacist... For immediate assistance, please call our 24/7 clinical helpline at +91 8426033033.";
   }
   if (
     input.includes("hi") ||
     input.includes("hello") ||
     input.includes("hey")
   ) {
-    return "Welcome to Rivaansh Clinical Support! 👋 I'm here to help with your medical queries, prescriptions, or order tracking. How may I serve you?";
+    return "Welcome to Rivaansh Lifesciences Support! 👋 I'm here to help with your medical queries, prescriptions, or order tracking. How may I serve you?";
   }
 
   return "Thank you for reaching out. For specific medical queries or pharmaceutical guidance, please use our clinical suggestion buttons or contact our direct helpline.";
@@ -2399,6 +2310,13 @@ function deletePrescription(id) {
 
 window.removePrescription = deletePrescription;
 
+window.updateBottomNav = function (btn) {
+  const nav = btn.parentElement;
+  if (!nav) return;
+  nav.querySelectorAll("button").forEach((b) => b.classList.remove("active"));
+  btn.classList.add("active");
+};
+
 function attachSpotlightNav() {
   const nav = document.querySelector(".desktop-nav");
   if (!nav) return;
@@ -2409,5 +2327,246 @@ function attachSpotlightNav() {
     nav.style.setProperty("--x", `${x}px`);
     nav.style.setProperty("--y", `${y}px`);
   });
+}
+
+window.handleSearch = function (val) {
+  _currentSearch = (val || "").toLowerCase().trim();
+  applyFilters();
+  showPage("products");
+};
+
+window.clearSearch = function () {
+  const el = document.getElementById("mainSearch");
+  if (el) el.value = "";
+  _currentSearch = "";
+  applyFilters();
+  renderProductsPage();
+};
+
+window.filterCat = function (cat, btn) {
+  _currentCat = cat;
+  applyFilters();
+  if (btn && btn.parentElement) {
+    btn.parentElement
+      .querySelectorAll("button")
+      .forEach((b) => b.classList.remove("active"));
+    btn.classList.add("active");
+  } else if (btn) {
+    document.querySelectorAll(".cat-btn, .category-bar button").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+  }
+};
+
+// ── CLINICAL DIAGNOSTICS (OpenAI Hub) ─────────────────────────────────────
+window.checkSymptoms = async function() {
+    const input = document.getElementById('symptomInput');
+    const resultBox = document.getElementById('symptomResult');
+    const sym = input?.value.trim();
+    if (!sym) return toast("Describe your symptoms first", "info");
+
+    resultBox.classList.remove('hidden');
+    resultBox.innerHTML = '<div class="diag-loading"><i class="fa fa-spinner fa-spin"></i> Analyzing Clinical Patterns...</div>';
+    
+    try {
+        const res = await fetch(`${API}/api/ai/symptom`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ symptoms: sym })
+        });
+        const data = await res.json();
+        resultBox.innerHTML = `<h4><i class="fa fa-user-doctor"></i> Clinical Insight</h4><p>${data.result}</p>`;
+    } catch (e) {
+        resultBox.innerHTML = '<p class="error">AI Link Error. Consult pharmacy helpline.</p>';
+    }
+};
+
+window.analyzePrescription = async function() {
+    const input = document.getElementById('prescriptionTextInput');
+    const resultBox = document.getElementById('prescriptionAnalysisResult');
+    const txt = input?.value.trim();
+    if (!txt) return toast("Enter prescription text first", "info");
+
+    resultBox.classList.remove('hidden');
+    resultBox.innerHTML = '<div class="diag-loading"><i class="fa fa-spinner fa-spin"></i> Processing Treatment Data...</div>';
+    
+    try {
+        const res = await fetch(`${API}/api/ai/prescription`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text: txt })
+        });
+        const data = await res.json();
+        resultBox.innerHTML = `<h4><i class="fa fa-file-waveform"></i> Treatment Analysis</h4><p>${data.result}</p>`;
+    } catch (e) {
+        resultBox.innerHTML = '<p class="error">Clinical Analysis Link Error.</p>';
+    }
+};
+
+// ── DASHBOARD & TRACKING ENGINE ───────────────────────────────────────────
+window.showDashboardOrAuth = function() {
+    if (_user) {
+        showPage('dashboard');
+        updateDashboard();
+    } else {
+        openAuthModal();
+    }
+};
+
+function updateDashboard() {
+    if (!_user) return;
+    const el = (id) => document.getElementById(id);
+    if (el('dashName')) el('dashName').textContent = _user.name;
+    if (el('dashEmail')) el('dashEmail').textContent = _user.email;
+    
+    // Simulate some counts
+    if (el('dashOrdersCount')) el('dashOrdersCount').textContent = `${_orders.length} Active Sessions`;
+    if (el('dashPrescCount')) el('dashPrescCount').textContent = `${_prescriptions.length} Records`;
+    if (el('dashWishCount')) el('dashWishCount').textContent = `${_wishlist.length} Items`;
+    
+    renderRecentActivity();
+}
+
+function renderRecentActivity() {
+    const list = document.getElementById('dashRecentList');
+    if (!list) return;
+    const recent = _orders.slice(0, 3);
+    if (!recent.length) {
+        list.innerHTML = '<p class="empty-text">No recent clinical sessions found.</p>';
+        return;
+    }
+    list.innerHTML = recent.map(o => `
+        <div class="activity-item">
+            <i class="fa fa-clock-rotate-left"></i>
+            <div>
+                <strong>Order #${String(o.id).slice(-6).toUpperCase()}</strong>
+                <p>${o.status || 'Confirmed'} • ${o.date}</p>
+            </div>
+            <button onclick="viewTrackingData('${o.id}')">Track</button>
+        </div>
+    `).join("");
+}
+
+window.viewTrackingData = function(id) {
+    showPage('orderTracking');
+    renderOrderTracking(id);
+};
+
+function renderOrderTracking(id) {
+    const container = document.getElementById('trackingContainer');
+    if (!container) return;
+    const order = _orders.find(o => String(o.id) === String(id));
+    
+    if (!order) {
+        container.innerHTML = '<div class="tracking-empty"><i class="fa fa-truck-fade"></i><h3>Order Details Syncing...</h3></div>';
+        return;
+    }
+
+    const stages = ['Confirmed', 'Packed', 'Shipped', 'Out for Delivery', 'Delivered'];
+    const currentIdx = stages.indexOf(order.status || 'Confirmed');
+    
+    container.innerHTML = `
+        <div class="tracking-header">
+            <h3>Clinical Logistics: #${String(id).slice(-8).toUpperCase()}</h3>
+            <p>Estimated Arrival: <strong>2-3 Business Days</strong></p>
+        </div>
+        <div class="tracking-steps">
+            ${stages.map((s, i) => `
+                <div class="track-step ${i <= currentIdx ? 'active' : ''}">
+                    <div class="step-dot"></div>
+                    <div class="step-label">${s}</div>
+                </div>
+            `).join("")}
+        </div>
+        <div class="tracking-footer">
+            <p><i class="fa fa-location-dot"></i> Hub: Jaipur Central Clinical Facility</p>
+            <p><i class="fa fa-shield-check"></i> Quality Verification: <strong>PASSED</strong></p>
+        </div>
+    `;
+}
+
+// ── LIVE SUGGESTIONS ──────────────────────────────────────────────────────
+window.handleLiveSuggest = function(val) {
+    const results = document.getElementById('liveSuggest');
+    if (!results) return;
+    const q = (val || "").toLowerCase().trim();
+    
+    if (q.length < 2) {
+        results.classList.add('hidden');
+        return;
+    }
+    
+    const hits = _allProducts.filter(p => 
+        p.name.toLowerCase().includes(q) || 
+        p.brand.toLowerCase().includes(q) ||
+        p.composition.toLowerCase().includes(q)
+    ).slice(0, 8);
+    
+    if (!hits.length) {
+        results.classList.add('hidden');
+        return;
+    }
+    
+    results.classList.remove('hidden');
+    results.innerHTML = hits.map(p => `
+        <div class="suggest-item" onclick="openModal(${p.id}); document.getElementById('liveSuggest').classList.add('hidden')">
+            <img src="${p.image}" alt="${p.name}" onerror="this.src='https://placehold.co/40x40/e0f5f2/0a7c6e?text=${p.name.charAt(0)}'">
+            <div class="suggest-info">
+                <div class="suggest-name">${p.name}</div>
+                <div class="suggest-meta">${p.brand} • ${p.composition.slice(0, 30)}...</div>
+            </div>
+            <div class="suggest-price">₹${p.price}</div>
+        </div>
+    `).join("");
+};
+
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('.search-bar')) {
+        document.getElementById('liveSuggest')?.classList.add('hidden');
+    }
+});
+
+window.toggleAIPanel = function() {
+    const p = document.getElementById('headerAIPanel');
+    if (p) p.classList.toggle('hidden');
+};
+
+window.openAuthModal = function() {
+    const modal = document.getElementById('authModal');
+    if (modal) modal.classList.add('open');
+};
+
+window.closeAuthModal = function() {
+    const modal = document.getElementById('authModal');
+    if (modal) modal.classList.remove('open');
+};
+
+window.switchAuthTab = function(type, el) {
+    document.querySelectorAll('.a-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.auth-form-content').forEach(f => f.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById(type + 'Form').classList.add('active');
+};
+
+window.showDashboardOrAuth = function() {
+    if (_user) {
+        showPage('dashboard');
+        updateDashboard();
+    } else {
+        openAuthModal();
+    }
+};
+
+function updateDashboard() {
+    if (!_user) return;
+    const el = (id) => document.getElementById(id);
+    if (el('dashName')) el('dashName').textContent = _user.name;
+    if (el('dashEmail')) el('dashEmail').textContent = _user.email;
+    
+    // Modern Dashboard Stats
+    if (el('dashOrdersCount')) el('dashOrdersCount').textContent = `${_orders.length} Active`;
+    if (el('dashPrescCount')) el('dashPrescCount').textContent = `${_prescriptions.length} Records`;
+    if (el('dashWishCount')) el('dashWishCount').textContent = `${_wishlist.length} Items`;
+    
+    renderRecentActivity();
 }
 
