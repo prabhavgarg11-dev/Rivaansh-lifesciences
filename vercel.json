@@ -1,9 +1,12 @@
 {
   "version": 2,
+  "framework": null,
+  "public": true,
+  "cleanUrls": true,
   "rewrites": [
     { "source": "/api/:path*", "destination": "https://rivaansh-lifesciences.onrender.com/api/:path*" },
     { "source": "/uploads/:path*", "destination": "https://rivaansh-lifesciences.onrender.com/uploads/:path*" },
-    { "source": "/images/:path*", "destination": "/frontend/images/:path*" },
-    { "source": "/(.*)", "destination": "/frontend/index.html" }
+    { "source": "/images/(.*)", "destination": "/frontend/images/$1" },
+    { "source": "/(.*)", "destination": "/frontend/$1" }
   ]
 }
