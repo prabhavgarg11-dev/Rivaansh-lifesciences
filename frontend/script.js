@@ -614,35 +614,49 @@ window.startPayment = async function(method) {
                 return;
             }
 
-            const options = {
-                key: 'rzp_test_YourRazorpayKeyHere', // Replace with your LIVE/TEST key from Razorpay Dashboard
-                amount,
-                currency: 'INR',
-                name: 'Rivaansh Lifesciences',
-                description: 'Safe & Secure Clinical Purchase',
-                prefill: { email: _user?.email || '', name: _user?.name || 'Guest' },
-                notes: { orderId },
-                handler: async function(response) {
-                    await confirmPayment(orderId, 'razorpay', response.razorpay_payment_id, true);
-                    const confirmedOrder = {
-                        id: orderId,
-                        items: [..._cart],
-                        totalAmount: totalAmount,
-                        status: 'Paid',
-                        date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
-                    };
-                    _orders.unshift(confirmedOrder);
-                    localStorage.setItem('rv_orders', JSON.stringify(_orders));
-                    _cart = [];
-                    saveCart();
-                    renderOrders();
-                    showPage('orders');
-                    toast(`🎉 Payment successful! Order #${String(orderId).slice(-8).toUpperCase()}`, 'success');
-                },
-                modal: { ondismiss: function() { toast('Payment window closed', 'info'); } }
-            };
-            const rzp = new Razorpay(options);
-            rzp.open();
+            try {
+                // Fetch dynamic order_id from backend Razorpay instance
+                const rzpRes = await fetch(`${API}/api/payment/razorpay-create`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ amount: totalAmount, receipt: orderId })
+                });
+                const rzpData = await rzpRes.json();
+                if (!rzpRes.ok) throw new Error(rzpData.error || 'Failed to initialize Razorpay Gateway.');
+
+                const options = {
+                    key: rzpData.simulated ? 'rzp_test_YourRazorpayKeyHere' : 'YOUR_LIVE_KEY_PLACEHOLDER', // Fetch your key securely in production
+                    amount: rzpData.amount || amount,
+                    currency: rzpData.currency || 'INR',
+                    name: 'Rivaansh Lifesciences',
+                    description: 'Safe & Secure Clinical Purchase',
+                    order_id: rzpData.simulated ? undefined : rzpData.id,
+                    prefill: { email: _user?.email || '', name: _user?.name || 'Guest' },
+                    notes: { orderId },
+                    handler: async function(response) {
+                        await confirmPayment(orderId, 'razorpay', response.razorpay_payment_id, true);
+                        const confirmedOrder = {
+                            id: orderId,
+                            items: [..._cart],
+                            totalAmount: totalAmount,
+                            status: 'Paid',
+                            date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
+                        };
+                        _orders.unshift(confirmedOrder);
+                        localStorage.setItem('rv_orders', JSON.stringify(_orders));
+                        _cart = [];
+                        saveCart();
+                        renderOrders();
+                        showPage('orders');
+                        toast(`🎉 Payment successful! Order #${String(orderId).slice(-8).toUpperCase()}`, 'success');
+                    },
+                    modal: { ondismiss: function() { toast('Payment window closed', 'info'); } }
+                };
+                const rzp = new Razorpay(options);
+                rzp.open();
+            } catch (err) {
+                toast('Payment initialization failed: ' + err.message, 'error');
+            }
             return;
 
         } else if (method === 'paypal') {
@@ -1688,7 +1702,7 @@ window.closeChatbot = function() {
     if (win) win.classList.remove('open');
 };
 
-window.sendChatMsg = function() {
+window.sendChatMsg = async function() {
     const input = document.getElementById('chatInputPrimary');
     const msg = input.value?.trim();
     if (!msg) return;
@@ -1700,14 +1714,30 @@ window.sendChatMsg = function() {
     const typingId = 'typing_' + Date.now();
     addChatMessage('<span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>', 'bot', typingId);
 
-    setTimeout(() => {
+    try {
+        const res = await fetch(`${API}/api/chat`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: msg })
+        });
+        const data = await res.json();
+        
         // Remove typing indicator
         const typingEl = document.getElementById(typingId);
         if (typingEl) typingEl.remove();
 
-        const botReply = getClinicalBotResponse(msg.toLowerCase());
-        addChatMessage(botReply, 'bot');
-    }, 1200);
+        if (res.ok && data.reply) {
+            addChatMessage(data.reply, 'bot');
+        } else {
+            // Fallback if AI not configured or failed
+            const fallbackReply = getClinicalBotResponse(msg.toLowerCase());
+            addChatMessage(data.error ? `${fallbackReply} <br><small style="opacity:0.7">[AI offline: ${data.error}]</small>` : fallbackReply, 'bot');
+        }
+    } catch (err) {
+        const typingEl = document.getElementById(typingId);
+        if (typingEl) typingEl.remove();
+        addChatMessage(getClinicalBotResponse(msg.toLowerCase()), 'bot');
+    }
 };
 
 // Also support old sendChatbotMessage for compatibility

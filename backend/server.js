@@ -218,6 +218,73 @@ app.post('/api/orders/:id/payment-confirmation', async (req, res) => {
     }
 });
 
+// ═══════════════════════════════════════════════════════════════════════════
+// AI CHATBOT INTEGRATION (Gemini API)
+// ═══════════════════════════════════════════════════════════════════════════
+const { GoogleGenerativeAI } = require('@google/generative-ai');
+const genAI = process.env.GEMINI_API_KEY ? new GoogleGenerativeAI(process.env.GEMINI_API_KEY) : null;
+
+app.post('/api/chat', async (req, res) => {
+    try {
+        const { message } = req.body;
+        if (!message) return res.status(400).json({ error: 'Message is required' });
+
+        if (!genAI) {
+            return res.status(503).json({ error: 'AI capabilities are currently offline. Please set GEMINI_API_KEY in the backend.' });
+        }
+
+        const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+        
+        const prompt = `You are Rivaansh Clinical Assistant, an expert AI pharmacist on the Rivaansh Lifesciences platform.
+        Provide professional, empathetic, and factual medical and pharmaceutical advice. 
+        Always remind users to consult a real human doctor for serious symptoms.
+        Limit your professional response to 3-4 sentences.
+        User Query: "${message}"`;
+
+        const result = await model.generateContent(prompt);
+        const text = result.response.text();
+        
+        res.status(200).json({ reply: text });
+    } catch (error) {
+        console.error('❌ AI Chat Error:', error);
+        res.status(500).json({ error: 'Failed to process AI chat request' });
+    }
+});
+
+// ═══════════════════════════════════════════════════════════════════════════
+// RAZORPAY INTEGRATION
+// ═══════════════════════════════════════════════════════════════════════════
+const Razorpay = require('razorpay');
+let razorpayInstance = null;
+if (process.env.RAZORPAY_KEY && process.env.RAZORPAY_SECRET) {
+    razorpayInstance = new Razorpay({
+        key_id: process.env.RAZORPAY_KEY,
+        key_secret: process.env.RAZORPAY_SECRET
+    });
+}
+
+app.post('/api/payment/razorpay-create', async (req, res) => {
+    try {
+        const { amount, receipt } = req.body;
+        if (!razorpayInstance) {
+            // Fallback for missing keys
+            return res.status(200).json({ id: 'sim_rzp_order_' + Date.now(), amount, currency: 'INR', simulated: true });
+        }
+
+        const options = {
+            amount: Math.round(amount * 100), // amount in smallest currency unit (paise)
+            currency: 'INR',
+            receipt: receipt || 'receipt_order_' + Date.now()
+        };
+
+        const order = await razorpayInstance.orders.create(options);
+        res.status(200).json(order);
+    } catch (error) {
+        console.error('❌ Razorpay Create Error:', error);
+        res.status(500).json({ error: 'Could not generate Razorpay order ID' });
+    }
+});
+
 // Admin login endpoint for token-based admin actions
 app.post('/api/admin/login', (req, res) => {
     try {

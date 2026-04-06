@@ -469,14 +469,21 @@ button { cursor: pointer; font-family: inherit; }
 #searchInput:focus { background: rgba(255,255,255,.18); border-color: var(--tl2); }
 #searchClear { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: rgba(255,255,255,.5); font-size: .9rem; }
 
-/* Desktop nav */
-.desktop-nav { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+/* Desktop nav (Spotlight effect) */
+.desktop-nav { display: flex; align-items: center; gap: 4px; flex-shrink: 0; position: relative; border-radius: 20px; padding: 2px; }
+.desktop-nav::before {
+    content: ""; position: absolute; inset: 0; border-radius: 20px;
+    background: radial-gradient(80px circle at var(--x, 0px) var(--y, 0px), rgba(255,255,255,0.25), transparent);
+    opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 0;
+}
+.desktop-nav:hover::before { opacity: 1; }
+
 .nav-link {
     padding: 7px 14px; border-radius: var(--r1);
     font-size: .88rem; font-weight: 600; color: rgba(255,255,255,.65);
-    transition: var(--t1);
+    transition: var(--t1); position: relative; z-index: 1;
 }
-.nav-link:hover, .nav-link.active { color: #fff; background: rgba(255,255,255,.12); }
+.nav-link:hover, .nav-link.active { color: #fff; background: rgba(255,255,255,.15); }
 
 /* Cart button */
 .cart-btn {
