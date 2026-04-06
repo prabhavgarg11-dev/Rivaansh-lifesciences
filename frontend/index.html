@@ -178,17 +178,8 @@
     </div>
 </section>
 
-<div id="chatbotBox" class="chatbot-box">
-    <button class="close-chat" onclick="closeChatbot()"><i class="fa fa-xmark"></i></button>
-    <div class="chat-header">Rivaansh Chatbot</div>
-    <div id="chatHistory" class="chat-history"></div>
-    <div class="chat-input-wrap">
-        <input id="chatInput" placeholder="Ask about meds, orders, health tips..." />
-        <button onclick="sendChatbotMessage()"><i class="fa fa-paper-plane"></i></button>
-    </div>
-</div>
+<!-- Chatbot moved to bottom for improved accessibility -->
 
-<button class="chatbot-fab" onclick="openChatbot()"><i class="fa fa-comment-dots"></i></button>
 
 <!-- ══════════════════════════════════════════════════════════════════════
      HEADER
@@ -750,6 +741,16 @@
                     </div>
                 </div>
 
+                <div class="support-form" style="margin-top:30px; background:#fff; padding:25px; border-radius:16px; border:1px solid #eee;">
+                    <h3 style="margin-bottom:15px; font-size:1.2rem;">📝 Submit a Clinical Query</h3>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-bottom:15px;">
+                        <input type="text" id="suppName" placeholder="Your Name" style="width:100%; padding:12px; border:1px solid #ddd; border-radius:10px;">
+                        <input type="email" id="suppEmail" placeholder="Your Email" style="width:100%; padding:12px; border:1px solid #ddd; border-radius:10px;">
+                    </div>
+                    <textarea id="suppMsg" placeholder="Describe your health query or order issue..." style="width:100%; padding:12px; border:1px solid #ddd; border-radius:10px; min-height:100px; margin-bottom:15px;"></textarea>
+                    <button class="btn-primary" style="width:100%; border:none; padding:14px; font-weight:800;" onclick="submitSupportForm()">Send Clinical Query</button>
+                </div>
+
                 <p class="policy-footer">Available 10:00 AM - 8:00 PM (IST).</p>
             </div>
         </div>
@@ -893,6 +894,7 @@
         </div>
         
         <div id="chatMessages" class="chat-messages">
+            <!-- Initial bot message is here or injected by JS -->
             <div class="chat-msg bot">
                 <p>Hello! 👋 I'm your Rivaansh Clinical Assistant. How can I help you today?</p>
             </div>
@@ -905,11 +907,12 @@
         </div>
         
         <div class="chat-footer">
-            <input type="text" id="chatInput" placeholder="Type your clinical query..." onkeypress="if(event.key==='Enter') sendChatMsg()">
+            <input type="text" id="chatInputPrimary" placeholder="Type your clinical query..." onkeypress="if(event.key==='Enter') sendChatMsg()">
             <button onclick="sendChatMsg()"><i class="fa fa-paper-plane"></i></button>
         </div>
     </div>
 </div>
+
 
 <script src="script.js"></script>
 </body>

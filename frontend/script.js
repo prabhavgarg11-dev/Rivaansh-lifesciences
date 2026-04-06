@@ -76,8 +76,34 @@ async function loadPrescriptions() {
     }
 }
 
-async function loadProducts() {
+async function checkClinicalConnectivity() {
     try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 4000); // 4s probe
+        const res = await fetch(`${API}/api/health`, { signal: controller.signal });
+        clearTimeout(timeoutId);
+        return res.ok;
+    } catch (e) {
+        return false;
+    }
+}
+
+async function loadProducts() {
+    const loaderText = document.querySelector('.loader-text');
+    if (loaderText) loaderText.textContent = '🏥 Probing Clinical Backend...';
+
+    const isUp = await checkClinicalConnectivity();
+    
+    if (!isUp) {
+        console.warn('⚠️ Clinical backend not reachable. Using fallback.');
+        if (loaderText) loaderText.textContent = '⚡ Starting Emergency Fallback Engine...';
+        addNotification('Clinical backend is starting up. Using temporary catalogue.', 'info');
+        loadFallbackProducts();
+        return;
+    }
+
+    try {
+        if (loaderText) loaderText.textContent = '🚀 Fetching Clinical Catalogue...';
         const res = await fetch(`${API}/api/products`);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         _allProducts = await res.json();
@@ -110,7 +136,6 @@ function getClinicalImageUrl(path) {
     if (!path) return 'images/medicine_placeholder.jpg';
     if (path.startsWith('http')) return path;
     // For relative paths like "images/hcg.jpg", ensure they point to the current domain's images folder
-    // which Vercel serves via the /images/ rewrite.
     return path; 
 }
 
@@ -1573,8 +1598,9 @@ window.renderOrderTracking = function() {
         
         let timeline = '<div class="tracking-timeline">';
         statuses.forEach((status, i) => {
+            let iconClass = i <= currentIndex ? 'fa-check' : 'fa-clock';
             timeline += `<div class="tracking-step ${i <= currentIndex ? 'completed' : ''}">
-                <div class="tracking-marker"><i class="fa ${i <= currentIndex ? 'fa-check' : (i-1)}"></i></div>
+                <div class="tracking-marker"><i class="fa ${iconClass}"></i></div>
                 <div class="tracking-content">
                     <div class="tracking-title">${status}</div>
                     <div class="tracking-date">${i <= currentIndex ? 'Completed' : 'Pending'}</div>
@@ -1640,33 +1666,74 @@ function showError(isFallback = false) {
 /* ── CHATBOT LOGIC ───────────────────────────────────────────────────────── */
 window.toggleChatbot = function() {
     const win = document.getElementById('chatbotWindow');
-    if (win) win.classList.toggle('open');
+    if (!win) return;
+    win.classList.toggle('open');
+    
+    // Auto-focus input when opening
+    if (win.classList.contains('open')) {
+        setTimeout(() => {
+            const input = document.getElementById('chatInputPrimary');
+            if (input) input.focus();
+        }, 300);
+    }
+};
+
+// Also support old open/close naming for compatibility with other triggers if any
+window.openChatbot = function() {
+    const win = document.getElementById('chatbotWindow');
+    if (win) win.classList.add('open');
+};
+window.closeChatbot = function() {
+    const win = document.getElementById('chatbotWindow');
+    if (win) win.classList.remove('open');
 };
 
 window.sendChatMsg = function() {
-    const input = document.getElementById('chatInput');
+    const input = document.getElementById('chatInputPrimary');
     const msg = input.value?.trim();
     if (!msg) return;
 
     addChatMessage(msg, 'user');
     input.value = '';
 
+    // Show typing indicator
+    const typingId = 'typing_' + Date.now();
+    addChatMessage('<span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>', 'bot', typingId);
+
     setTimeout(() => {
+        // Remove typing indicator
+        const typingEl = document.getElementById(typingId);
+        if (typingEl) typingEl.remove();
+
         const botReply = getClinicalBotResponse(msg.toLowerCase());
         addChatMessage(botReply, 'bot');
-    }, 800);
+    }, 1200);
 };
 
-function addChatMessage(text, side) {
+// Also support old sendChatbotMessage for compatibility
+window.sendChatbotMessage = window.sendChatMsg;
+
+
+function addChatMessage(text, side, id = null) {
     const container = document.getElementById('chatMessages');
     if (!container) return;
 
     const div = document.createElement('div');
     div.className = `chat-msg ${side}`;
+    if (id) div.id = id;
     div.innerHTML = `<p>${text}</p>`;
-    container.appendChild(div);
+    
+    // If there's a suggestions div, insert before it
+    const suggestions = container.querySelector('.chat-suggestions');
+    if (suggestions) {
+        container.insertBefore(div, suggestions);
+    } else {
+        container.appendChild(div);
+    }
+    
     container.scrollTop = container.scrollHeight;
 }
+
 
 function getClinicalBotResponse(input) {
     // 1. Detect Clinical Search Intent
@@ -1697,12 +1764,50 @@ function getClinicalBotResponse(input) {
 }
 
 window.handleChatAction = function(action) {
-    if (action === 'track') showPage('orders');
-    if (action === 'medInfo') showPage('medicineInfo');
-    if (action === 'presc') showPage('prescriptions');
-    if (action === 'expert') {
-        window.open('tel:+918426033033');
-        toast('Calling Rivaansh Health Helpline...', 'info');
+    let userInput = '';
+    let actionDelay = 1500;
+    
+    if (action === 'track') userInput = 'Track my order';
+    else if (action === 'medInfo') userInput = 'Find medicine info';
+    else if (action === 'presc') userInput = 'Upload prescription';
+    else if (action === 'expert') {
+        userInput = 'Talk to an expert';
+        actionDelay = 2000;
     }
-    toggleChatbot();
+
+    if (userInput) {
+        const inputPrimary = document.getElementById('chatInputPrimary');
+        if (inputPrimary) {
+            inputPrimary.value = userInput;
+            window.sendChatMsg();
+        }
+    }
+    
+    setTimeout(() => {
+        if (action === 'track') showPage('orders');
+        if (action === 'medInfo') showPage('medicineInfo');
+        if (action === 'presc') showPage('prescriptions');
+        if (action === 'expert') {
+            window.location.href = 'tel:+918426033033';
+            toast('Calling Rivaansh Health Helpline...', 'info');
+        }
+        
+        // Optionally close chatbot after action
+        if (action !== 'expert') {
+            window.closeChatbot();
+        }
+    }, actionDelay);
 };
+
+window.submitSupportForm = function() {
+    const name = document.getElementById('suppName')?.value.trim();
+    const email = document.getElementById('suppEmail')?.value.trim();
+    const msg = document.getElementById('suppMsg')?.value.trim();
+    
+    if (!name || !email || !msg) { toast('Please fill all fields', 'error'); return; }
+    
+    toast('🚀 Query submitted! A clinical expert will contact you soon.', 'success');
+    document.getElementById('suppName').value = '';
+    document.getElementById('suppEmail').value = '';
+    document.getElementById('suppMsg').value = '';
+}

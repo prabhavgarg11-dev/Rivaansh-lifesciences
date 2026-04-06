@@ -14,6 +14,7 @@ const compression = require('compression');
 const morgan = require('morgan');
 const crypto = require('crypto');
 const path = require('path');
+const fs = require('fs');
 
 const app = express();
 
@@ -54,8 +55,25 @@ const connectDB = require('./config/db');
 
 // Connect to Database
 let dbConnected = false;
-connectDB().then(connected => {
+connectDB().then(async (connected) => {
     dbConnected = connected;
+    if (connected) {
+        console.log('✅ Database connected. Checking for clinical data...');
+        try {
+            const count = await Product.countDocuments();
+            if (count === 0) {
+                console.log('📦 Database is empty. Seeding pharmaceutical catalogue from products.json...');
+                const fs = require('fs');
+                const productsData = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'frontend', 'products.json'), 'utf-8'));
+                await Product.insertMany(productsData);
+                console.log(`🚀 Successfully seeded ${productsData.length} medicines into the clinical database.`);
+            } else {
+                console.log(`📊 Clinical database reports ${count} active medicines.`);
+            }
+        } catch (seedErr) {
+            console.error('❌ Seeding failed:', seedErr.message);
+        }
+    }
 });
 
 // ── Models (Professional Centralized Schema) ───────────────────────────────
@@ -423,13 +441,14 @@ app.post('/api/users/login', async (req, res) => {
 });
 
 /**
- * GET /health
- * Server health check
+ * GET /api/health
+ * Clinical Monitoring Endpoint
  */
-app.get('/health', (req, res) => {
+app.get('/api/health', (req, res) => {
     res.status(200).json({
         status: 'OK',
-        message: 'Server is running',
+        database: dbConnected ? 'CONNECTED' : 'DISCONNECTED',
+        environment: process.env.NODE_ENV || 'production',
         timestamp: new Date().toISOString()
     });
 });
