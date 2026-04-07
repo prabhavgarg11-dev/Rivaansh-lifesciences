@@ -64,6 +64,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   renderOrders();
   await loadProducts();
   updateAdminStats();
+  checkAIStatus();
   hideLoader();
 });
 
@@ -343,11 +344,6 @@ window.filterCat = function (cat, el) {
   showPage("products");
   applyFilters();
   window.scrollTo({ top: 0, behavior: "smooth" });
-};
-
-window.filterCatDirect = function (cat) {
-  _currentCat = cat;
-  applyFilters();
 };
 
 window.filterCatDirect = function (cat) {
@@ -2391,6 +2387,253 @@ window.analyzePrescription = async function() {
         resultBox.innerHTML = '<p class="error">Clinical Analysis Link Error.</p>';
     }
 };
+
+// ── AI MEDICINE INFO (API-powered) ────────────────────────────
+window.searchMedInfoAI = async function (val) {
+    if (!val || val.trim().length < 2) return;
+    const results = document.getElementById('medInfoResults');
+    if (!results) return;
+
+    // Local matches
+    window.searchMedInfo(val);
+
+    const localMatch = _allProducts.find(p =>
+        p.name.toLowerCase().includes(val.toLowerCase()) ||
+        p.composition.toLowerCase().includes(val.toLowerCase())
+    );
+
+    if (!localMatch && val.trim().length > 3) {
+        try {
+            const res = await fetch(`${API}/api/ai/medicine-info`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ medicine: val.trim() })
+            });
+            const data = await res.json();
+            if (res.ok && data.result) {
+                results.innerHTML = `
+                    <div class="med-info-card">
+                        <div class="med-info-header">
+                            <h3 class="med-info-title"><i class="fa fa-wand-magic-sparkles" style="color:var(--tl)"></i> AI Clinical Info: ${val}</h3>
+                            <span class="med-info-badge">AI Powered</span>
+                        </div>
+                        <div class="med-info-ai-content">${data.result.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</div>
+                        <small style="color:#94a3b8;margin-top:15px;display:block;">⚠️ AI-generated information. Always consult a licensed pharmacist.</small>
+                    </div>`;
+            }
+        } catch (e) {
+            console.warn('AI offline');
+        }
+    }
+};
+
+// ── DRUG INTERACTION CHECKER ──────────────────────────────────
+window.checkDrugInteractions = async function () {
+    const input = document.getElementById('drugInteractInput');
+    const resultBox = document.getElementById('drugInteractResult');
+    const drugs = input?.value.trim();
+    if (!drugs) return toast('Enter medicine names separated by commas', 'info');
+
+    resultBox.classList.remove('hidden');
+    resultBox.innerHTML = '<div class="diag-loading"><i class="fa fa-spinner fa-spin"></i> Checking clinical interactions...</div>';
+
+    try {
+        const res = await fetch(`${API}/api/ai/drug-interact`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ drugs })
+        });
+        const data = await res.json();
+        if (res.ok && data.result) {
+            resultBox.innerHTML = `
+                <div class="ai-result-header"><i class="fa fa-pills"></i> Interaction Analysis</div>
+                <div class="ai-result-body">${data.result.replace(/\n/g, '<br>')}</div>
+                <div class="ai-result-disclaimer">⚠️ Consult a doctor before combining medications.</div>`;
+        } else {
+            throw new Error(data.error);
+        }
+    } catch (e) {
+        resultBox.innerHTML = `
+            <div class="ai-result-header"><i class="fa fa-triangle-exclamation"></i> Offline Analysis</div>
+            <div class="ai-result-body">Drug interaction data unavailable. Call <strong>+91 8426033033</strong> for guidance.</div>
+            <div class="ai-result-disclaimer">⚠️ Never combine medications without professional supervision.</div>`;
+    }
+};
+
+window.quickDrugCheck = function (drugString) {
+    const input = document.getElementById('drugInteractInput');
+    if (input) {
+        input.value = drugString;
+        window.checkDrugInteractions();
+    }
+};
+
+// ── HEALTH RISK SCREENER ──────────────────────────────────────
+window.runHealthRisk = async function () {
+    const age = document.getElementById('riskAge')?.value;
+    const weight = document.getElementById('riskWeight')?.value;
+    const height = document.getElementById('riskHeight')?.value;
+    const conditions = document.getElementById('riskConditions')?.value.trim();
+    const lifestyle = document.getElementById('riskLifestyle')?.value.trim();
+    const resultBox = document.getElementById('healthRiskResult');
+
+    if (!age) return toast('Please enter your age to proceed', 'info');
+
+    let bmi = null;
+    if (weight && height) {
+        bmi = (weight / ((height / 100) ** 2)).toFixed(1);
+    }
+
+    resultBox.classList.remove('hidden');
+    resultBox.innerHTML = '<div class="diag-loading"><i class="fa fa-spinner fa-spin"></i> Assessing Health Risk...</div>';
+
+    try {
+        const res = await fetch(`${API}/api/ai/health-risk`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ age, weight, height, bmi, conditions, lifestyle })
+        });
+        const data = await res.json();
+        if (res.ok && data.result) {
+            const bmiInfo = bmi ? `<div class="bmi-badge" style="background:#eff6ff;padding:12px 18px;border-radius:12px;border:1px solid #bfdbfe;margin-bottom:15px;"><strong>BMI: ${bmi}</strong></div>` : '';
+            resultBox.innerHTML = `
+                ${bmiInfo}
+                <div class="ai-result-header"><i class="fa fa-shield-heart"></i> AI Risk Assessment</div>
+                <div class="ai-result-body">${data.result.replace(/\n/g, '<br>')}</div>
+                <div class="ai-result-disclaimer">⚠️ This is for reference only.</div>`;
+        } else {
+            throw new Error(data.error);
+        }
+    } catch (e) {
+        resultBox.innerHTML = `<div class="ai-result-body">Assessment offline. Contact us at +91 8426033033 for guidance.</div>`;
+    }
+};
+
+// ── AI CLINICAL CHATBOT ───────────────────────────────────────
+window.toggleChatbot = function () {
+    const wrapper = document.getElementById('chatbotWrapper');
+    if (wrapper) wrapper.classList.toggle('active');
+};
+
+window.sendChatMsg = async function () {
+    const input = document.getElementById('chatInputPrimary');
+    if (!input) return;
+    const msg = input.value.trim();
+    if (!msg) return;
+    
+    const messagesDiv = document.getElementById('chatMessages');
+    messagesDiv.innerHTML += `<div class="chat-msg user"><div class="msg-bubble">${msg}</div></div>`;
+    input.value = '';
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+    const loadingId = 'loading-' + Date.now();
+    messagesDiv.innerHTML += `<div id="${loadingId}" class="chat-msg bot"><div class="msg-bubble"><i class="fa fa-spinner fa-spin"></i> Clinician typing...</div></div>`;
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+    try {
+        const res = await fetch(`${API}/api/ai/chat`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: msg })
+        });
+        const data = await res.json();
+        document.getElementById(loadingId)?.remove();
+        if (res.ok && data.reply) {
+            messagesDiv.innerHTML += `<div class="chat-msg bot"><div class="msg-bubble">${data.reply.replace(/\n/g, '<br>')}</div></div>`;
+        } else {
+            messagesDiv.innerHTML += `<div class="chat-msg bot"><div class="msg-bubble">Sorry, I'm offline. Please call +91 8426033033.</div></div>`;
+        }
+    } catch (e) {
+        document.getElementById(loadingId)?.remove();
+        messagesDiv.innerHTML += `<div class="chat-msg bot"><div class="msg-bubble">Connection error. Please try again.</div></div>`;
+    }
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+};
+
+// Handle chat suggestions (Action Buttons)
+window.handleChatAction = function(action) {
+    let message = "";
+    if (action === 'track') message = "How can I track my order?";
+    if (action === 'medInfo') message = "Can you give me info about a medicine?";
+    if (action === 'presc') message = "How do I upload a prescription?";
+    if (action === 'expert') message = "I need to talk to a human expert.";
+    
+    const input = document.getElementById('chatInputPrimary');
+    if (input) {
+        input.value = message;
+        sendChatMsg();
+    }
+};
+
+// ── SYMPTOM CHECKER ───────────────────────────────────────────
+window.checkSymptoms = async function () {
+    const symptoms = document.getElementById('symptomInput')?.value.trim();
+    const resultBox = document.getElementById('symptomResult');
+    if (!symptoms) return toast('Please describe your symptoms', 'info');
+    
+    resultBox.classList.remove('hidden');
+    resultBox.innerHTML = '<div class="diag-loading"><i class="fa fa-spinner fa-spin"></i> Analyzing symptoms...</div>';
+
+    try {
+        const res = await fetch(`${API}/api/ai/symptom`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ symptoms })
+        });
+        const data = await res.json();
+        if (res.ok && data.result) {
+            resultBox.innerHTML = `
+                <div class="ai-result-header"><i class="fa fa-stethoscope"></i> Clinical Assessment</div>
+                <div class="ai-result-body">${data.result.replace(/\n/g, '<br>')}</div>
+            `;
+        } else {
+            throw new Error();
+        }
+    } catch (e) {
+        resultBox.innerHTML = '<div class="ai-result-body">Symptom check unavailable. Call <strong>+91 8426033033</strong> for guidance.</div>';
+    }
+};
+
+// ── PRESCRIPTION ANALYZER ─────────────────────────────────────
+window.analyzePrescription = async function () {
+    const text = document.getElementById('prescriptionTextInput')?.value.trim();
+    const resultBox = document.getElementById('prescriptionAnalysisResult');
+    if (!text) return toast('Please enter your prescription text', 'info');
+    
+    resultBox.classList.remove('hidden');
+    resultBox.innerHTML = '<div class="diag-loading"><i class="fa fa-spinner fa-spin"></i> Analyzing treatment plan...</div>';
+
+    try {
+        const res = await fetch(`${API}/api/ai/prescription`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text })
+        });
+        const data = await res.json();
+        if (res.ok && data.result) {
+            resultBox.innerHTML = `
+                <div class="ai-result-header"><i class="fa fa-file-medical"></i> Treatment Guide</div>
+                <div class="ai-result-body">${data.result.replace(/\n/g, '<br>')}</div>
+            `;
+        } else {
+            throw new Error();
+        }
+    } catch (e) {
+        resultBox.innerHTML = '<div class="ai-result-body">Analysis offline. Please upload prescription in the Uploads tab.</div>';
+    }
+};
+
+// ── AI STATUS CHECK ON LOAD ───────────────────────────────────
+async function checkAIStatus() {
+    try {
+        const res = await fetch(`${API}/api/ai/status`);
+        if (res.ok) {
+            const data = await res.json();
+            console.log(`🤖 Clinical AI: ${data.message} (${data.mode || 'unknown'})`);
+            if (!data.available) addNotification('AI is running in smart fallback mode. Add your Gemini API key to .env for full AI.', 'info');
+        }
+    } catch (e) { }
+}
 
 // ── DASHBOARD & TRACKING ENGINE ───────────────────────────────────────────
 window.showDashboardOrAuth = function() {

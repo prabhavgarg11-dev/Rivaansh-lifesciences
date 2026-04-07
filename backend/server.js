@@ -229,93 +229,25 @@ app.post('/api/orders/:id/payment-confirmation', async (req, res) => {
 });
 
 // ═══════════════════════════════════════════════════════════════════════════
-// OPENAI CLINICAL AI HUB — Rivaansh Lifesciences
+// CLINICAL AI HUB — Gemini + OpenAI + Smart Fallback
+// All routes are served from routes/aiRoutes.js via services/aiService.js
 // ═══════════════════════════════════════════════════════════════════════════
-const OpenAI = require('openai');
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+const aiRoutes = require('./routes/aiRoutes');
 
-// Healthcare Assistant — Main Clinical Hub (Supports old and new routes)
-const aiHandler = async (req, res) => {
+// Mount all AI routes (Gemini primary → OpenAI secondary → smart fallback)
+app.use('/api/ai', aiRoutes);
+
+// Legacy /api/chat alias (backwards compatible with older frontend calls)
+app.post('/api/chat', async (req, res) => {
     try {
+        const { getChatResponse } = require('./services/aiService');
         const { message } = req.body;
-        if (!message) return res.status(400).json({ error: 'Clinical message is required' });
-
-        if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY.includes('your_api_key_here')) {
-            return res.status(503).json({ error: 'OpenAI API key is missing. Please configure healthcare credentials.' });
-        }
-
-        const response = await openai.chat.completions.create({
-            model: "gpt-4o-mini",
-            messages: [
-              {
-                role: "system",
-                content: `You are the Rivaansh Lifesciences Clinical Assistant. 
-                Provide expert, medical-grade, pharmaceutical advice with empathy.
-                Always remind patients to consult a licensed medical practitioner for emergencies.
-                Current Clinical Hub: Rivaansh Lifesciences. 
-                Format: 3-4 professional sentences.`
-              },
-              { role: "user", content: message }
-            ]
-        });
-
-        res.json({ reply: response.choices[0].message.content });
+        if (!message) return res.status(400).json({ error: 'Message required' });
+        const reply = await getChatResponse(message);
+        res.json({ reply, success: true });
     } catch (err) {
-        console.error('❌ OpenAI Clinical Hub Error:', err);
-        res.status(500).json({ reply: "A clinical AI synchronization error occurred. Please try again or call our helpline." });
-    }
-};
-
-app.post('/api/chat', aiHandler);
-app.post('/api/ai/chat', aiHandler);
-
-// Symptom Checker — Advanced Clinical Diagnostics
-app.post("/api/ai/symptom", async (req, res) => {
-    try {
-        const { symptoms } = req.body;
-        if (!symptoms) return res.status(400).json({ error: 'Symptoms required for analysis' });
-
-        const response = await openai.chat.completions.create({
-            model: "gpt-4o-mini",
-            messages: [
-              {
-                role: "system",
-                content: "You are the Rivaansh Lifesciences Symptom Checker. Analyze clinical patterns and suggest possible conditions with safe medical disclaimers. Suggest specialized care if needed."
-              },
-              { role: "user", content: symptoms }
-            ]
-        });
-
-        res.json({ result: response.choices[0].message.content });
-    } catch (err) {
-        console.error('❌ Symptom Checker Error:', err);
-        res.status(500).json({ error: "Symptom analysis failed." });
-    }
-});
-
-// Prescription Analyzer — Clinical OCR Simulation
-app.post("/api/ai/prescription", async (req, res) => {
-    try {
-        const { text } = req.body;
-        if (!text) return res.status(400).json({ error: 'Prescription text is required' });
-
-        const response = await openai.chat.completions.create({
-            model: "gpt-4o-mini",
-            messages: [
-              {
-                role: "system",
-                content: "You are the Rivaansh Lifesciences Prescription Analyzer. Decipher medical handwriting patterns and suggest possible medicine matches from the pharmaceutical catalogue. Mention side-effects if certain."
-              },
-              { role: "user", content: text }
-            ]
-        });
-
-        res.json({ result: response.choices[0].message.content });
-    } catch (err) {
-        console.error('❌ Prescription Analyzer Error:', err);
-        res.status(500).json({ error: "Clinical analysis failed." });
+        console.error('❌ Chat error:', err.message);
+        res.status(500).json({ reply: 'Clinical AI temporarily unavailable. Call +91 8426033033 for support.' });
     }
 });
 

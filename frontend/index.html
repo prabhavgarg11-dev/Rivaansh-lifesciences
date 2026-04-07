@@ -147,6 +147,20 @@
                     <p>24/7 Clinical support</p>
                 </div>
             </div>
+            <div class="ai-hub-item" onclick="showPage('drugInteraction'); toggleAIPanel()">
+                <i class="fa fa-pills"></i>
+                <div>
+                    <strong>Drug Interaction Checker</strong>
+                    <p>Check medicine safety</p>
+                </div>
+            </div>
+            <div class="ai-hub-item" onclick="showPage('healthRisk'); toggleAIPanel()">
+                <i class="fa fa-shield-heart"></i>
+                <div>
+                    <strong>Health Risk Screener</strong>
+                    <p>AI preventive assessment</p>
+                </div>
+            </div>
         </div>
     </div>
 </header>
@@ -164,11 +178,12 @@
         <!-- HERO -->
         <div class="hero">
             <h1>Rivaansh Lifesciences</h1>
-            <p>Your Trusted Gateway to 100% Genuine Clinical Medicines & Wellness Kits.</p>
+            <p>Your Trusted Gateway to 100% Genuine Clinical Medicines, Expert Consultations, & Wellness Kits.</p>
             <div class="hero-btns">
                 <button class="btn-primary" onclick="showPage('products')">Explore Medicines <i class="fa fa-pills ml-2"></i></button>
                 <button class="btn-outline" onclick="toggleAIPanel()" style="background: white;">AI Health Lab <i class="fa fa-wand-magic-sparkles ml-2"></i></button>
             </div>
+            <p style="font-size: 0.8rem; margin-top: 15px; color: #cbd5e1; opacity: 0.8;">⚠️ All prescription medicines require a valid doctor's prescription. AI tools are for informational purposes only.</p>
         </div>
 
         <!-- QUICK CATEGORIES GRID (MODERN UI KIT) -->
@@ -196,6 +211,53 @@
             <div class="cgrid-item" onclick="filterCat('Vitamins', this)">
                 <div class="c-icon"><i class="fa fa-apple-whole"></i></div>
                 <span>Vitamins</span>
+            </div>
+        </div>
+
+        <!-- HEALTHCARE SERVICES (LAB TESTS & DOCTORS) -->
+        <div class="section healthcare-services-section" style="background-color: #f8fafc; padding: 40px 20px; border-radius: 12px; margin: 30px auto; max-width: 1200px;">
+            <div class="section-head" style="margin-bottom: 25px;">
+                <h2 class="section-title">Comprehensive Healthcare</h2>
+                <p class="section-sub">Bringing the hospital directly to your home.</p>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                <!-- Lab Tests -->
+                <div style="background: white; padding: 25px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); text-align: center;">
+                    <div style="width: 60px; height: 60px; background: #eff6ff; color: var(--tl); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin: 0 auto 15px;">
+                        <i class="fa fa-microscope"></i>
+                    </div>
+                    <h3 style="margin-bottom: 10px; color: var(--tm); font-size: 1.2rem;">Book Lab Tests</h3>
+                    <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 20px;">Get comprehensive blood tests, full-body checkups, and diagnostic screenings with free home sample collection.</p>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 10px; text-align: left; background: #f8fafc; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.9rem;"><strong>Complete Blood Count</strong> <span style="color:var(--ts)">₹299</span></div>
+                        <div style="display: flex; justify-content: space-between; font-size: 0.9rem;"><strong>Advanced Full Body</strong> <span style="color:var(--ts)">₹1499</span></div>
+                    </div>
+                    
+                    <button class="btn-primary" style="width: 100%;" onclick="toast('Lab Test booking will be available shortly.', 'info')">Schedule Home Visit</button>
+                </div>
+
+                <!-- Consult Doctors -->
+                <div style="background: white; padding: 25px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); text-align: center;">
+                    <div style="width: 60px; height: 60px; background: #f0fdf4; color: #16a34a; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin: 0 auto 15px;">
+                        <i class="fa fa-user-doctor"></i>
+                    </div>
+                    <h3 style="margin-bottom: 10px; color: var(--tm); font-size: 1.2rem;">Consult Specialists</h3>
+                    <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 20px;">Audio or video consult with verified clinical experts in General Medicine, Dermatology, and more.</p>
+                    
+                    <div style="display: flex; align-items: center; gap: 15px; background: #f8fafc; padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: left;">
+                        <div style="width: 50px; height: 50px; background: #cbd5e1; border-radius: 50%; overflow: hidden;">
+                            <img src="https://i.pravatar.cc/150?img=32" alt="Doctor" style="width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+                        <div>
+                            <strong style="display: block; color: var(--tm); font-size: 0.95rem;">Dr. A. Sharma, MD</strong>
+                            <span style="color: #64748b; font-size: 0.8rem;">General Physician • 12 Yrs Exp</span>
+                        </div>
+                    </div>
+                    
+                    <button class="btn-outline" style="width: 100%; border-color: #16a34a; color: #16a34a;" onclick="toast('Live doctor consultation feature coming next week.', 'info')">Book Teleconsultation</button>
+                </div>
             </div>
         </div>
 
@@ -481,6 +543,79 @@
                 <textarea id="prescriptionTextInput" placeholder="e.g., Tab. Rivakold twice daily after meals, Cap. Rivapro once daily..."></textarea>
                 <button class="btn-primary" onclick="analyzePrescription()"><i class="fa fa-file-waveform"></i> Analyze Treatment</button>
                 <div id="prescriptionAnalysisResult" class="ai-result-box hidden"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ── AI DRUG INTERACTION CHECKER ──────────────────────────────── -->
+    <section id="drugInteractionPage" class="page">
+        <div class="section diagnostic-section">
+            <div class="section-head">
+                <div>
+                    <h2 class="section-title">Drug Interaction Checker</h2>
+                    <p class="section-sub">Check if your medicines are safe to take together.</p>
+                </div>
+            </div>
+            <div class="ai-diagnostic-panel">
+                <p class="diagnostic-intro">Enter two or more medicine names separated by commas to check for potential interactions. <strong>(For reference only — always consult your doctor.)</strong></p>
+                <div class="drug-input-group">
+                    <textarea id="drugInteractInput" placeholder="e.g., Aspirin, Ibuprofen, Paracetamol..."></textarea>
+                </div>
+                <div style="display:flex; gap:15px; flex-wrap:wrap; margin-top:15px;">
+                    <button class="btn-primary" onclick="checkDrugInteractions()"><i class="fa fa-pills"></i> Check Interactions</button>
+                    <button class="btn-outline" onclick="document.getElementById('drugInteractInput').value=''; document.getElementById('drugInteractResult').classList.add('hidden')"><i class="fa fa-rotate-left"></i> Clear</button>
+                </div>
+                <div id="drugInteractResult" class="ai-result-box hidden"></div>
+                <div class="drug-quick-checks" style="margin-top:20px;">
+                    <p style="font-size:0.82rem; font-weight:700; color:var(--tm); margin-bottom:10px;">⚡ Quick Checks:</p>
+                    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                        <button class="btn-outline" style="font-size:0.78rem; padding:6px 14px;" onclick="quickDrugCheck('Aspirin, Ibuprofen')">Aspirin + Ibuprofen</button>
+                        <button class="btn-outline" style="font-size:0.78rem; padding:6px 14px;" onclick="quickDrugCheck('Paracetamol, Alcohol')">Paracetamol + Alcohol</button>
+                        <button class="btn-outline" style="font-size:0.78rem; padding:6px 14px;" onclick="quickDrugCheck('Antacids, Antibiotics')">Antacids + Antibiotics</button>
+                        <button class="btn-outline" style="font-size:0.78rem; padding:6px 14px;" onclick="quickDrugCheck('Metformin, Alcohol')">Metformin + Alcohol</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ── AI HEALTH RISK SCREENER ────────────────────────────────────── -->
+    <section id="healthRiskPage" class="page">
+        <div class="section diagnostic-section">
+            <div class="section-head">
+                <div>
+                    <h2 class="section-title">AI Health Risk Screener</h2>
+                    <p class="section-sub">Preventive health assessment powered by clinical AI.</p>
+                </div>
+            </div>
+            <div class="ai-diagnostic-panel">
+                <p class="diagnostic-intro">Fill in your health details for a personalized risk assessment. <strong>(Not a substitute for professional medical evaluation.)</strong></p>
+                <div class="health-risk-form">
+                    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:15px; margin-bottom:15px;">
+                        <div class="form-field">
+                            <label>Age (years)</label>
+                            <div class="input-wrap"><i class="fa fa-calendar"></i><input type="number" id="riskAge" placeholder="e.g., 35" min="1" max="120"></div>
+                        </div>
+                        <div class="form-field">
+                            <label>Weight (kg)</label>
+                            <div class="input-wrap"><i class="fa fa-weight-scale"></i><input type="number" id="riskWeight" placeholder="e.g., 70"></div>
+                        </div>
+                        <div class="form-field">
+                            <label>Height (cm)</label>
+                            <div class="input-wrap"><i class="fa fa-ruler-vertical"></i><input type="number" id="riskHeight" placeholder="e.g., 170"></div>
+                        </div>
+                    </div>
+                    <div class="form-field">
+                        <label>Existing Conditions (if any)</label>
+                        <div class="input-wrap"><i class="fa fa-heart-pulse"></i><input type="text" id="riskConditions" placeholder="e.g., Diabetes, Hypertension, Asthma..."></div>
+                    </div>
+                    <div class="form-field">
+                        <label>Lifestyle Notes</label>
+                        <div class="input-wrap"><i class="fa fa-person-running"></i><input type="text" id="riskLifestyle" placeholder="e.g., Non-smoker, sedentary job, occasional exercise..."></div>
+                    </div>
+                </div>
+                <button class="btn-primary" style="margin-top:10px;" onclick="runHealthRisk()"><i class="fa fa-shield-heart"></i> Assess My Health Risk</button>
+                <div id="healthRiskResult" class="ai-result-box hidden"></div>
             </div>
         </div>
     </section>
@@ -892,7 +1027,7 @@
     <div class="footer-brand">
         <div class="footer-logo"><i class="fa fa-dna"></i> Rivaansh Lifesciences</div>
         <p>Premium pharmaceutical formulations delivered with precision and clinical care.</p>
-        <p class="footer-addr"><i class="fa fa-location-dot"></i> Jaipur, Rajasthan, India</p>
+        <p class="footer-addr"><i class="fa fa-location-dot"></i> Triveni Nagar, Gopalpura, 302018, Jaipur, Rajasthan, India</p>
         <p class="footer-contact"><i class="fa fa-envelope"></i> <a href="mailto:rivaanshlifesciences@gmail.com">rivaanshlifesciences@gmail.com</a></p>
         <p class="footer-contact"><i class="fa fa-phone"></i> <a href="tel:+918426033033">+91 8426033033</a></p>
         <div class="footer-social">
@@ -915,6 +1050,8 @@
         <a href="#" onclick="showPage('medicineInfo')">Medicine Guide</a>
         <a href="#" onclick="showPage('symptomChecker')">AI Symptom Checker</a>
         <a href="#" onclick="showPage('prescriptionAnalysis')">Prescription Analyzer</a>
+        <a href="#" onclick="showPage('drugInteraction')">Drug Interaction Checker</a>
+        <a href="#" onclick="showPage('healthRisk')">Health Risk Screener</a>
         <a href="#" onclick="toggleChatbot()">Live Chat Support</a>
         <a href="#" onclick="showPage('orderTracking')">Track Order</a>
         <a href="#" onclick="showPage('refund')">Returns & Refunds</a>
@@ -930,7 +1067,6 @@
         <div class="trust-badges">
             <div class="trust-badge"><i class="fa fa-shield-halved"></i> 100% Genuine</div>
             <div class="trust-badge"><i class="fa fa-certificate"></i> ISO Certified</div>
-            <div class="trust-badge"><i class="fa fa-microscope"></i> WHO-GMP</div>
             <div class="trust-badge"><i class="fa fa-lock"></i> SSL Secured</div>
         </div>
         <p>© 2026 Rivaansh Lifesciences. All rights reserved.</p>
