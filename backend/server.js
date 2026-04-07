@@ -158,6 +158,16 @@ app.get('/api/products/category/:category', async (req, res) => {
 });
 
 /**
+ * GET /api/health
+ * Health check endpoint for the frontend connectivity checker
+ */
+app.get('/api/health', (req, res) => {
+    // If dbConnected is true, return 200. Otherwise return 503 if we want strictly strict, 
+    // but returning 200 says the server is alive and we load from DB (which falls back natively if DB is slow).
+    res.status(200).json({ status: 'ok', dbConnected });
+});
+
+/**
  * POST /api/orders
  * Create a new healthcare order in the database.
  * If DB is offline, returns a simulated order object.
