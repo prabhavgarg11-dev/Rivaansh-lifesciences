@@ -1,0 +1,107 @@
+.segments-section {
+  position: relative;
+}
+
+.segments-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
+}
+
+.segment-card {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: 2.5rem 2rem;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+  border: 1px solid var(--border-color);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.segment-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background-color: var(--primary);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s ease;
+}
+
+.segment-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lg);
+}
+
+.segment-card:hover::before {
+  transform: scaleX(1);
+}
+
+.segment-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 2rem;
+  transition: var(--transition);
+}
+
+.segment-icon-blue { background-color: rgba(0, 86, 179, 0.1); color: #0056b3; }
+.segment-icon-green { background-color: rgba(0, 150, 136, 0.1); color: #009688; }
+.segment-icon-purple { background-color: rgba(156, 39, 176, 0.1); color: #9c27b0; }
+.segment-icon-orange { background-color: rgba(255, 152, 0, 0.1); color: #ff9800; }
+
+.segment-card:hover .segment-icon {
+  transform: scale(1.1);
+}
+
+.segment-title {
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+  color: var(--text-main);
+}
+
+.segment-description {
+  color: var(--text-light);
+  margin-bottom: 2rem;
+  flex-grow: 1;
+}
+
+.segment-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--primary);
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.segment-link svg {
+  transition: transform 0.3s ease;
+}
+
+.segment-link:hover svg {
+  transform: translate(2px, -2px);
+}
+
+@media (max-width: 1024px) {
+  .segments-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .segments-grid {
+    grid-template-columns: 1fr;
+  }
+}
