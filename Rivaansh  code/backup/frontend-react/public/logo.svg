@@ -1,0 +1,28 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" width="60" height="60">
+  <!-- Background circle -->
+  <circle cx="100" cy="100" r="95" fill="#0a7c6e" opacity="0.1"/>
+  
+  <!-- DNA Helix base -->
+  <g stroke="#0a7c6e" stroke-width="3" fill="none" stroke-linecap="round">
+    <!-- Left spiral -->
+    <path d="M 80 50 Q 70 70 80 90 Q 90 110 80 130 Q 70 150 80 170" opacity="0.8"/>
+    <!-- Right spiral -->
+    <path d="M 120 50 Q 130 70 120 90 Q 110 110 120 130 Q 130 150 120 170" opacity="0.8"/>
+  </g>
+  
+  <!-- Connection lines -->
+  <g stroke="#0a7c6e" stroke-width="2.5">
+    <line x1="80" y1="70" x2="120" y2="70" opacity="0.6"/>
+    <line x1="80" y1="110" x2="120" y2="110" opacity="0.6"/>
+    <line x1="80" y1="150" x2="120" y2="150" opacity="0.6"/>
+  </g>
+  
+  <!-- Plus symbol (pharmacy) -->
+  <g fill="#e8472a">
+    <rect x="95" y="85" width="4" height="30" rx="2"/>
+    <rect x="80" y="100" width="30" height="4" rx="2"/>
+  </g>
+  
+  <!-- Center accent circle -->
+  <circle cx="100" cy="100" r="8" fill="none" stroke="#e8472a" stroke-width="2"/>
+</svg>
