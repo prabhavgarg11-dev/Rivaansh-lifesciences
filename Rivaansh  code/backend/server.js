@@ -95,8 +95,7 @@ connectDB().then(async (connected) => {
             const count = await Product.countDocuments();
             if (count === 0) {
                 console.log('📦 Database is empty. Seeding pharmaceutical catalogue from products.json...');
-                const fs = require('fs');
-                const productsData = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'frontend', 'products.json'), 'utf-8'));
+                const productsData = JSON.parse(fs.readFileSync(path.join(__dirname, 'data', 'products.json'), 'utf-8'));
                 await Product.insertMany(productsData);
                 console.log(`🚀 Successfully seeded ${productsData.length} medicines into the clinical database.`);
             } else {
@@ -146,7 +145,7 @@ app.get('/api/products', async (req, res) => {
     try {
         if (!dbConnected) {
             console.warn('⚠️ DB offline, using fallback products.json');
-            const productsData = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'frontend', 'products.json'), 'utf-8'));
+            const productsData = JSON.parse(fs.readFileSync(path.join(__dirname, 'data', 'products.json'), 'utf-8'));
             return res.status(200).json(productsData);
         }
         const products = await Product.find({}).sort({ createdAt: -1 });
@@ -772,14 +771,15 @@ process.on('uncaughtException', (error) => {
 });
 
 // Graceful shutdown
-process.on('SIGTERM', () => {
-    console.log('⚠ SIGTERM signal received: closing HTTP server');
-    process.exit(0);
-});
-
 process.on('SIGINT', () => {
     console.log('\n⚠ Server interrupted');
-    process.exit(0);
+    server.close(() => {
+        console.log('✓ HTTP server closed by SIGINT');
+        mongoose.connection.close(false, () => {
+            console.log('✓ MongoDB connection closed');
+            process.exit(0);
+        });
+    });
 });
 
 module.exports = app;
