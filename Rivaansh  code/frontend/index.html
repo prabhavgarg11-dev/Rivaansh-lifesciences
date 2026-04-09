@@ -2,25 +2,42 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
     <meta name="description" content="Rivaansh Lifesciences — Licensed pharmacy delivering 100% genuine medicines. WHO-GMP certified, easy returns, express delivery across India.">
+    <meta name="keywords" content="pharmacy, medicines, genuine, healthcare, online pharmacy, licensed">
+    <meta name="author" content="Rivaansh Lifesciences">
     <meta name="theme-color" content="#0f2447">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Rivaansh">
+    <meta name="format-detection" content="telephone=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta property="og:title" content="Rivaansh Lifesciences — Clinical Pharmacy">
     <meta property="og:description" content="100% genuine medicines, licensed pharmacy, 7-day return policy. Shop tablets, capsules, vitamins & kits online.">
     <meta property="og:type" content="website">
+    <meta property="og:url" content="https://rivaansh-lifesciences.onrender.com">
+    <meta property="og:image" content="/logo.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Rivaansh Lifesciences">
+    <meta name="twitter:description" content="100% genuine medicines online">
     <title>Rivaansh Lifesciences — Licensed Clinical Pharmacy | 100% Genuine Medicines</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="canonical" href="https://rivaansh-lifesciences.onrender.com">
 
-    <!-- Syne (display) + DM Sans (body) — clinical precision meets warmth -->
+    <!-- Fonts — preconnect for performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- Icons (preloaded for fast render) -->
-    <link rel="shortcut icon" href="logo.png" type="image/png">
+    <!-- Icons and Favicon -->
+    <link rel="icon" href="logo.png" type="image/png">
+    <link rel="apple-touch-icon" href="logo.png">
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <!-- PWA Manifest -->
     <link rel="manifest" href="manifest.json">
+    
     <!-- Razorpay SDK -->
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 </head>
@@ -1231,23 +1248,31 @@
     </button>
 </div>
 
-<!-- Module scripts (load in order) -->
-<script type="module" src="api.js"></script>
-<script type="module" src="auth.js"></script>
-<script type="module" src="cart.js"></script>
-<script type="module" src="order.js"></script>
-<script type="module" src="script.js"></script>
+<!-- Main application script -->
+<script src="script.js"></script>
 
 <script>
+// Register Service Worker for PWA functionality
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/service-worker.js').then(reg => {
-      console.log('SW Registered!', reg);
-    }).catch(err => {
-      console.log('SW Failed!', err);
-    });
+    navigator.serviceWorker.register('/service-worker.js')
+      .then(reg => {
+        console.log('✅ Service Worker Registered:', reg);
+        // Check for updates periodically
+        setInterval(() => {
+          reg.update();
+        }, 60000); // Check every minute
+      })
+      .catch(err => {
+        console.error('❌ Service Worker Registration Failed:', err);
+        console.error('Details:', err.message);
+        // Service worker is optional - don't block the app
+      });
   });
+} else {
+  console.warn('⚠️ Service Workers not supported in this browser');
 }
+</script>
 </script>
 </body>
 </html>

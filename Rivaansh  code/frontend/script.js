@@ -5,10 +5,19 @@
 
 // ── API base URL ──────────────────────────────────────────────
 // Automatically uses localhost in development, Render in production.
-const _isLocal = ["localhost", "127.0.0.1", ""].includes(
-  window.location.hostname,
-);
-const API = _isLocal ? "http://localhost:5000" : "";
+const getAPIBase = () => {
+  const hostname = window.location.hostname;
+  const isLocal = ["localhost", "127.0.0.1"].includes(hostname);
+  const isLocalhost5500 = hostname === "127.0.0.1" && window.location.port === "5500";
+  
+  if (isLocal || isLocalhost5500) {
+    return "http://localhost:5000";
+  }
+  // For production (Render), use same origin (backend and frontend share same domain)
+  return `${window.location.protocol}//${hostname}`;
+};
+
+const API = getAPIBase();
 
 // ── State ──────────────────────────────────────────────────────────────────
 let _allProducts = []; // full catalogue from API
@@ -43,8 +52,44 @@ const ADMIN_CREDENTIALS = {
   role: "admin",
 };
 
+// ── SIMPLE AUTH HELPERS ────────────────────────────────────────────────────
+function loginUser(email, password) {
+  try {
+    const user = _users.find(u => u.email === email && u.password === password);
+    if (user) {
+      return { ok: true, user: { ...user, password: undefined } };
+    }
+    return { ok: false, message: "Invalid email or password" };
+  } catch (err) {
+    return { ok: false, message: err.message };
+  }
+}
+
+function registerUser(name, email, phone = "", password) {
+  try {
+    if (_users.find(u => u.email === email)) {
+      return { ok: false, message: "Email already registered" };
+    }
+    const newUser = {
+      uid: Math.random().toString(36).substr(2, 9),
+      name,
+      email,
+      phone,
+      password,
+      role: "user",
+      createdAt: new Date().toISOString()
+    };
+    _users.push(newUser);
+    localStorage.setItem("rv_users", JSON.stringify(_users));
+    return { ok: true, user: { ...newUser, password: undefined } };
+  } catch (err) {
+    return { ok: false, message: err.message };
+  }
+}
+
 // ── DOM READY ──────────────────────────────────────────────────────────────
 document.addEventListener("DOMContentLoaded", async () => {
+  console.log("✓ DOMContentLoaded fired, initializing Rivaansh app...");
   // Initialize admin user if missing
   if (!_users.length) {
     _users.push({
@@ -57,30 +102,44 @@ document.addEventListener("DOMContentLoaded", async () => {
     localStorage.setItem("rv_users", JSON.stringify(_users));
   }
 
+  console.log("✓ Attaching search...");
   attachSearch();
+  console.log("✓ Attaching navigation...");
   attachSpotlightNav();
+  console.log("✓ Rendering cart...");
   renderCart();
   updateCartBadge();
+  console.log("✓ Rendering auth buttons...");
   renderAuthButtons();
   renderOrders();
+  console.log("✓ Loading products...");
   await loadProducts();
+  console.log("✓ Updating admin stats...");
   updateAdminStats();
+  console.log("✓ Checking AI status...");
   checkAIStatus();
-  hideLoader();
+  console.log("✓ App initialization complete!");
 });
 
 // ── LOADER ─────────────────────────────────────────────────────────────────
 function hideLoader() {
   const l = document.getElementById("loader");
+  console.log("🔄 hideLoader called, loader element:", l);
   if (l) {
     l.style.transition = "opacity 0.6s ease, visibility 0.6s ease";
     l.style.opacity = "0";
     l.style.visibility = "hidden";
-    setTimeout(() => (l.style.display = "none"), 600);
+    setTimeout(() => {
+      l.style.display = "none";
+      console.log("✓ Loader hidden successfully");
+    }, 600);
+  } else {
+    console.warn("⚠️ Loader element not found!");
   }
 }
 
 window.addEventListener("load", () => {
+    console.log("✓ Window load event fired");
     setTimeout(hideLoader, 500); // Aesthetic delay for clinical feel
 });
 
@@ -115,10 +174,12 @@ async function checkClinicalConnectivity() {
 }
 
 async function loadProducts() {
+  console.log("📦 loadProducts started, API:", API);
   const loaderText = document.querySelector(".loader-text");
   if (loaderText) loaderText.textContent = "🏥 Probing Clinical Backend...";
 
   const isUp = await checkClinicalConnectivity();
+  console.log("✓ Backend connectivity check:", isUp);
 
   if (!isUp) {
     console.warn("⚠️ Clinical backend not reachable. Using fallback.");
@@ -129,6 +190,7 @@ async function loadProducts() {
       "info",
     );
     loadFallbackProducts();
+    hideLoader();
     return;
   }
 
@@ -1251,16 +1313,14 @@ window.handleAuth = async function (type) {
     if (!email || !pass) return toast("Please enter email and password", "error");
 
     try {
-      // Use auth.js login function
-      const { login } = await import('./auth.js');
-      const result = await login(email, pass);
+      const result = loginUser(email, pass);
       
       if (result.ok) {
         _user = result.user;
         saveAuthState();
         closeAuthModal();
         toast(`Welcome back, ${_user.name.split(" ")[0]}!`, "success");
-        if (_user.isAdmin) showPage("adminPanel");
+        if (_user.role === "admin") showPage("adminPanel");
         else showPage("dashboard");
       } else {
         toast(result.message || "Login failed", "error");
@@ -1276,9 +1336,7 @@ window.handleAuth = async function (type) {
     if (!name || !email || !pass) return toast("Please fill all signup fields", "error");
 
     try {
-      // Use auth.js register function
-      const { register } = await import('./auth.js');
-      const result = await register(name, email, '', pass);
+      const result = registerUser(name, email, '', pass);
       
       if (result.ok) {
         _user = result.user;

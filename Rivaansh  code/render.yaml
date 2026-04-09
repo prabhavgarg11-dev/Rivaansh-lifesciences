@@ -1,0 +1,63 @@
+# ─── Render Deployment Configuration ──────────────────────────────────────
+# Deploy Rivaansh Backend on Render.com
+# Steps:
+# 1. Connect your GitHub repo to Render
+# 2. Create new Web Service
+# 3. Use this file automatically or set environment variables manually
+
+services:
+  - type: web
+    name: rivaansh-backend
+    plan: free  # or pro for better performance
+    runtime: node
+    region: singapore  # or your preferred region
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5000
+      - key: MONGO_URI
+        # Set in Render Dashboard - NEVER commit real URI to git
+        fromDatabase: rivaansh_mongo
+      - key: GEMINI_API_KEY
+        # Set in Render Dashboard from your Google Cloud Project
+        sync: false
+      - key: ADMIN_EMAIL
+        value: admin@rivaansh.com
+      - key: ADMIN_SECRET
+        # Generate strong secret and set in Dashboard
+        sync: false
+      - key: FRONTEND_URL
+        value: https://rivaansh-lifesciences.vercel.app
+      - key: CORS_ORIGINS
+        value: "https://rivaansh-lifesciences.vercel.app,https://rivaansh-frontend.onrender.com"
+
+    # Connect MongoDB if using Render's database
+    # databases:
+    #   - name: rivaansh_mongo
+
+    # Health check configuration
+    healthCheckPath: /api/health
+    healthCheckStartupFailureThresholdCount: 10
+    
+    # Auto-deploy on git push
+    autoDeploy: true
+    
+    # Custom domains
+    # domains:
+    #   - rivaansh-api.onrender.com
+    #   - api.rivaansh.com (if you own the domain)
+
+    # Pull request previews (for testing)
+    previewsEnabled: true
+    previewsLimit: 3
+
+    # Max instances for scaling
+    maxInstances: 3
+    minInstances: 1
+
+    # Docker configuration (optional - use for custom setup)
+    # dockerfile: Dockerfile
+    # dockerContext: ./backend

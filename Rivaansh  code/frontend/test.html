@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rivaansh — System Test</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'DM Sans', system-ui, sans-serif; background: linear-gradient(135deg, #0f2447 0%, #1a3a52 100%); color: #fff; padding: 40px; min-height: 100vh; }
+        .container { max-width: 600px; margin: 0 auto; background: rgba(255,255,255,0.1); border-radius: 12px; padding: 30px; backdrop-filter: blur(10px); }
+        h1 { font-size: 28px; margin-bottom: 20px; }
+        .status { margin: 15px 0; padding: 12px; border-radius: 6px; }
+        .success { background: rgba(34, 197, 94, 0.2); border-left: 4px solid #22c55e; }
+        .error { background: rgba(239, 68, 68, 0.2); border-left: 4px solid #ef4444; }
+        .info { background: rgba(59, 130, 246, 0.2); border-left: 4px solid #3b82f6; }
+        .code { background: rgba(0,0,0,0.3); padding: 10px; border-radius: 4px; font-family: monospace; font-size: 12px; margin-top: 10px; }
+        button { background: #0f2447; color: #fff; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; margin-top: 20px; }
+        button:hover { background: #1a3a52; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>✓ Rivaansh Lifesciences — System Test</h1>
+        <div class="status success">
+            <strong>✓ Page Loading:</strong> HTML and CSS are rendering correctly
+        </div>
+        <div id="apiTest" class="status info">
+            <strong>⏳ API Test:</strong> Checking backend connectivity...
+        </div>
+        <div id="scriptTest" class="status info">
+            <strong>⏳ Script Test:</strong> Initializing application...
+        </div>
+        <div id="domTest" class="status info">
+            <strong>⏳ DOM Test:</strong> Checking render functions...
+        </div>
+        <div class="status info">
+            <strong>Next Step:</strong>
+            <p>If all tests pass, click below to go to the main website:</p>
+            <button onclick="window.location.href='/'">Go to Main Website →</button>
+        </div>
+    </div>
+
+    <script>
+        console.log("【Test Page Started】");
+        
+        // Test 1: API Connectivity
+        const apiURL = "http://localhost:5000";
+        fetch(apiURL + "/api/health")
+            .then(r => r.json())
+            .then(d => {
+                document.getElementById("apiTest").innerHTML = `<strong>✓ API Connected:</strong> Backend is responding. Status: ${d.status}, DB: ${d.database}`;
+                document.getElementById("apiTest").className = "status success";
+                console.log("✓ API test passed");
+            })
+            .catch(e => {
+                document.getElementById("apiTest").innerHTML = `<strong>✗ API Error:</strong> ${e.message}`;
+                document.getElementById("apiTest").className = "status error";
+                console.error("✗ API test failed:", e);
+            });
+
+        // Test 2: Script Functions
+        setTimeout(() => {
+            try {
+                const testFunctions = ["hideLoader", "loadProducts", "renderHome", "renderCart"];
+                const windowObj = window;
+                let allFound = true;
+                let missingFunctions = [];
+                
+                testFunctions.forEach(fn => {
+                    if (typeof windowObj[fn] !== "function") {
+                        allFound = false;
+                        missingFunctions.push(fn);
+                    }
+                });
+
+                if (allFound) {
+                    document.getElementById("scriptTest").innerHTML = `<strong>✓ Scripts Loaded:</strong> All essential functions available (${testFunctions.join(", ")})`;
+                    document.getElementById("scriptTest").className = "status success";
+                    console.log("✓ Script test passed");
+                } else {
+                    throw new Error(`Missing functions: ${missingFunctions.join(", ")}`);
+                }
+            } catch (e) {
+                document.getElementById("scriptTest").innerHTML = `<strong>✗ Script Error:</strong> ${e.message}<div class="code">${e.stack}</div>`;
+                document.getElementById("scriptTest").className = "status error";
+                console.error("✗ Script test failed:", e);
+            }
+        }, 2000);
+
+        // Test 3: DOM Elements
+        setTimeout(() => {
+            const requiredElements = ["loader", "modal", "cartDrawer", "homeGrid", "allGrid"];
+            let allFound = true;
+            let missingElements = [];
+            
+            requiredElements.forEach(id => {
+                if (!document.getElementById(id)) {
+                    allFound = false;
+                    missingElements.push(id);
+                }
+            });
+
+            if (allFound) {
+                document.getElementById("domTest").innerHTML = `<strong>✓ DOM Ready:</strong> All required elements present (${requiredElements.join(", ")})`;
+                document.getElementById("domTest").className = "status success";
+                console.log("✓ DOM test passed");
+            } else {
+                document.getElementById("domTest").innerHTML = `<strong>✗ DOM Error:</strong> Missing elements: ${missingElements.join(", ")}`;
+                document.getElementById("domTest").className = "status error";
+                console.error("✗ DOM test failed: missing", missingElements);
+            }
+        }, 3000);
+
+        console.log("【Test Page Ready - Open browser console for details】");
+    </script>
+</body>
+</html>

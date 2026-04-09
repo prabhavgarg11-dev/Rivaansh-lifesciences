@@ -1334,6 +1334,14 @@ button:active { transform: scale(0.95); }
 
 @keyframes spinStartup { to { transform: rotate(360deg); } }
 
+/* Loader completely hidden */
+#loader[style*="display: none"], #loader.hidden {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
 /* TOAST STARTUP */
 .toast-startup {
   position: fixed; bottom: 40px; left: 50%;

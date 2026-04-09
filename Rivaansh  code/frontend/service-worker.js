@@ -11,18 +11,11 @@ const API_CACHE     = `${CACHE_VERSION}-api`;
 const STATIC_ASSETS = [
     '/',
     '/index.html',
+    '/offline.html',
     '/script.js',
-    '/api.js',
-    '/auth.js',
-    '/cart.js',
-    '/order.js',
     '/style.css',
     '/manifest.json',
     '/logo.png',
-    '/offline.html',
-    // Add critical fonts and icons
-    'https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap',
-    'https://fonts.googleapis.com/icon?family=Material+Icons+Round',
 ];
 
 // ── INSTALL ───────────────────────────────────────────────────────────────────
@@ -30,10 +23,22 @@ self.addEventListener('install', event => {
     event.waitUntil(
         caches.open(STATIC_CACHE).then(cache => {
             // addAll fails if ANY resource 404s — use individual adds to be safe
-            return Promise.allSettled(
-                STATIC_ASSETS.map(url => cache.add(url).catch(() => null))
+            return Promise.all(
+                STATIC_ASSETS.map(url => {
+                    return cache.add(url).catch(err => {
+                        console.warn(`[SW] Failed to cache ${url}:`, err.message);
+                        // Don't fail installation if one asset fails
+                        return null;
+                    });
+                })
             );
-        }).then(() => self.skipWaiting())  // activate immediately
+        }).then(() => {
+            console.log('[SW] Cache populated, skipping wait...');
+            return self.skipWaiting();  // activate immediately
+        }).catch(err => {
+            console.error('[SW] Installation error:', err);
+            return self.skipWaiting();  // Force activation even if cache fails
+        })
     );
 });
 
@@ -107,7 +112,7 @@ self.addEventListener('fetch', event => {
                 }).catch(() => {
                     // Navigation request while offline → serve app shell
                     if (request.mode === 'navigate') {
-                        return caches.match('/index(1).html') ||
+                        return caches.match('/index.html') ||
                                caches.match('/offline.html');
                     }
                     // For other resource types, serve a fallback if available
