@@ -1,26 +1,26 @@
-import Order from '../models/Order.js';
-import Cart from '../models/Cart.js';
+const Order = require('../models/Order.js');
+const Cart = require('../models/Cart.js');
 
-export const addOrderItems = async (req, res) => {
+const addOrderItems = async (req, res) => {
     try {
         const { items, address, phone, totalAmount } = req.body;
         // Parse items if sent as JSON string via FormData
         const parsedItems = typeof items === 'string' ? JSON.parse(items) : items;
         const prescription = req.file ? `/uploads/${req.file.filename}` : null;
-        
+
         if (!parsedItems || parsedItems.length === 0) {
             return res.status(400).json({ message: 'No order items' });
         }
-        
+
         const order = new Order({
-            userId: req.user._id, 
-            items: parsedItems, 
-            address, 
-            phone, 
-            totalAmount, 
+            userId: req.user._id,
+            items: parsedItems,
+            address,
+            phone,
+            totalAmount,
             prescription
         });
-        
+
         const createdOrder = await order.save();
 
         // ── Clear the user's cart after order is placed ──────────────────
@@ -33,7 +33,7 @@ export const addOrderItems = async (req, res) => {
     }
 };
 
-export const getMyOrders = async (req, res) => {
+const getMyOrders = async (req, res) => {
     try {
         const orders = await Order.find({ userId: req.user._id })
             .populate('items.productId', 'name price brand category prescriptionRequired')
@@ -44,7 +44,9 @@ export const getMyOrders = async (req, res) => {
     }
 };
 
-export const getOrders = async (req, res) => {
+const getOrders = async (req, res) => {
     const orders = await Order.find({}).populate('userId', 'name email phone');
     res.json(orders);
 };
+
+module.exports = { addOrderItems, getMyOrders, getOrders };

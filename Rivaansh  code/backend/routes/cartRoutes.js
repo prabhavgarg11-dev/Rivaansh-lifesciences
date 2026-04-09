@@ -1,15 +1,15 @@
-import express from 'express';
-import { getUserCart, addToCart, removeFromCart, clearCart } from '../controllers/cartController.js';
-import { protect } from '../middleware/authMiddleware.js';
+const express = require('express');
+const cartController = require('../controllers/cartController.js');
+const { protect } = require('../middleware/authMiddleware.js');
 
 const router = express.Router();
 
 router.route('/')
-      .get(protect, getUserCart)
-      .post(protect, addToCart)
-      .delete(protect, clearCart);      // Clear entire cart after order
+      .get(protect, cartController.getUserCart)
+      .post(protect, cartController.addToCart)
+      .delete(protect, cartController.clearCart);      // Clear entire cart after order
 
 router.route('/:productId')
-      .delete(protect, removeFromCart);
+      .delete(protect, cartController.removeFromCart);
 
-export default router;
+module.exports = router;

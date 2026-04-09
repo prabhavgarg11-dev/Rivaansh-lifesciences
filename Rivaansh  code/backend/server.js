@@ -233,6 +233,22 @@ app.post('/api/orders/:id/payment-confirmation', async (req, res) => {
 });
 
 // ═══════════════════════════════════════════════════════════════════════════
+// CLINICAL API ROUTES — Auth, Cart, Orders, Products
+// ═══════════════════════════════════════════════════════════════════════════
+
+// Mount authentication routes
+app.use('/api/auth', require('./routes/authRoutes'));
+
+// Mount cart management routes
+app.use('/api/cart', require('./routes/cartRoutes'));
+
+// Mount order management routes
+app.use('/api/orders', require('./routes/orderRoutes'));
+
+// Mount product routes
+app.use('/api/products', require('./routes/productRoutes'));
+
+// ═══════════════════════════════════════════════════════════════════════════
 // CLINICAL AI HUB — Gemini + Smart Fallback
 // All routes are served from routes/ai.js
 // ═══════════════════════════════════════════════════════════════════════════

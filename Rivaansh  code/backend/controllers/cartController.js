@@ -1,7 +1,7 @@
-import Cart from '../models/Cart.js';
+const Cart = require('../models/Cart.js');
 
 // GET /api/cart — fetch user's cart with populated product details
-export const getUserCart = async (req, res) => {
+const getUserCart = async (req, res) => {
     try {
         let cart = await Cart.findOne({ userId: req.user._id })
             .populate('items.productId', 'name price brand category prescriptionRequired imageUrl');
@@ -15,7 +15,7 @@ export const getUserCart = async (req, res) => {
 };
 
 // POST /api/cart — add item or update quantity (quantity is a delta: +1 to add, -1 to reduce)
-export const addToCart = async (req, res) => {
+const addToCart = async (req, res) => {
     try {
         const { productId, quantity } = req.body;
         if (!productId || quantity === undefined) {
@@ -51,7 +51,7 @@ export const addToCart = async (req, res) => {
 };
 
 // DELETE /api/cart/:productId — remove a specific item
-export const removeFromCart = async (req, res) => {
+const removeFromCart = async (req, res) => {
     try {
         const cart = await Cart.findOne({ userId: req.user._id });
         if (!cart) return res.status(404).json({ message: 'Cart not found' });
@@ -67,7 +67,7 @@ export const removeFromCart = async (req, res) => {
 };
 
 // DELETE /api/cart — clear entire cart (called after order placement)
-export const clearCart = async (req, res) => {
+const clearCart = async (req, res) => {
     try {
         const cart = await Cart.findOne({ userId: req.user._id });
         if (cart) {
@@ -79,3 +79,5 @@ export const clearCart = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+module.exports = { getUserCart, addToCart, removeFromCart, clearCart };

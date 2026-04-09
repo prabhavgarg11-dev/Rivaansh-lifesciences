@@ -1,9 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const { GoogleGenerativeAI } = require('@google/generative-ai');
+const OpenAI = require('openai');
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+const openaiClient = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 const PHARMACY_SYSTEM = `You are Riva, a clinical AI assistant for Rivaansh Lifesciences, 
 a WHO-GMP certified pharmacy in Jaipur, India. You help patients understand medicines, 
@@ -13,6 +15,7 @@ Never diagnose definitively — always say "this may indicate" or "consult your 
 
 // FEATURE 1: Context-aware Gemini chat with conversation history
 async function geminiChat(prompt, history) {
+    // Try Gemini first
     try {
         const chat = model.startChat({
             history: history || []
@@ -21,7 +24,37 @@ async function geminiChat(prompt, history) {
         return result.response.text();
     } catch (err) {
         console.error('Gemini API error:', err.message);
-        throw err;
+    }
+
+    // Fallback to OpenAI
+    try {
+        const messages = history ? history.map(h => ({ role: h.role, content: h.parts[0].text })) : [];
+        messages.push({ role: 'user', content: prompt });
+        
+        const response = await openaiClient.chat.completions.create({
+            model: 'gpt-4o-mini',
+            messages: [
+                { role: 'system', content: PHARMACY_SYSTEM },
+                ...messages
+            ],
+            max_tokens: 500,
+        });
+        return response.choices[0]?.message?.content || 'I apologize, but I cannot provide a response at this time.';
+    } catch (openaiErr) {
+        console.error('OpenAI API error:', openaiErr.message);
+        
+        // Rule-based fallback
+        const msg = prompt.toLowerCase();
+        if (msg.includes('headache') || msg.includes('pain')) {
+            return 'For headaches, consider Rivakold™ Antikold Tablets (₹85) which provides relief from pain and fever. Take 1-2 tablets after meals. If severe or persistent, please consult a doctor.';
+        }
+        if (msg.includes('cold') || msg.includes('fever') || msg.includes('cough')) {
+            return 'Rivakold™ is our clinical-grade cold relief medication. It helps with fever, cough, and congestion. Available for ₹85. For high fever above 103°F, seek medical attention.';
+        }
+        if (msg.includes('hello') || msg.includes('hi')) {
+            return 'Hello! 👋 Welcome to Rivaansh Lifesciences. I\'m your clinical assistant. How can I help you with medicines, prescriptions, or health queries today?';
+        }
+        return 'Thank you for reaching out to Rivaansh Lifesciences. Our clinical team is available at +91 8426033033 or rivaanshlifesciences@gmail.com for personalized assistance.';
     }
 }
 
@@ -31,7 +64,7 @@ router.get('/status', (req, res) => {
     res.json({
         available,
         message: available ? 'Gemini AI is online' : 'AI offline - add GEMINI_API_KEY to .env',
-        mode: available ? 'gemini-1.5-flash' : 'fallback'
+        mode: available ? 'gemini-pro' : 'fallback'
     });
 });
 

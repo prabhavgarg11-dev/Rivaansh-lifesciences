@@ -21,7 +21,7 @@ const isValidKey = (key) => key && !key.includes('your_') && key.length > 10;
 if (isValidKey(GEMINI_KEY)) {
   try {
     gemini = new GoogleGenerativeAI(GEMINI_KEY);
-    geminiModel = gemini.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    geminiModel = gemini.getGenerativeModel({ model: 'gemini-pro' });
     console.log('✅ Gemini AI initialized (Clinical Hub)');
   } catch (e) {
     console.warn('⚠️ Gemini init failed:', e.message);

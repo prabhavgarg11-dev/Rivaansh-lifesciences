@@ -1,14 +1,13 @@
-import express from 'express';
-import { addOrderItems, getMyOrders, getOrders } from '../controllers/orderController.js';
-import { protect, admin } from '../middleware/authMiddleware.js';
-import upload from '../middleware/uploadMiddleware.js';
+const express = require('express');
+const orderController = require('../controllers/orderController.js');
+const { protect, admin } = require('../middleware/authMiddleware.js');
+const upload = require('../middleware/uploadMiddleware.js');
 
 const router = express.Router();
 
 router.route('/')
-      .post(protect, upload.single('prescription'), addOrderItems)
-      .get(protect, admin, getOrders);
-      
-router.route('/myorders').get(protect, getMyOrders);
+      .post(protect, upload.single('prescription'), orderController.addOrderItems)
+      .get(protect, admin, orderController.getOrders);
 
-export default router;
+router.route('/myorders').get(protect, orderController.getMyOrders);
+module.exports = router;
