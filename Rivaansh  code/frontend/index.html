@@ -53,8 +53,8 @@
         {
           "@type": "Organization",
           "name": "Rivaansh Lifesciences",
-          "url": "https://rivaansh-lifesciences.onrender.com/",
-          "logo": "https://rivaansh-lifesciences.onrender.com/logo.png",
+          "url": "https://rivaansh-lifesciences.vercel.app/",
+          "logo": "https://rivaansh-lifesciences.vercel.app/logo.png",
           "sameAs": [
             "https://www.facebook.com/rivaansh",
             "https://www.linkedin.com/company/rivaansh-lifesciences"
@@ -79,21 +79,21 @@
         },
         {
           "@type": "WebSite",
-          "url": "https://rivaansh-lifesciences.onrender.com/",
+          "url": "https://rivaansh-lifesciences.vercel.app/",
           "name": "Rivaansh Lifesciences",
           "description": "AI-powered healthcare platform for authenticated medicines, clinical support, and wellness products in India.",
           "potentialAction": {
             "@type": "SearchAction",
-            "target": "https://rivaansh-lifesciences.onrender.com/?s={search_term_string}",
+            "target": "https://rivaansh-lifesciences.vercel.app/?s={search_term_string}",
             "query-input": "required name=search_term_string"
           }
         },
         {
           "@type": "BreadcrumbList",
           "itemListElement": [
-            {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://rivaansh-lifesciences.onrender.com/"},
-            {"@type": "ListItem", "position": 2, "name": "Products", "item": "https://rivaansh-lifesciences.onrender.com/products"},
-            {"@type": "ListItem", "position": 3, "name": "AI Health Lab", "item": "https://rivaansh-lifesciences.onrender.com/ai-health"}
+            {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://rivaansh-lifesciences.vercel.app/"},
+            {"@type": "ListItem", "position": 2, "name": "Products", "item": "https://rivaansh-lifesciences.vercel.app/products"},
+            {"@type": "ListItem", "position": 3, "name": "AI Health Lab", "item": "https://rivaansh-lifesciences.vercel.app/ai-health"}
           ]
         },
         {
@@ -1362,46 +1362,35 @@
 
 <script>
 // Register Service Worker for PWA functionality
-// Only register when API is on same origin (port 5000 or production)
+// Only register when app origin and API origin match and the page is served over HTTPS or localhost.
 if ('serviceWorker' in navigator) {
-  // Check if API is on same origin (same logic as getAPIBase in script.js)
   const hostname = window.location.hostname;
-  const isLocal = ["localhost", "127.0.0.1"].includes(hostname);
-  const isLocalhost5500 = hostname === "127.0.0.1" && window.location.port === "5500";
+  const isLocal = ['localhost', '127.0.0.1'].includes(hostname);
+  const isLocalhost5500 = hostname === '127.0.0.1' && window.location.port === '5500';
+  const apiOrigin = isLocal || isLocalhost5500
+    ? 'http://localhost:5000'
+    : `${window.location.protocol}//${hostname}`;
 
-  let apiOrigin;
-  if (isLocal || isLocalhost5500) {
-    apiOrigin = "http://localhost:5000";
-  } else {
-    apiOrigin = `${window.location.protocol}//${hostname}`;
-  }
-
-  const isSameOrigin = window.location.origin === new URL(apiOrigin).origin;
-
-  if (isSameOrigin) {
+  if (window.location.origin === new URL(apiOrigin).origin) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/service-worker.js')
+      navigator.serviceWorker.register('/service-worker.js', { scope: '/' })
         .then(reg => {
           console.log('✅ Service Worker Registered:', reg);
-          // Check for updates periodically
-          setInterval(() => {
-            reg.update();
-          }, 60000); // Check every minute
+          reg.addEventListener('updatefound', () => {
+            console.log('🔄 New service worker found, installing update.');
+          });
+          setInterval(() => reg.update(), 60000);
         })
         .catch(err => {
-          console.error('❌ Service Worker Registration Failed:', err);
-          console.error('Details:', err.message);
-          // Service worker is optional - don't block the app
+          console.warn('❌ Service Worker registration failed:', err);
         });
     });
   } else {
-    console.log('ℹ️ Service Worker skipped (API calls go to different origin)');
+    console.log('ℹ️ Service Worker skipped: API origin differs from app origin.');
   }
-}
 } else {
-  console.warn('⚠️ Service Workers not supported in this browser');
+  console.warn('⚠️ Service Worker unavailable or insecure context.');
 }
-</script>
 </script>
 </body>
 </html>

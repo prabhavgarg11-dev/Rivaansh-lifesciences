@@ -61,7 +61,7 @@ self.addEventListener('fetch', event => {
     const url = new URL(request.url);
 
     // ① API requests → Network-First with offline fallback (only GET)
-    if (url.pathname.startsWith('/api/') || url.port === '5000') {
+    if (url.origin === self.location.origin && url.pathname.startsWith('/api/')) {
         // Non-GET API calls (POST, PUT, DELETE) → always network, never cache
         if (request.method !== 'GET') {
             event.respondWith(
@@ -78,10 +78,8 @@ self.addEventListener('fetch', event => {
             return;
         }
 
-        // API requests → Always go to Network, Skip Cache (Fixing loading/CORS stuckness)
         event.respondWith(
             fetch(request).catch(() => {
-                // Only use cache as fallback if network fails
                 return caches.match(request).then(cached => {
                     return cached || new Response(
                         JSON.stringify({

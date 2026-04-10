@@ -23,55 +23,53 @@ const app = express();
 const isDevelopment = process.env.NODE_ENV !== 'production';
 const getCORSOrigins = () => {
   const envOrigins = process.env.CORS_ORIGINS || '';
-  const hardcodedOrigins = [
+  const defaultOrigins = [
     'http://localhost:3000',
     'http://127.0.0.1:3000',
     'http://localhost:5000',
     'http://127.0.0.1:5000',
     'http://localhost:5500',
     'http://127.0.0.1:5500',
-    'https://rivaansh-lifesciences.onrender.com',
     'https://rivaansh-lifesciences.vercel.app',
-    'https://rivaansh-frontend.onrender.com'
+    'https://rivaansh-lifesciences.onrender.com'
   ];
-  
-  return envOrigins ? envOrigins.split(',').map(o => o.trim()).concat(hardcodedOrigins) : hardcodedOrigins;
+
+  return envOrigins
+    ? envOrigins.split(',').map((o) => o.trim()).concat(defaultOrigins)
+    : defaultOrigins;
 };
 
-const ALLOWED_ORIGINS = getCORSOrigins();
+const ALLOWED_ORIGINS = new Set(getCORSOrigins());
+
+app.disable('x-powered-by');
+app.set('trust proxy', true);
 
 app.use(cors({
-    origin: (origin, callback) => {
-      // Allow requests with no origin (like mobile apps or curl requests)
-      if (!origin) return callback(null, true);
-      
-      // Check if origin is in allowed list
-      if (ALLOWED_ORIGINS.includes(origin)) return callback(null, true);
-      
-      // Allow any subdomain of render.com, vercel.app, or custom domains
-      if (origin.includes('render.com') || origin.includes('.vercel.app') || 
-          origin.includes('rivaansh')) {
-        return callback(null, true);
-      }
-      
-      // In production, be strict
-      if (!isDevelopment) {
-        console.warn(`⚠️ CORS blocked request from: ${origin}`);
-        return callback(new Error('CORS not allowed'));
-      }
-      
-      // In development, be lenient
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+    if (ALLOWED_ORIGINS.has(origin)) return callback(null, true);
+
+    if (/(^https?:\/\/([^\/]+\.)?(vercel\.app|render\.com)$)/i.test(origin)) {
       return callback(null, true);
-    },
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'x-manual-token', 'x-admin-token'],
-    credentials: true,
-    optionsSuccessStatus: 200
+    }
+
+    if (!isDevelopment) {
+      console.warn(`⚠️ CORS blocked request from: ${origin}`);
+      return callback(new Error('CORS not allowed'));
+    }
+
+    return callback(null, true);
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'x-manual-token', 'x-admin-token'],
+  credentials: true,
+  optionsSuccessStatus: 200,
 }));
-app.options('*', cors()); 
+app.options('*', cors());
 
 app.use(helmet({
-    contentSecurityPolicy: false, // Disable CSP for demo/root simplicity or configure specifically
+  contentSecurityPolicy: false,
+  crossOriginEmbedderPolicy: false,
 }));
 app.use(compression());
 app.use(morgan('dev'));
@@ -104,6 +102,31 @@ connectDB().then(async (connected) => {
         } catch (seedErr) {
             console.error('❌ Seeding failed:', seedErr.message);
         }
+
+        // Update status display after successful connection
+        const nodeEnv = process.env.NODE_ENV || 'development';
+        const mongoStatus = '✓ Connected';
+        const aiStatus = process.env.GEMINI_API_KEY ? '✓ Enabled' : '⚠ Disabled';
+        const corsOrigins = ALLOWED_ORIGINS.size;
+
+        console.log('\n🔄 Database connection established - updating status...');
+        console.log('\n╔═══════════════════════════════════════════════════════════╗');
+        console.log('║                                                           ║');
+        console.log(`║  🏥 RIVAANSH LIFESCIENCES — ${nodeEnv.toUpperCase().padEnd(24)} ║`);
+        console.log('║                                                           ║');
+        console.log(`║  ✓ Server:        localhost:${PORT}                       ║`);
+        console.log(`║  ✓ Database:      ${mongoStatus.padEnd(40)}║`);
+        console.log(`║  ✓ AI Module:     ${aiStatus.padEnd(40)}║`);
+        console.log(`║  ✓ CORS Origins:  ${corsOrigins} domains allowed${' '.repeat(31-String(corsOrigins).length)}║`);
+        console.log('║                                                           ║');
+        console.log('║  API Endpoints:                                          ║');
+        console.log('║  • GET  /api/health         — Health check               ║');
+        console.log('║  • GET  /api/products       — List medicines             ║');
+        console.log('║  • GET  /api/products/:id   — Product details            ║');
+        console.log('║  • POST /api/orders         — Create order               ║');
+        console.log('║  • POST /api/ai/chat        — AI assistant               ║');
+        console.log('║                                                           ║');
+        console.log('╚═══════════════════════════════════════════════════════════╝\n');
     }
 });
 
@@ -128,10 +151,45 @@ const User = require('./models/User');
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Serve static frontend files and images (linked to the new frontend/ folder)
-app.use(express.static(path.join(__dirname, '..', 'frontend')));
-app.use('/images', express.static(path.join(__dirname, '..', 'frontend', 'images')));
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// Request logging for diagnostics
+app.use((req, res, next) => {
+  console.log(`Incoming: ${req.method} ${req.originalUrl}`);
+  res.on('finish', () => {
+    console.log(`Completed: ${req.method} ${req.originalUrl} ${res.statusCode}`);
+  });
+  next();
+});
+
+// Wrap async route handlers so unhandled promise rejections are passed to error middleware
+const asyncHandler = (fn) => (req, res, next) => {
+  Promise.resolve(fn(req, res, next)).catch(next);
+};
+
+['get', 'post', 'put', 'patch', 'delete'].forEach((method) => {
+  const original = app[method];
+  app[method] = function (path, ...handlers) {
+    const wrappedHandlers = handlers.map((handler) => {
+      if (handler && handler.constructor && handler.constructor.name === 'AsyncFunction') {
+        return asyncHandler(handler);
+      }
+      return handler;
+    });
+    return original.call(app, path, ...wrappedHandlers);
+  };
+});
+
+// Serve static frontend files and images (if backend and frontend are deployed together)
+app.use(express.static(path.join(__dirname, '..', 'frontend'), {
+  index: false,
+  maxAge: '1d',
+  setHeaders: (res, assetPath) => {
+    if (assetPath.endsWith('.html')) {
+      res.setHeader('Cache-Control', 'public, max-age=0, s-maxage=600, must-revalidate');
+    }
+  }
+}));
+app.use('/images', express.static(path.join(__dirname, '..', 'frontend', 'images'), { maxAge: '7d' }));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads'), { maxAge: '2d' }));
 
 app.get('/sitemap.xml', async (req, res) => {
     const host = `${req.protocol}://${req.get('host')}`;
@@ -163,6 +221,26 @@ app.get('/sitemap.xml', async (req, res) => {
     const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.join('\n')}\n</urlset>`;
     res.header('Content-Type', 'application/xml');
     res.send(xml);
+});
+
+app.get('/health', (req, res) => {
+    res.status(200).json({
+        status: 'running',
+        database: dbConnected ? 'CONNECTED' : 'DISCONNECTED',
+        environment: process.env.NODE_ENV || 'development',
+        timestamp: new Date().toISOString()
+    });
+});
+
+app.get('/api/status', (req, res) => {
+    res.status(200).json({
+        status: 'ok',
+        database: dbConnected ? 'CONNECTED' : 'DISCONNECTED',
+        ai: process.env.GEMINI_API_KEY || process.env.OPENAI_API_KEY ? 'available' : 'unavailable',
+        environment: process.env.NODE_ENV || 'production',
+        uptime: process.uptime(),
+        timestamp: new Date().toISOString()
+    });
 });
 
 app.get('*', (req, res, next) => {
@@ -711,7 +789,8 @@ app.get('/', (req, res) => {
             'GET /api/products': 'Fetch all products',
             'GET /api/products/:id': 'Fetch single product by ID',
             'GET /api/products/category/:category': 'Fetch products by category',
-            'GET /health': 'Server health check'
+            'GET /api/health': 'API health check',
+            'GET /health': 'Server working check'
         }
     });
 });
@@ -734,10 +813,10 @@ app.use((req, res) => {
  * Global Error Handler
  */
 app.use((err, req, res, next) => {
-  console.error("ERROR:", err.stack);
+  console.error('🔥 ERROR STACK:', err.stack);
   res.status(err.status || 500).json({
     success: false,
-    message: err.message || "Server Error"
+    message: err.message || 'Internal Server Error'
   });
 });
 
@@ -747,10 +826,10 @@ app.use((err, req, res, next) => {
 
 const server = app.listen(PORT, () => {
     const nodeEnv = process.env.NODE_ENV || 'development';
-    const mongoStatus = dbConnected ? '✓ Connected' : '⚠ Fallback (No DB)';
+    const mongoStatus = '⏳ Connecting...'; // Will be updated after DB connects
     const aiStatus = process.env.GEMINI_API_KEY ? '✓ Enabled' : '⚠ Disabled';
-    const corsOrigins = ALLOWED_ORIGINS.length;
-    
+    const corsOrigins = ALLOWED_ORIGINS.size;
+
     console.log('\n╔═══════════════════════════════════════════════════════════╗');
     console.log('║                                                           ║');
     console.log(`║  🏥 RIVAANSH LIFESCIENCES — ${nodeEnv.toUpperCase().padEnd(24)} ║`);
@@ -768,7 +847,7 @@ const server = app.listen(PORT, () => {
     console.log('║  • POST /api/ai/chat        — AI assistant               ║');
     console.log('║                                                           ║');
     console.log('╚═══════════════════════════════════════════════════════════╝\n');
-    
+
     // Log CORS origins in development
     if (isDevelopment) {
         console.log('📍 Allowed CORS Origins:');

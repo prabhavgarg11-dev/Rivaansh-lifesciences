@@ -1,7 +1,8 @@
 User-agent: *
 Allow: /
+Disallow: /api/
 Disallow: /admin
 Disallow: /backend
-Sitemap: https://rivaansh-lifesciences.onrender.com/sitemap.xml
-Host: https://rivaansh-lifesciences.onrender.com
+Sitemap: https://rivaansh-lifesciences.vercel.app/sitemap.xml
+Host: https://rivaansh-lifesciences.vercel.app
 Crawl-delay: 5

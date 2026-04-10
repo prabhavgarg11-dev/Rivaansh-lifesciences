@@ -74,10 +74,10 @@ function updateProductSEO(product) {
   if (ogTitle) ogTitle.content = title;
   if (ogDesc) ogDesc.content = product.description || 'Shop clinical healthcare products, medicines and wellness kits online.';
   if (ogUrl) ogUrl.content = `${window.location.origin}${getProductUrl(product)}`;
-  if (ogImg) ogImg.content = product.image ? `${window.location.origin}/${product.image}` : 'https://rivaansh-lifesciences.onrender.com/logo.png';
+  if (ogImg) ogImg.content = product.image ? `${window.location.origin}/${product.image}` : `${window.location.origin}/logo.png`;
   if (twitterTitle) twitterTitle.content = title;
   if (twitterDesc) twitterDesc.content = product.description || 'Order authentic medicines and health products online in India.';
-  if (twitterImg) twitterImg.content = product.image ? `${window.location.origin}/${product.image}` : 'https://rivaansh-lifesciences.onrender.com/logo.png';
+  if (twitterImg) twitterImg.content = product.image ? `${window.location.origin}/${product.image}` : `${window.location.origin}/logo.png`;
 }
 
 function resetPageSEO() {
