@@ -734,11 +734,11 @@ app.use((req, res) => {
  * Global Error Handler
  */
 app.use((err, req, res, next) => {
-  console.error("❌ Server Error:", err);
-  res.status(500).json({
+  console.error("ERROR:", err.stack);
+  res.status(err.status || 500).json({
     success: false,
-    message: err.message || "Internal server error"
-    });
+    message: err.message || "Server Error"
+  });
 });
 
 // ═══════════════════════════════════════════════════════════════════════════

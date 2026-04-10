@@ -17,15 +17,17 @@
     <meta property="og:title" content="Rivaansh Lifesciences — AI-Powered Clinical Pharmacy in India">
     <meta property="og:description" content="Buy licensed medicines, wellness products and use AI healthcare tools for symptom screening, prescription analysis and drug safety across India.">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://rivaansh-lifesciences.onrender.com/">
-    <meta property="og:image" content="https://rivaansh-lifesciences.onrender.com/logo.png">
+    <meta property="og:url" content="https://rivaansh-lifesciences.vercel.app/">
+    <meta property="og:image" content="https://rivaansh-lifesciences.vercel.app/logo.png">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Rivaansh Lifesciences — AI Healthcare Pharmacy">
     <meta name="twitter:description" content="Trusted online pharmacy and AI health assistant for medicines, wellness products and smart healthcare guidance.">
-    <meta name="twitter:image" content="https://rivaansh-lifesciences.onrender.com/logo.png">
+    <meta name="twitter:image" content="https://rivaansh-lifesciences.vercel.app/logo.png">
     <meta name="twitter:creator" content="@RivaanshHealth">
     <title>Rivaansh Lifesciences | AI Pharmacy & Healthcare Products with Trusted Medicine Delivery</title>
-    <link rel="canonical" href="https://rivaansh-lifesciences.onrender.com/">
+    <link rel="canonical" href="https://rivaansh-lifesciences.vercel.app/">
+    <link rel="icon" href="/logo.png" type="image/png">
+    <link rel="shortcut icon" href="/logo.png">
     <link rel="preload" href="style.css" as="style">
     <link rel="stylesheet" href="style.css">
 
@@ -1360,22 +1362,42 @@
 
 <script>
 // Register Service Worker for PWA functionality
+// Only register when API is on same origin (port 5000 or production)
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/service-worker.js')
-      .then(reg => {
-        console.log('✅ Service Worker Registered:', reg);
-        // Check for updates periodically
-        setInterval(() => {
-          reg.update();
-        }, 60000); // Check every minute
-      })
-      .catch(err => {
-        console.error('❌ Service Worker Registration Failed:', err);
-        console.error('Details:', err.message);
-        // Service worker is optional - don't block the app
-      });
-  });
+  // Check if API is on same origin (same logic as getAPIBase in script.js)
+  const hostname = window.location.hostname;
+  const isLocal = ["localhost", "127.0.0.1"].includes(hostname);
+  const isLocalhost5500 = hostname === "127.0.0.1" && window.location.port === "5500";
+
+  let apiOrigin;
+  if (isLocal || isLocalhost5500) {
+    apiOrigin = "http://localhost:5000";
+  } else {
+    apiOrigin = `${window.location.protocol}//${hostname}`;
+  }
+
+  const isSameOrigin = window.location.origin === new URL(apiOrigin).origin;
+
+  if (isSameOrigin) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/service-worker.js')
+        .then(reg => {
+          console.log('✅ Service Worker Registered:', reg);
+          // Check for updates periodically
+          setInterval(() => {
+            reg.update();
+          }, 60000); // Check every minute
+        })
+        .catch(err => {
+          console.error('❌ Service Worker Registration Failed:', err);
+          console.error('Details:', err.message);
+          // Service worker is optional - don't block the app
+        });
+    });
+  } else {
+    console.log('ℹ️ Service Worker skipped (API calls go to different origin)');
+  }
+}
 } else {
   console.warn('⚠️ Service Workers not supported in this browser');
 }

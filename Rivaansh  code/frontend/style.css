@@ -1219,8 +1219,8 @@ header {
 
 .floating-cart {
   position: fixed;
-  right: 25px;
-  bottom: 100px;
+  right: 20px;
+  bottom: 80px;
   background: var(--pr);
   color: white;
   width: 56px;
@@ -1932,6 +1932,7 @@ button:active { transform: scale(0.95); }
 .chat-footer button:hover { transform: scale(1.05); }
 
 @media (max-width: 768px) {
-    .chatbot-wrapper { bottom: 70px; left: 15px; }
+    .chatbot-wrapper { bottom: 80px; left: 15px; }
     .chatbot-window { width: 330px; position: fixed; left: 10px; right: auto; bottom: 140px; }
+    .floating-cart { bottom: 80px; right: 15px; }
 }
