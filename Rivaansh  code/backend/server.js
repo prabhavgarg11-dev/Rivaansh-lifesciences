@@ -133,6 +133,46 @@ app.use(express.static(path.join(__dirname, '..', 'frontend')));
 app.use('/images', express.static(path.join(__dirname, '..', 'frontend', 'images')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+app.get('/sitemap.xml', async (req, res) => {
+    const host = `${req.protocol}://${req.get('host')}`;
+    let products = [];
+    try {
+        if (dbConnected) {
+            products = await Product.find({}).select('id name').lean();
+        } else {
+            const fileData = fs.readFileSync(path.join(__dirname, 'data', 'products.json'), 'utf-8');
+            products = JSON.parse(fileData).map((p) => ({ id: p.id, name: p.name }));
+        }
+    } catch (error) {
+        console.warn('⚠️ Sitemap products fallback error:', error.message);
+    }
+
+    const staticUrls = ['/', '/products', '/faq', '/contact', '/privacy', '/terms', '/refund'];
+    const urls = staticUrls.map((url) => {
+        return `    <url>\n      <loc>${host}${url}</loc>\n      <changefreq>daily</changefreq>\n      <priority>0.8</priority>\n    </url>`;
+    });
+
+    products.forEach((product) => {
+        const slug = product.name
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/(^-|-$)/g, '');
+        urls.push(`    <url>\n      <loc>${host}/product/${slug}-${product.id}</loc>\n      <changefreq>weekly</changefreq>\n      <priority>0.7</priority>\n    </url>`);
+    });
+
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.join('\n')}\n</urlset>`;
+    res.header('Content-Type', 'application/xml');
+    res.send(xml);
+});
+
+app.get('*', (req, res, next) => {
+    const pathName = req.path;
+    if (pathName.startsWith('/api/') || pathName.startsWith('/uploads') || pathName.startsWith('/sitemap.xml') || pathName.startsWith('/robots.txt') || pathName.startsWith('/favicon.ico')) {
+        return next();
+    }
+    res.sendFile(path.join(__dirname, '..', 'frontend', 'index.html'));
+});
+
 // ═══════════════════════════════════════════════════════════════════════════
 // SAMPLE HEALTHCARE PRODUCTS DATABASE
 // ═══════════════════════════════════════════════════════════════════════════

@@ -45,6 +45,106 @@ let _reviews = JSON.parse(localStorage.getItem("rv_reviews") || "[]");
 let _cartOpen = false;
 let _chatHistory = []; // FEATURE 1: Persistent chat history for context-aware AI
 
+function toSlug(text) {
+  return String(text)
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '');
+}
+
+function getProductUrl(product) {
+  return `/product/${toSlug(product.name)}-${product.id}`;
+}
+
+function updateProductSEO(product) {
+  const canonical = document.querySelector('link[rel="canonical"]');
+  const descMeta = document.querySelector('meta[name="description"]');
+  const ogTitle = document.querySelector('meta[property="og:title"]');
+  const ogDesc = document.querySelector('meta[property="og:description"]');
+  const ogUrl = document.querySelector('meta[property="og:url"]');
+  const ogImg = document.querySelector('meta[property="og:image"]');
+  const twitterTitle = document.querySelector('meta[name="twitter:title"]');
+  const twitterDesc = document.querySelector('meta[name="twitter:description"]');
+  const twitterImg = document.querySelector('meta[name="twitter:image"]');
+  const title = `${product.name} | Buy Online at Rivaansh Lifesciences`;
+  document.title = title;
+  if (descMeta) descMeta.content = product.description || 'Order genuine healthcare products and medicines from Rivaansh Lifesciences.';
+  if (canonical) canonical.href = `${window.location.origin}${getProductUrl(product)}`;
+  if (ogTitle) ogTitle.content = title;
+  if (ogDesc) ogDesc.content = product.description || 'Shop clinical healthcare products, medicines and wellness kits online.';
+  if (ogUrl) ogUrl.content = `${window.location.origin}${getProductUrl(product)}`;
+  if (ogImg) ogImg.content = product.image ? `${window.location.origin}/${product.image}` : 'https://rivaansh-lifesciences.onrender.com/logo.png';
+  if (twitterTitle) twitterTitle.content = title;
+  if (twitterDesc) twitterDesc.content = product.description || 'Order authentic medicines and health products online in India.';
+  if (twitterImg) twitterImg.content = product.image ? `${window.location.origin}/${product.image}` : 'https://rivaansh-lifesciences.onrender.com/logo.png';
+}
+
+function resetPageSEO() {
+  const canonical = document.querySelector('link[rel="canonical"]');
+  const descMeta = document.querySelector('meta[name="description"]');
+  const ogTitle = document.querySelector('meta[property="og:title"]');
+  const ogDesc = document.querySelector('meta[property="og:description"]');
+  const ogUrl = document.querySelector('meta[property="og:url"]');
+  const ogImg = document.querySelector('meta[property="og:image"]');
+  const twitterTitle = document.querySelector('meta[name="twitter:title"]');
+  const twitterDesc = document.querySelector('meta[name="twitter:description"]');
+  const twitterImg = document.querySelector('meta[name="twitter:image"]');
+
+  document.title = 'Rivaansh Lifesciences | AI Healthcare Pharmacy & Genuine Medicines';
+  if (descMeta) descMeta.content = 'Rivaansh Lifesciences is India\'s trusted AI-powered pharmacy offering authentic medicines, healthcare products, wellness kits, and clinical AI tools with fast delivery across major cities.';
+  if (canonical) canonical.href = `${window.location.origin}/`;
+  if (ogTitle) ogTitle.content = 'Rivaansh Lifesciences — AI-Powered Clinical Pharmacy in India';
+  if (ogDesc) ogDesc.content = 'Buy licensed medicines, wellness products and use AI healthcare tools for symptom screening, prescription analysis and drug safety across India.';
+  if (ogUrl) ogUrl.content = `${window.location.origin}/`;
+  if (ogImg) ogImg.content = `${window.location.origin}/logo.png`;
+  if (twitterTitle) twitterTitle.content = 'Rivaansh Lifesciences — AI Healthcare Pharmacy';
+  if (twitterDesc) twitterDesc.content = 'Trusted online pharmacy and AI health assistant for medicines, wellness products and smart healthcare guidance.';
+  if (twitterImg) twitterImg.content = `${window.location.origin}/logo.png`;
+}
+
+function handleDeepLink() {
+  const pathName = window.location.pathname.toLowerCase();
+  if (pathName.startsWith('/product/')) {
+    const segments = pathName.split('-');
+    const id = Number(segments.pop());
+    if (id) {
+      const product = _allProducts.find((p) => p.id === id);
+      if (product) {
+        showPage('products');
+        openModal(id);
+        return;
+      }
+    }
+  }
+
+  if (pathName.startsWith('/products')) {
+    showPage('products');
+    return;
+  }
+  if (pathName.startsWith('/faq')) {
+    showPage('faq');
+    return;
+  }
+  if (pathName.startsWith('/contact')) {
+    showPage('contact');
+    return;
+  }
+  if (pathName.startsWith('/privacy')) {
+    showPage('privacy');
+    return;
+  }
+  if (pathName.startsWith('/terms')) {
+    showPage('terms');
+    return;
+  }
+  if (pathName.startsWith('/refund')) {
+    showPage('refund');
+    return;
+  }
+  showPage('home');
+}
+
 const ADMIN_CREDENTIALS = {
   email: "admin@rivaansh.com",
   password: "Admin@123",
@@ -114,6 +214,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   renderOrders();
   console.log("✓ Loading products...");
   await loadProducts();
+  handleDeepLink();
+  window.addEventListener('popstate', handleDeepLink);
   console.log("✓ Updating admin stats...");
   updateAdminStats();
   console.log("✓ Checking AI status...");
@@ -600,6 +702,10 @@ window.openModal = function (id) {
   const overlay = document.getElementById("modal");
   overlay.classList.add("open");
   document.body.style.overflow = "hidden";
+  if (p) {
+    window.history.replaceState({ productId: p.id }, '', getProductUrl(p));
+    updateProductSEO(p);
+  }
 };
 
 window.closeModal = function (e) {
@@ -609,6 +715,8 @@ window.closeModal = function (e) {
 window.closeModalDirect = function () {
   document.getElementById("modal").classList.remove("open");
   document.body.style.overflow = "";
+  window.history.replaceState(null, '', '/');
+  resetPageSEO();
 };
 
 // ── CART LOGIC ─────────────────────────────────────────────────────────────

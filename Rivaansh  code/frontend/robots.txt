@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /backend
+Sitemap: https://rivaansh-lifesciences.onrender.com/sitemap.xml
+Host: https://rivaansh-lifesciences.onrender.com
+Crawl-delay: 5
