@@ -4,10 +4,7 @@
  * Imported as an ES module where needed (Vite / React builds).
  */
 
-const _isLocal = ['localhost', '127.0.0.1', ''].includes(window.location.hostname);
-const BASE_URL = _isLocal
-    ? 'http://localhost:5000'
-    : '';
+const BASE_URL = 'https://rivaansh-lifesciences.onrender.com';
 
 /**
  * Generic API helper — returns { ok, status, data } format

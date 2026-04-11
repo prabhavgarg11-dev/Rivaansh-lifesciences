@@ -1362,32 +1362,20 @@
 
 <script>
 // Register Service Worker for PWA functionality
-// Only register when app origin and API origin match and the page is served over HTTPS or localhost.
 if ('serviceWorker' in navigator) {
-  const hostname = window.location.hostname;
-  const isLocal = ['localhost', '127.0.0.1'].includes(hostname);
-  const isLocalhost5500 = hostname === '127.0.0.1' && window.location.port === '5500';
-  const apiOrigin = isLocal || isLocalhost5500
-    ? 'http://localhost:5000'
-    : `${window.location.protocol}//${hostname}`;
-
-  if (window.location.origin === new URL(apiOrigin).origin) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/service-worker.js', { scope: '/' })
-        .then(reg => {
-          console.log('✅ Service Worker Registered:', reg);
-          reg.addEventListener('updatefound', () => {
-            console.log('🔄 New service worker found, installing update.');
-          });
-          setInterval(() => reg.update(), 60000);
-        })
-        .catch(err => {
-          console.warn('❌ Service Worker registration failed:', err);
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/service-worker.js', { scope: '/' })
+      .then(reg => {
+        console.log('✅ Service Worker Registered:', reg);
+        reg.addEventListener('updatefound', () => {
+          console.log('🔄 New service worker found, installing update.');
         });
-    });
-  } else {
-    console.log('ℹ️ Service Worker skipped: API origin differs from app origin.');
-  }
+        setInterval(() => reg.update(), 60000);
+      })
+      .catch(err => {
+        console.warn('❌ Service Worker registration failed:', err);
+      });
+  });
 } else {
   console.warn('⚠️ Service Worker unavailable or insecure context.');
 }

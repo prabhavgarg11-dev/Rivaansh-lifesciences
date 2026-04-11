@@ -45,21 +45,7 @@ app.disable('x-powered-by');
 app.set('trust proxy', true);
 
 app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin) return callback(null, true);
-    if (ALLOWED_ORIGINS.has(origin)) return callback(null, true);
-
-    if (/(^https?:\/\/([^\/]+\.)?(vercel\.app|render\.com)$)/i.test(origin)) {
-      return callback(null, true);
-    }
-
-    if (!isDevelopment) {
-      console.warn(`⚠️ CORS blocked request from: ${origin}`);
-      return callback(new Error('CORS not allowed'));
-    }
-
-    return callback(null, true);
-  },
+  origin: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization', 'x-manual-token', 'x-admin-token'],
   credentials: true,
@@ -275,20 +261,6 @@ app.get('/api/products', async (req, res) => {
 });
 
 /**
- * GET /api/products/:id
- */
-app.get('/api/products/:id', async (req, res) => {
-    try {
-        const product = await Product.findOne({ id: parseInt(req.params.id) });
-        if (!product) return res.status(404).json({ error: 'Product not found' });
-        res.status(200).json(product);
-    } catch (error) {
-        console.error('❌ Error fetching product:', error);
-        res.status(500).json({ error: 'Error fetching product', message: error.message });
-    }
-});
-
-/**
  * GET /api/products/category/:category
  */
 app.get('/api/products/category/:category', async (req, res) => {
@@ -298,6 +270,24 @@ app.get('/api/products/category/:category', async (req, res) => {
     } catch (error) {
         console.error('❌ Error filtering products:', error);
         res.status(500).json({ error: 'Error filtering products', message: error.message });
+    }
+});
+
+/**
+ * GET /api/products/:id
+ */
+app.get('/api/products/:id', async (req, res) => {
+    try {
+        const productId = Number(req.params.id);
+        if (Number.isNaN(productId)) {
+            return res.status(400).json({ error: 'Product id must be a number' });
+        }
+        const product = await Product.findOne({ id: productId });
+        if (!product) return res.status(404).json({ error: 'Product not found' });
+        res.status(200).json(product);
+    } catch (error) {
+        console.error('❌ Error fetching product:', error);
+        res.status(500).json({ error: 'Error fetching product', message: error.message });
     }
 });
 
@@ -418,16 +408,29 @@ if (process.env.RAZORPAY_KEY && process.env.RAZORPAY_SECRET) {
 
 app.post('/api/payment/razorpay-create', async (req, res) => {
     try {
-        const { amount, receipt } = req.body;
+        const rawAmount = req.body.amount;
+        const receipt = req.body.receipt || `receipt_order_${Date.now()}`;
+        const amount = Number(rawAmount);
+
+        if (!rawAmount || Number.isNaN(amount) || amount <= 0) {
+            return res.status(400).json({ error: 'Valid amount is required to create an order' });
+        }
+
         if (!razorpayInstance) {
             // Fallback for missing keys
-            return res.status(200).json({ id: 'sim_rzp_order_' + Date.now(), amount, currency: 'INR', simulated: true });
+            return res.status(200).json({
+                id: 'sim_rzp_order_' + Date.now(),
+                amount,
+                currency: 'INR',
+                receipt,
+                simulated: true
+            });
         }
 
         const options = {
             amount: Math.round(amount * 100), // amount in smallest currency unit (paise)
             currency: 'INR',
-            receipt: receipt || 'receipt_order_' + Date.now()
+            receipt
         };
 
         const order = await razorpayInstance.orders.create(options);
@@ -696,10 +699,9 @@ app.patch('/api/prescriptions/:id', requireAdmin, async (req, res) => {
 app.delete('/api/prescriptions/:id', requireAdmin, async (req, res) => {
     try {
         const { id } = req.params;
-        const rx = await Prescription.findById(id);
+        const rx = await Prescription.findByIdAndDelete(id);
         if (!rx) return res.status(404).json({ message: 'Prescription not found' });
-        await rx.remove();
-        res.status(200).json({ message: 'Deleted' });
+        res.status(200).json({ message: 'Deleted successfully' });
     } catch (error) {
         console.error('❌ Error deleting prescription:', error);
         res.status(500).json({ message: 'Server error' });
@@ -714,14 +716,21 @@ app.post('/api/users/register', async (req, res) => {
     try {
         const { name, email, phone, password } = req.body;
         
-        if (!name || !email || !password) return res.status(400).json({ message: 'Missing fields' });
+        if (!name || !email || !password) {
+            return res.status(400).json({ message: 'Missing required fields: name, email, password' });
+        }
 
-        const userExists = await User.findOne({ email });
-        if (userExists) return res.status(400).json({ message: 'User already exists' });
+        const normalizedEmail = String(email).trim().toLowerCase();
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
+            return res.status(400).json({ message: 'Invalid email format' });
+        }
+
+        const userExists = await User.findOne({ email: normalizedEmail });
+        if (userExists) return res.status(400).json({ message: 'Email already registered' });
 
         const user = await User.create({
             name,
-            email: email.toLowerCase(),
+            email: normalizedEmail,
             phone: phone || '9999999999',
             password
         });
@@ -745,7 +754,12 @@ app.post('/api/users/register', async (req, res) => {
 app.post('/api/users/login', async (req, res) => {
     try {
         const { email, password } = req.body;
-        const user = await User.findOne({ email: email.toLowerCase() });
+        if (!email || !password) {
+            return res.status(400).json({ message: 'Email and password are required' });
+        }
+
+        const normalizedEmail = String(email).trim().toLowerCase();
+        const user = await User.findOne({ email: normalizedEmail });
 
         if (user && (await user.matchPassword(password))) {
             res.json({

@@ -6,15 +6,7 @@
 // ── API base URL ──────────────────────────────────────────────
 // Automatically uses localhost in development, Render in production.
 const getAPIBase = () => {
-  const hostname = window.location.hostname;
-  const isLocal = ["localhost", "127.0.0.1"].includes(hostname);
-  const isLocalhost5500 = hostname === "127.0.0.1" && window.location.port === "5500";
-  
-  if (isLocal || isLocalhost5500) {
-    return "http://localhost:5000";
-  }
-  // For production (Render), use same origin (backend and frontend share same domain)
-  return `${window.location.protocol}//${hostname}`;
+  return "https://rivaansh-lifesciences.onrender.com";
 };
 
 const API = getAPIBase();

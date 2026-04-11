@@ -44,7 +44,9 @@ async function callAI(systemPrompt, userPrompt) {
     try {
       const fullPrompt = `${systemPrompt}\n\nUser Query: ${userPrompt}`;
       const result = await geminiModel.generateContent(fullPrompt);
-      const text = result.response.text();
+      const text = result?.response && typeof result.response.text === 'function'
+        ? result.response.text()
+        : String(result?.response || '').trim();
       if (text && text.trim()) return { text, source: 'gemini' };
     } catch (e) {
       console.warn('Gemini call failed, trying OpenAI:', e.message);
@@ -62,8 +64,8 @@ async function callAI(systemPrompt, userPrompt) {
         ],
         max_tokens: 500,
       });
-      const text = response.choices[0]?.message?.content;
-      if (text) return { text, source: 'openai' };
+      const text = response?.choices?.[0]?.message?.content || response?.choices?.[0]?.text || '';
+      if (text && String(text).trim()) return { text: String(text).trim(), source: 'openai' };
     } catch (e) {
       console.warn('OpenAI call failed:', e.message);
     }
