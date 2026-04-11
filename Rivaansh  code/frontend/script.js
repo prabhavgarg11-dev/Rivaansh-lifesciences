@@ -918,77 +918,107 @@ window.startPayment = async function (method) {
 
     if (method === "razorpay") {
       if (typeof Razorpay === "undefined") {
-        toast("💳 Razorpay SDK not loaded. Retrying...", "info");
-        // Optional: Dynamic reload or just wait for it in head
-        setTimeout(() => {
-          if (typeof Razorpay !== "undefined") window.startPayment(method);
-        }, 1500);
+        toast("💳 Razorpay SDK not loaded. Please check your internet connection.", "error");
+        setTimeout(() => { if (typeof Razorpay !== "undefined") window.startPayment(method); }, 2000);
         return;
       }
 
       try {
-        // Fetch dynamic order_id from backend Razorpay instance
-        const rzpRes = await fetch(`${API}/api/payment/razorpay-create`, {
+        // ── STEP 1: Create Razorpay order on backend FIRST and AWAIT ──────────
+        const token = localStorage.getItem('rl_token') || localStorage.getItem('userToken') || '';
+        const rzpRes = await fetch(`${API}/api/orders/create-razorpay-order`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ amount: totalAmount, receipt: orderId }),
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + token
+          },
+          body: JSON.stringify({ amount: totalAmount, currency: "INR" }),
         });
         const rzpData = await rzpRes.json();
-        if (!rzpRes.ok)
-          throw new Error(
-            rzpData.error || "Failed to initialize Razorpay Gateway.",
-          );
 
+        // ── STEP 2: Guard — do NOT open checkout if order_id is missing ───────
+        if (!rzpRes.ok || (!rzpData.order_id && !rzpData.id)) {
+          console.error("Razorpay order creation failed:", rzpData);
+          toast(rzpData.message || "Payment could not be initiated. Please try again.", "error");
+          return;
+        }
+
+        const razorpayOrderId = rzpData.order_id || rzpData.id;
+
+        // ── STEP 3: Only NOW open the Razorpay checkout ───────────────────────
         const options = {
-          key: rzpData.key || "rzp_test_YourRazorpayKeyHere",
-          amount: rzpData.amount || amount,
+          key: RZP_KEY_ID || rzpData.key || "rzp_test_YourRazorpayKeyHere",
+          amount: rzpData.amount || Math.round(totalAmount * 100),
           currency: rzpData.currency || "INR",
           name: "Rivaansh Lifesciences",
           description: "Safe & Secure Clinical Purchase",
-          order_id: rzpData.simulated ? null : rzpData.id,
-          prefill: { email: _user?.email || "", name: _user?.name || "Guest" },
+          order_id: razorpayOrderId,
+          prefill: {
+            email: _user?.email || localStorage.getItem('rl_email') || "",
+            name: _user?.name  || localStorage.getItem('rl_name')  || "Guest",
+            contact: localStorage.getItem('rl_phone') || ""
+          },
           notes: { orderId: String(orderId) },
+          theme: { color: "#2563eb" },
           handler: async function (response) {
-            await confirmPayment(
-              orderId,
-              "razorpay",
-              response.razorpay_payment_id,
-              true,
-            );
-            const confirmedOrder = {
-              id: orderId,
-              items: [..._cart],
-              totalAmount: totalAmount,
-              status: "Paid",
-              date: new Date().toLocaleDateString("en-IN", {
-                day: "numeric",
-                month: "short",
-                year: "numeric",
-              }),
-            };
-            _orders.unshift(confirmedOrder);
-            localStorage.setItem("rv_orders", JSON.stringify(_orders));
-            _cart = [];
-            saveCart();
-            renderOrders();
-            showPage("orders");
-            toast(
-              `🎉 Payment successful! Order #${String(orderId).slice(-8).toUpperCase()}`,
-              "success",
-            );
+            // ── STEP 4: Verify payment signature on backend ───────────────────
+            try {
+              const verifyRes = await fetch(`${API}/api/orders/verify-payment`, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  "Authorization": "Bearer " + token
+                },
+                body: JSON.stringify({
+                  razorpay_order_id: response.razorpay_order_id,
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  razorpay_signature: response.razorpay_signature
+                })
+              });
+              const verifyData = await verifyRes.json();
+
+              if (verifyData.success) {
+                await confirmPayment(orderId, "razorpay", response.razorpay_payment_id, true);
+                const confirmedOrder = {
+                  id: orderId,
+                  items: [..._cart],
+                  totalAmount: totalAmount,
+                  status: "Paid",
+                  date: new Date().toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }),
+                };
+                _orders.unshift(confirmedOrder);
+                localStorage.setItem("rv_orders", JSON.stringify(_orders));
+                _cart = [];
+                saveCart();
+                renderOrders();
+                showPage("orders");
+                toast(`🎉 Payment successful! Order #${String(orderId).slice(-8).toUpperCase()}`, "success");
+              } else {
+                toast("Payment verification failed. Please contact support.", "error");
+              }
+            } catch (verifyErr) {
+              console.error("Payment verification error:", verifyErr);
+              toast("Payment received but verification failed. Contact support.", "error");
+            }
           },
           modal: {
-            ondismiss: function () {
-              toast("Payment window closed", "info");
-            },
-          },
+            ondismiss: function () { toast("Payment window closed", "info"); }
+          }
         };
+
         const rzp = new Razorpay(options);
+        rzp.on("payment.failed", function (response) {
+          console.error("Razorpay payment failed:", response.error);
+          toast("Payment failed: " + response.error.description, "error");
+        });
         rzp.open();
+
       } catch (err) {
+        console.error("Razorpay initiation error:", err);
         toast("Payment initialization failed: " + err.message, "error");
       }
       return;
+
     } else if (method === "paypal") {
       const returnUrl = `${window.location.origin}/payment-success?order=${orderId}`;
       const cancelUrl = `${window.location.origin}/payment-fail`;

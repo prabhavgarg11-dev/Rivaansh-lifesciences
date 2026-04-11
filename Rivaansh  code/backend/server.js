@@ -227,13 +227,19 @@ app.post('/api/chat', async (req, res, next) => {
 // ═══════════════════════════════════════════════════════════════════════════
 const Razorpay = require('razorpay');
 let razorpayInstance = null;
-if (process.env.RAZORPAY_KEY && process.env.RAZORPAY_SECRET) {
+const RZP_KEY_ID     = process.env.RAZORPAY_KEY_ID     || process.env.RAZORPAY_KEY;
+const RZP_KEY_SECRET = process.env.RAZORPAY_KEY_SECRET || process.env.RAZORPAY_SECRET;
+if (RZP_KEY_ID && RZP_KEY_SECRET) {
     razorpayInstance = new Razorpay({
-        key_id: process.env.RAZORPAY_KEY,
-        key_secret: process.env.RAZORPAY_SECRET
+        key_id: RZP_KEY_ID,
+        key_secret: RZP_KEY_SECRET
     });
+    console.log('✅ Razorpay initialized');
+} else {
+    console.warn('⚠️  Razorpay keys missing — payments will run in simulation mode');
 }
 
+/** LEGACY: POST /api/payment/razorpay-create — kept for backward compat */
 app.post('/api/payment/razorpay-create', async (req, res, next) => {
     try {
         const rawAmount = req.body.amount;
@@ -245,28 +251,110 @@ app.post('/api/payment/razorpay-create', async (req, res, next) => {
         }
 
         if (!razorpayInstance) {
-            // Fallback for missing keys
             return res.status(200).json({
                 id: 'sim_rzp_order_' + Date.now(),
+                order_id: 'sim_rzp_order_' + Date.now(),
                 amount,
                 currency: 'INR',
                 receipt,
+                key: RZP_KEY_ID || 'rzp_test_demo',
                 simulated: true
             });
         }
 
         const options = {
-            amount: Math.round(amount * 100), // amount in smallest currency unit (paise)
+            amount: Math.round(amount * 100),
             currency: 'INR',
             receipt
         };
 
         const order = await razorpayInstance.orders.create(options);
-        res.status(200).json({ ...order, key: process.env.RAZORPAY_KEY });
+        res.status(200).json({ ...order, order_id: order.id, key: RZP_KEY_ID });
     } catch (error) {
         next(error);
     }
 });
+
+/**
+ * POST /api/orders/create-razorpay-order — canonical route, protected
+ */
+app.post('/api/orders/create-razorpay-order', authMiddleware, async (req, res, next) => {
+    try {
+        const { amount, currency = 'INR' } = req.body;
+        const numAmount = Number(amount);
+
+        if (!amount || Number.isNaN(numAmount) || numAmount <= 0) {
+            return res.status(400).json({ success: false, message: 'Valid amount is required' });
+        }
+
+        if (!razorpayInstance) {
+            // Simulation mode when keys are missing
+            const simId = 'sim_' + Date.now();
+            return res.status(200).json({
+                order_id: simId,
+                id: simId,
+                amount: numAmount * 100,
+                currency,
+                simulated: true
+            });
+        }
+
+        const order = await razorpayInstance.orders.create({
+            amount: Math.round(numAmount * 100),
+            currency,
+            receipt: 'rcpt_' + Date.now()
+        });
+
+        res.status(200).json({
+            order_id: order.id,
+            id: order.id,
+            amount: order.amount,
+            currency: order.currency
+        });
+    } catch (err) {
+        next(err);
+    }
+});
+
+/**
+ * POST /api/orders/verify-payment — validate Razorpay signature, protected
+ */
+app.post('/api/orders/verify-payment', authMiddleware, async (req, res, next) => {
+    try {
+        const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+
+        if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+            return res.status(400).json({ success: false, message: 'Missing payment verification fields' });
+        }
+
+        if (!RZP_KEY_SECRET) {
+            // Simulation: always pass
+            return res.json({ success: true, simulated: true });
+        }
+
+        const expectedSignature = crypto
+            .createHmac('sha256', RZP_KEY_SECRET)
+            .update(razorpay_order_id + '|' + razorpay_payment_id)
+            .digest('hex');
+
+        if (expectedSignature !== razorpay_signature) {
+            return res.status(400).json({ success: false, message: 'Payment signature mismatch' });
+        }
+
+        // Mark order as paid in DB if possible
+        if (dbConnected) {
+            await Order.findOneAndUpdate(
+                { razorpayOrderId: razorpay_order_id },
+                { $set: { status: 'Paid', paymentId: razorpay_payment_id } }
+            );
+        }
+
+        res.json({ success: true, paymentId: razorpay_payment_id });
+    } catch (err) {
+        next(err);
+    }
+});
+
 
 // Admin login endpoint for token-based admin actions
 app.post('/api/admin/login', (req, res) => {
