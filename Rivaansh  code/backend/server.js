@@ -11,6 +11,7 @@ require('dotenv').config({
 const express = require('express');
 const { body, validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken');
+const authMiddleware = require('./middleware/authMiddleware');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const helmet = require('helmet');
@@ -47,7 +48,7 @@ app.disable('x-powered-by');
 app.set('trust proxy', true);
 
 app.use(cors({
-  origin: true,
+  origin: ['http://localhost:3000', 'http://localhost:5000', 'http://localhost:5500', 'http://127.0.0.1:5500', 'https://rivaansh-lifesciences.vercel.app', 'https://rivaansh-lifesciences.onrender.com'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization', 'x-manual-token', 'x-admin-token'],
   credentials: true,
@@ -605,6 +606,64 @@ app.get('/', (req, res) => {
 // SUPABASE INTEGRATION ROUTE
 // ═══════════════════════════════════════════════════════════════════════════
 app.use('/api/supabase', require('./routes/supabaseRoutes'));
+
+// ═══════════════════════════════════════════════════════════════════════════
+// MISSING ENDPOINTS — PRODUCT SEARCH, PROFILE, ORDERS/MY, PRESCRIPTIONS/MY
+// ═══════════════════════════════════════════════════════════════════════════
+
+/** GET /api/products/search?q= */
+app.get('/api/products/search', async (req, res, next) => {
+    try {
+        const q = req.query.q || '';
+        const regex = new RegExp(q, 'i');
+        const results = await Product.find({
+            $or: [{ name: regex }, { category: regex }, { description: regex }]
+        });
+        res.status(200).json(results);
+    } catch (error) { next(error); }
+});
+
+/** GET /api/users/profile — protected */
+app.get('/api/users/profile', authMiddleware, async (req, res, next) => {
+    try {
+        const user = await User.findById(req.user.id).select('-password');
+        if (!user) return res.status(404).json({ message: 'User not found' });
+        res.json(user);
+    } catch (error) { next(error); }
+});
+
+/** PUT /api/users/profile — protected */
+app.put('/api/users/profile', authMiddleware, async (req, res, next) => {
+    try {
+        const { name, phone, address } = req.body;
+        const user = await User.findByIdAndUpdate(
+            req.user.id,
+            { $set: { name, phone, address } },
+            { new: true, runValidators: true }
+        ).select('-password');
+        if (!user) return res.status(404).json({ message: 'User not found' });
+        res.json(user);
+    } catch (error) { next(error); }
+});
+
+/** GET /api/orders/my — protected, returns orders for current user only */
+app.get('/api/orders/my', authMiddleware, async (req, res, next) => {
+    try {
+        if (!dbConnected) return res.status(200).json([]);
+        const orders = await Order.find({ user: req.user.id }).sort({ createdAt: -1 });
+        res.status(200).json(orders);
+    } catch (error) { next(error); }
+});
+
+/** GET /api/prescriptions/my — protected */
+app.get('/api/prescriptions/my', authMiddleware, async (req, res, next) => {
+    try {
+        if (!dbConnected) return res.status(200).json([]);
+        const items = await Prescription.find({ user: req.user.id }).sort({ createdAt: -1 });
+        res.status(200).json(items);
+    } catch (error) { next(error); }
+});
+
 
 // ═══════════════════════════════════════════════════════════════════════════
 // ERROR HANDLING MIDDLEWARE

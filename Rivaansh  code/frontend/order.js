@@ -79,7 +79,7 @@ export async function fetchOrders() {
     if (!isLoggedIn()) return [];
 
     showLoader(true);
-    const { ok, data } = await api.get('/api/orders');
+    const { ok, data } = await api.get('/api/orders/my');
     showLoader(false);
 
     if (ok && Array.isArray(data)) {

@@ -6,17 +6,17 @@ import api from './api.js';
 
 // ── State ─────────────────────────────────────────────────────────────────────
 let _user = null;  // { _id, name, email, isAdmin }
-let _token = localStorage.getItem('userToken') || null;
+let _token = localStorage.getItem('rl_token') || null;
 
 // ── Token helpers ─────────────────────────────────────────────────────────────
 function saveToken(token) {
     _token = token;
-    localStorage.setItem('userToken', token);
+    localStorage.setItem('rl_token', token);
 }
 
 function clearToken() {
     _token = null;
-    localStorage.removeItem('userToken');
+    localStorage.removeItem('rl_token');
 }
 
 export function getToken() { return _token; }
@@ -66,7 +66,7 @@ window.addEventListener('storage', (e) => {
 export async function login(email, password) {
     if (!email || !password) return { ok: false, message: 'Please fill in all fields.' };
 
-    const { ok, data } = await api.post('/api/auth/login', { email, password });
+    const { ok, data } = await api.post('/api/users/login', { email, password });
 
     if (ok && data.token) {
         saveToken(data.token);
@@ -96,7 +96,7 @@ export async function register(name, email, phone, password) {
     if (password.length < 6)
         return { ok: false, message: 'Password must be at least 6 characters.' };
 
-    const { ok, data } = await api.post('/api/auth/register', { name, email, phone, password });
+    const { ok, data } = await api.post('/api/users/register', { name, email, phone, password });
 
     if (ok && data.token) {
         saveToken(data.token);

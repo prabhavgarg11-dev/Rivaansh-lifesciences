@@ -4,7 +4,9 @@
  * Imported as an ES module where needed (Vite / React builds).
  */
 
-const BASE_URL = 'https://rivaansh-lifesciences.onrender.com';
+const BASE_URL = window.location.hostname === 'localhost'
+  ? 'http://localhost:5000'
+  : 'https://rivaansh-lifesciences.onrender.com';
 
 /**
  * Generic API helper — returns { ok, status, data } format
@@ -19,7 +21,7 @@ async function api(endpoint, options = {}) {
     };
 
     // Attach user token if present
-    const userToken = localStorage.getItem('userToken');
+    const userToken = localStorage.getItem('rl_token');
     if (userToken) headers['Authorization'] = `Bearer ${userToken}`;
 
     // Attach admin token if present
