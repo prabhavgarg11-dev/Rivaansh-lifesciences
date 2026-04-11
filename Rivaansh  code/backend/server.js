@@ -227,8 +227,8 @@ app.post('/api/chat', async (req, res, next) => {
 // ═══════════════════════════════════════════════════════════════════════════
 const Razorpay = require('razorpay');
 let razorpayInstance = null;
-const RZP_KEY_ID     = process.env.RAZORPAY_KEY_ID     || process.env.RAZORPAY_KEY;
-const RZP_KEY_SECRET = process.env.RAZORPAY_KEY_SECRET || process.env.RAZORPAY_SECRET;
+const RZP_KEY_ID     = process.env.RAZORPAY_KEY_ID;
+const RZP_KEY_SECRET = process.env.RAZORPAY_KEY_SECRET;
 if (RZP_KEY_ID && RZP_KEY_SECRET) {
     razorpayInstance = new Razorpay({
         key_id: RZP_KEY_ID,
@@ -279,41 +279,18 @@ app.post('/api/payment/razorpay-create', async (req, res, next) => {
  * POST /api/orders/create-razorpay-order — canonical route, protected
  */
 app.post('/api/orders/create-razorpay-order', authMiddleware, async (req, res, next) => {
-    try {
-        const { amount, currency = 'INR' } = req.body;
-        const numAmount = Number(amount);
-
-        if (!amount || Number.isNaN(numAmount) || numAmount <= 0) {
-            return res.status(400).json({ success: false, message: 'Valid amount is required' });
-        }
-
-        if (!razorpayInstance) {
-            // Simulation mode when keys are missing
-            const simId = 'sim_' + Date.now();
-            return res.status(200).json({
-                order_id: simId,
-                id: simId,
-                amount: numAmount * 100,
-                currency,
-                simulated: true
-            });
-        }
-
-        const order = await razorpayInstance.orders.create({
-            amount: Math.round(numAmount * 100),
-            currency,
-            receipt: 'rcpt_' + Date.now()
-        });
-
-        res.status(200).json({
-            order_id: order.id,
-            id: order.id,
-            amount: order.amount,
-            currency: order.currency
-        });
-    } catch (err) {
-        next(err);
-    }
+  try {
+    const { amount, currency = 'INR' } = req.body;
+    const options = {
+      amount: amount * 100,
+      currency,
+      receipt: 'receipt_' + Date.now()
+    };
+    const order = await razorpayInstance.orders.create(options);
+    res.json({ order_id: order.id, amount: order.amount, currency: order.currency, key: RZP_KEY_ID });
+  } catch (err) {
+    next(err);
+  }
 });
 
 /**
