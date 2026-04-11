@@ -4,7 +4,7 @@
  * Version bump forces cache refresh on deploy
  */
 
-const CACHE_VERSION = 'rivaansh-v4';
+const CACHE_VERSION = 'rivaansh-v5';
 const STATIC_CACHE  = `${CACHE_VERSION}-static`;
 const API_CACHE     = `${CACHE_VERSION}-api`;
 
@@ -61,7 +61,7 @@ self.addEventListener('fetch', event => {
     const url = new URL(request.url);
 
     // ① API requests → Network-First with offline fallback (only GET)
-    if (url.origin === self.location.origin && url.pathname.startsWith('/api/')) {
+    if (url.pathname.startsWith('/api/') || url.hostname.includes('onrender.com')) {
         // Non-GET API calls (POST, PUT, DELETE) → always network, never cache
         if (request.method !== 'GET') {
             event.respondWith(
@@ -94,26 +94,21 @@ self.addEventListener('fetch', event => {
         return;
     }
 
-    // ② Static assets → Cache-First with network fallback
+    // ② Static assets → Network-First with cache fallback
     if (request.method === 'GET') {
         event.respondWith(
-            caches.match(request).then(cached => {
-                if (cached) return cached;
-
-                return fetch(request).then(res => {
-                    // Cache successful assets discovered at runtime
-                    if (res && res.ok && res.status === 200) {
-                        const clone = res.clone();
-                        caches.open(STATIC_CACHE).then(c => c.put(request, clone));
-                    }
-                    return res;
-                }).catch(() => {
-                    // Navigation request while offline → serve app shell
+            fetch(request).then(res => {
+                if (res && res.ok && res.status === 200) {
+                    const clone = res.clone();
+                    caches.open(STATIC_CACHE).then(c => c.put(request, clone));
+                }
+                return res;
+            }).catch(() => {
+                return caches.match(request).then(cached => {
+                    if (cached) return cached;
                     if (request.mode === 'navigate') {
-                        return caches.match('/index.html') ||
-                               caches.match('/offline.html');
+                        return caches.match('/index.html') || caches.match('/offline.html');
                     }
-                    // For other resource types, serve a fallback if available
                     return caches.match('/offline.html');
                 });
             })
