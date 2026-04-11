@@ -9,6 +9,8 @@ require('dotenv').config({
 });
 
 const express = require('express');
+const { body, validationResult } = require('express-validator');
+const jwt = require('jsonwebtoken');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const helmet = require('helmet');
@@ -301,19 +303,7 @@ function requireAdmin(req, res, next) {
 // ═══════════════════════════════════════════════════════════════════════════
 const JWT_SECRET = process.env.JWT_SECRET || 'rivaansh_jwt_secret_key_2024';
 
-function requireAuth(req, res, next) {
-    const token = (req.headers.authorization || '').replace('Bearer ', '');
-    if (!token) {
-        return res.status(401).json({ message: 'No authentication token provided' });
-    }
-    try {
-        // For now, validate token format (in production, use jwt.verify)
-        req.user = { token };
-        next();
-    } catch (err) {
-        next(err);
-    }
-});
+);
 
 app.post('/api/admin/products', requireAdmin, async (req, res, next) => {
     try {
@@ -366,7 +356,7 @@ app.get('/api/admin/prescriptions', requireAdmin, async (req, res, next) => {
  * GET /api/cart
  * Retrieve user's cart (requires authentication)
  */
-app.get('/api/cart', requireAuth, async (req, res, next) => {
+app.get('/api/cart', authMiddleware, async (req, res, next) => {
     try {
         // For now, return empty cart — frontend manages cart locally
         // In production, query Cart collection for req.user._id
@@ -384,7 +374,7 @@ app.get('/api/cart', requireAuth, async (req, res, next) => {
  * POST /api/cart
  * Update/sync user's cart (requires authentication)
  */
-app.post('/api/cart', requireAuth, async (req, res, next) => {
+app.post('/api/cart', authMiddleware, async (req, res, next) => {
     try {
         const { items, total } = req.body;
         if (!items) {
@@ -410,7 +400,7 @@ app.post('/api/cart', requireAuth, async (req, res, next) => {
  * GET /api/orders
  * Retrieve all orders for authenticated user
  */
-app.get('/api/orders', requireAuth, async (req, res, next) => {
+app.get('/api/orders', authMiddleware, async (req, res, next) => {
     try {
         if (!dbConnected) return res.status(200).json([]);
         // In production, filter by req.user._id
@@ -425,7 +415,7 @@ app.get('/api/orders', requireAuth, async (req, res, next) => {
  * GET /api/orders/:id
  * Retrieve specific order details
  */
-app.get('/api/orders/:id', requireAuth, async (req, res, next) => {
+app.get('/api/orders/:id', authMiddleware, async (req, res, next) => {
     try {
         if (!dbConnected) return res.status(404).json({ message: 'Order not found' });
         const order = await Order.findById(req.params.id);
@@ -534,7 +524,10 @@ app.post('/api/users/register', async (req, res, next) => {
             password
         });
 
+        const token = jwt.sign({ id: user._id }, process.env.SESSION_SECRET || 'rivaansh_jwt_secret_key_2024', { expiresIn: '30d' });
+
         res.status(201).json({
+            token,
             uid: user._id,
             name: user.name,
             email: user.email,
@@ -560,7 +553,9 @@ app.post('/api/users/login', async (req, res, next) => {
         const user = await User.findOne({ email: normalizedEmail });
 
         if (user && (await user.matchPassword(password))) {
+            const token = jwt.sign({ id: user._id }, process.env.SESSION_SECRET || 'rivaansh_jwt_secret_key_2024', { expiresIn: '30d' });
             res.json({
+                token,
                 uid: user._id,
                 name: user.name,
                 email: user.email,
