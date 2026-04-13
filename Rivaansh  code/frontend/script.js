@@ -6,7 +6,16 @@
 // ── API base URL ──────────────────────────────────────────────
 // Automatically uses localhost in development, Render in production.
 const getAPIBase = () => {
-  return window.location.origin.includes('localhost') ? "http://localhost:5000" : "";
+  const origin = window.location.origin;
+  if (origin.includes('localhost') || origin.includes('127.0.0.1')) {
+    return "http://localhost:5000";
+  }
+  // If deployed on Vercel but API is on Render
+  if (origin.includes('vercel.app')) {
+    return "https://rivaansh-lifesciences.onrender.com";
+  }
+  // Self-hosted or Monolith on Render
+  return ""; 
 };
 
 const API = getAPIBase();

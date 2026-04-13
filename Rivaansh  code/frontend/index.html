@@ -28,8 +28,8 @@
     <link rel="canonical" href="https://rivaansh-lifesciences.vercel.app/">
     <link rel="icon" href="/logo.png" type="image/png">
     <link rel="shortcut icon" href="/logo.png">
-    <link rel="preload" href="style.css" as="style">
-    <link rel="stylesheet" href="style.css">
+    <link rel="preload" href="style.css?v=2.5" as="style">
+    <link rel="stylesheet" href="style.css?v=2.5">
 
     <!-- Fonts — preconnect for performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1413,8 +1413,8 @@
 </div>
 
 <!-- Main application script -->
-<script defer src="script.js"></script>
-<script defer src="location.js"></script>
+<script defer src="script.js?v=2.5"></script>
+<script defer src="location.js?v=2.5"></script>
 
 <style>
 /* ── LOCATION HUB STYLES ─────────────────────────────────────────────────── */
@@ -1542,8 +1542,11 @@
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', async () => {
     try {
-      const reg = await navigator.serviceWorker.register('/service-worker.js');
-      console.log('SW registered:', reg.scope);
+      const reg = await navigator.serviceWorker.register('/service-worker.js?v=2.5');
+      // Force update if one is waiting
+      if (reg.waiting) {
+        reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+      }
     } catch (err) {
       console.warn('SW registration failed (non-critical):', err);
     }
