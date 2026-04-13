@@ -11,7 +11,7 @@ require('dotenv').config({
 const express = require('express');
 const { body, validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken');
-const authMiddleware = require('./middleware/authMiddleware');
+const { protect: authMiddleware } = require('./middleware/authMiddleware');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const helmet = require('helmet');
