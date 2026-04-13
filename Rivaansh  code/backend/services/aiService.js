@@ -1,7 +1,7 @@
 /**
  * ═══════════════════════════════════════════════════════════════
  * RIVAANSH LIFESCIENCES — CLINICAL AI SERVICE
- * Gemini (primary) → OpenAI (secondary) → Smart Rule Fallback
+ * OpenAI (primary) → Gemini (secondary) → Smart Rule Fallback
  * ═══════════════════════════════════════════════════════════════
  */
 
@@ -31,29 +31,15 @@ if (isValidKey(GEMINI_KEY)) {
 if (isValidKey(OPENAI_KEY)) {
   try {
     openaiClient = new OpenAI({ apiKey: OPENAI_KEY });
-    console.log('✅ OpenAI initialized (Clinical Backup)');
+    console.log('✅ OpenAI initialized (Clinical Hub)');
   } catch (e) {
     console.warn('⚠️ OpenAI init failed:', e.message);
   }
 }
 
-// ── Core AI Call (Gemini first, then OpenAI) ──────────────────
+// ── Core AI Call (OpenAI first, then Gemini) ──────────────────
 async function callAI(systemPrompt, userPrompt) {
-  // Try Gemini first
-  if (geminiModel) {
-    try {
-      const fullPrompt = `${systemPrompt}\n\nUser Query: ${userPrompt}`;
-      const result = await geminiModel.generateContent(fullPrompt);
-      const text = result?.response && typeof result.response.text === 'function'
-        ? result.response.text()
-        : String(result?.response || '').trim();
-      if (text && text.trim()) return { text, source: 'gemini' };
-    } catch (e) {
-      console.warn('Gemini call failed, trying OpenAI:', e.message);
-    }
-  }
-
-  // Fallback to OpenAI
+  // Try OpenAI first
   if (openaiClient) {
     try {
       const response = await openaiClient.chat.completions.create({
@@ -67,7 +53,21 @@ async function callAI(systemPrompt, userPrompt) {
       const text = response?.choices?.[0]?.message?.content || response?.choices?.[0]?.text || '';
       if (text && String(text).trim()) return { text: String(text).trim(), source: 'openai' };
     } catch (e) {
-      console.warn('OpenAI call failed:', e.message);
+      console.warn('OpenAI call failed, trying Gemini:', e.message);
+    }
+  }
+
+  // Fallback to Gemini
+  if (geminiModel) {
+    try {
+      const fullPrompt = `${systemPrompt}\n\nUser Query: ${userPrompt}`;
+      const result = await geminiModel.generateContent(fullPrompt);
+      const text = result?.response && typeof result.response.text === 'function'
+        ? result.response.text()
+        : String(result?.response || '').trim();
+      if (text && text.trim()) return { text, source: 'gemini' };
+    } catch (e) {
+      console.warn('Gemini call failed:', e.message);
     }
   }
 
@@ -205,9 +205,9 @@ async function getMedicineInfo(medicine) {
 // ── Export AI Status ──────────────────────────────────────────
 function getAIStatus() {
   return {
-    gemini: !!geminiModel,
     openai: !!openaiClient,
-    mode: geminiModel ? 'gemini' : openaiClient ? 'openai' : 'fallback',
+    gemini: !!geminiModel,
+    mode: openaiClient ? 'openai' : geminiModel ? 'gemini' : 'fallback',
     available: !!(geminiModel || openaiClient),
   };
 }

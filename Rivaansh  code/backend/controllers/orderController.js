@@ -1,7 +1,7 @@
-import Order from '../models/Order.js';
-import Cart from '../models/Cart.js';
+const Order = require('../models/Order');
+const Cart = require('../models/Cart');
 
-export const addOrderItems = async (req, res) => {
+exports.addOrderItems = async (req, res) => {
     try {
         const { items, address, phone, totalAmount } = req.body;
         // Parse items if sent as JSON string via FormData
@@ -33,7 +33,7 @@ export const addOrderItems = async (req, res) => {
     }
 };
 
-export const getMyOrders = async (req, res) => {
+exports.getMyOrders = async (req, res) => {
     try {
         const orders = await Order.find({ userId: req.user._id })
             .populate('items.productId', 'name price brand category prescriptionRequired')
@@ -44,7 +44,11 @@ export const getMyOrders = async (req, res) => {
     }
 };
 
-export const getOrders = async (req, res) => {
-    const orders = await Order.find({}).populate('userId', 'name email phone');
-    res.json(orders);
+exports.getOrders = async (req, res) => {
+    try {
+        const orders = await Order.find({}).populate('userId', 'name email phone');
+        res.json(orders);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
 };

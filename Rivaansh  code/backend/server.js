@@ -20,6 +20,13 @@ const morgan = require('morgan');
 const crypto = require('crypto');
 const path = require('path');
 const fs = require('fs');
+
+// Mongoose Models
+const Product = require('./models/Product');
+const User = require('./models/User');
+const Order = require('./models/Order');
+const Prescription = require('./models/Prescription');
+
 const app = express();
 
 // ── DYNAMIC CORS CONFIGURATION ─────────────────────────────────────────────
@@ -83,13 +90,16 @@ connectDB().then(async (connected) => {
             if (count === 0) {
                 console.log('📦 Database is empty. Seeding pharmaceutical catalogue from products.json...');
                 const productsData = JSON.parse(fs.readFileSync(path.join(__dirname, 'data', 'products.json'), 'utf-8'));
-                await Product.insertMany(productsData);
-                console.log(`🚀 Successfully seeded ${productsData.length} medicines into the clinical database.`);
+                if (productsData && productsData.length) {
+                  await Product.insertMany(productsData);
+                  console.log(`🚀 Successfully seeded ${productsData.length} medicines into the clinical database.`);
+                }
             } else {
                 console.log(`📊 Clinical database reports ${count} active medicines.`);
             }
         } catch (seedErr) {
-        next(seedErr);
+            console.error('❌ Database seeding failed:', seedErr.message);
+        }
     }
 });
 
@@ -194,12 +204,12 @@ app.post('/api/orders/:id/payment-confirmation', async (req, res, next) => {
 });
 
 // ═══════════════════════════════════════════════════════════════════════════
-// CLINICAL AI HUB — Gemini + Smart Fallback
+// CLINICAL AI HUB — OpenAI (Primary) + Gemini + Smart Fallback
 // All routes are served from routes/aiRoutes.js
 // ═══════════════════════════════════════════════════════════════════════════
 const aiRoutes = require('./routes/aiRoutes');
 
-// Mount all AI routes (Gemini primary → smart fallback)
+// Mount all AI routes (OpenAI primary → Gemini → smart fallback)
 app.use('/api/ai', aiRoutes);
 
 // Legacy /api/chat alias (backwards compatible with older frontend calls)
@@ -368,8 +378,6 @@ function requireAdmin(req, res, next) {
 // USER AUTHENTICATION MIDDLEWARE (for protected routes)
 // ═══════════════════════════════════════════════════════════════════════════
 const JWT_SECRET = process.env.JWT_SECRET || 'rivaansh_jwt_secret_key_2024';
-
-);
 
 app.post('/api/admin/products', requireAdmin, async (req, res, next) => {
     try {
@@ -668,6 +676,11 @@ app.get('/', (req, res) => {
 });
 
 // ═══════════════════════════════════════════════════════════════════════════
+// LOCATION TRACKING HUB
+// ═══════════════════════════════════════════════════════════════════════════
+app.use('/api/location', require('./routes/locationRoutes'));
+
+// ═══════════════════════════════════════════════════════════════════════════
 // SUPABASE INTEGRATION ROUTE
 // ═══════════════════════════════════════════════════════════════════════════
 app.use('/api/supabase', require('./routes/supabaseRoutes'));
@@ -788,6 +801,14 @@ const server = app.listen(PORT, () => {
         console.log('📍 Allowed CORS Origins:');
         ALLOWED_ORIGINS.forEach(origin => console.log(`   • ${origin}`));
         console.log('');
+        
+        // Supabase Status
+        const supabase = require('./config/supabase');
+        if (supabase) {
+            console.log('📡 Supabase Hub:     Active (Routes: /api/supabase/*)');
+        } else {
+            console.log('📡 Supabase Hub:     Inactive (Check .env)');
+        }
     }
 });
 

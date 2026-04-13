@@ -1,7 +1,7 @@
-import Cart from '../models/Cart.js';
+const Cart = require('../models/Cart');
 
 // GET /api/cart — fetch user's cart with populated product details
-export const getUserCart = async (req, res) => {
+exports.getUserCart = async (req, res) => {
     try {
         let cart = await Cart.findOne({ userId: req.user._id })
             .populate('items.productId', 'name price brand category prescriptionRequired imageUrl');
@@ -15,7 +15,7 @@ export const getUserCart = async (req, res) => {
 };
 
 // POST /api/cart — add item or update quantity (quantity is a delta: +1 to add, -1 to reduce)
-export const addToCart = async (req, res) => {
+exports.addToCart = async (req, res) => {
     try {
         const { productId, quantity } = req.body;
         if (!productId || quantity === undefined) {
@@ -28,7 +28,7 @@ export const addToCart = async (req, res) => {
         const itemIndex = cart.items.findIndex(i => i.productId.toString() === productId);
 
         if (itemIndex > -1) {
-            const newQty = cart.items[itemIndex].quantity + quantity;
+            const newQty = cart.items[itemIndex].quantity + Number(quantity);
             if (newQty <= 0) {
                 // Remove item if quantity drops to 0
                 cart.items.splice(itemIndex, 1);
@@ -36,22 +36,22 @@ export const addToCart = async (req, res) => {
                 cart.items[itemIndex].quantity = newQty;
             }
         } else {
-            if (quantity > 0) {
-                cart.items.push({ productId, quantity });
+            if (Number(quantity) > 0) {
+                cart.items.push({ productId, quantity: Number(quantity) });
             }
         }
 
         await cart.save();
         // Return populated cart
-        await cart.populate('items.productId', 'name price brand category prescriptionRequired imageUrl');
-        res.json(cart);
+        const updatedCart = await Cart.findById(cart._id).populate('items.productId', 'name price brand category prescriptionRequired imageUrl');
+        res.json(updatedCart);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 };
 
 // DELETE /api/cart/:productId — remove a specific item
-export const removeFromCart = async (req, res) => {
+exports.removeFromCart = async (req, res) => {
     try {
         const cart = await Cart.findOne({ userId: req.user._id });
         if (!cart) return res.status(404).json({ message: 'Cart not found' });
@@ -67,7 +67,7 @@ export const removeFromCart = async (req, res) => {
 };
 
 // DELETE /api/cart — clear entire cart (called after order placement)
-export const clearCart = async (req, res) => {
+exports.clearCart = async (req, res) => {
     try {
         const cart = await Cart.findOne({ userId: req.user._id });
         if (cart) {

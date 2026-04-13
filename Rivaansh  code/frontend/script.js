@@ -6,7 +6,7 @@
 // ── API base URL ──────────────────────────────────────────────
 // Automatically uses localhost in development, Render in production.
 const getAPIBase = () => {
-  return "https://rivaansh-lifesciences.onrender.com";
+  return window.location.origin.includes('localhost') ? "http://localhost:5000" : "";
 };
 
 const API = getAPIBase();
@@ -181,7 +181,6 @@ function registerUser(name, email, phone = "", password) {
 
 // ── DOM READY ──────────────────────────────────────────────────────────────
 document.addEventListener("DOMContentLoaded", async () => {
-  console.log("✓ DOMContentLoaded fired, initializing Rivaansh app...");
   // Initialize admin user if missing
   if (!_users.length) {
     _users.push({
@@ -194,38 +193,30 @@ document.addEventListener("DOMContentLoaded", async () => {
     localStorage.setItem("rv_users", JSON.stringify(_users));
   }
 
-  console.log("✓ Attaching search...");
   attachSearch();
-  console.log("✓ Attaching navigation...");
   attachSpotlightNav();
-  console.log("✓ Rendering cart...");
   renderCart();
   updateCartBadge();
-  console.log("✓ Rendering auth buttons...");
   renderAuthButtons();
   renderOrders();
-  console.log("✓ Loading products...");
   await loadProducts();
   handleDeepLink();
   window.addEventListener('popstate', handleDeepLink);
-  console.log("✓ Updating admin stats...");
   updateAdminStats();
-  console.log("✓ Checking AI status...");
   checkAIStatus();
-  console.log("✓ App initialization complete!");
 });
 
 // ── LOADER ─────────────────────────────────────────────────────────────────
 function hideLoader() {
   const l = document.getElementById("loader");
-  console.log("🔄 hideLoader called, loader element:", l);
+
   if (l) {
     l.style.transition = "opacity 0.6s ease, visibility 0.6s ease";
     l.style.opacity = "0";
     l.style.visibility = "hidden";
     setTimeout(() => {
       l.style.display = "none";
-      console.log("✓ Loader hidden successfully");
+
     }, 600);
   } else {
     console.warn("⚠️ Loader element not found!");
@@ -233,7 +224,7 @@ function hideLoader() {
 }
 
 window.addEventListener("load", () => {
-    console.log("✓ Window load event fired");
+
     setTimeout(hideLoader, 500); // Aesthetic delay for clinical feel
 });
 
@@ -268,12 +259,12 @@ async function checkClinicalConnectivity() {
 }
 
 async function loadProducts() {
-  console.log("📦 loadProducts started, API:", API);
+
   const loaderText = document.querySelector(".loader-text");
   if (loaderText) loaderText.textContent = "🏥 Probing Clinical Backend...";
 
   const isUp = await checkClinicalConnectivity();
-  console.log("✓ Backend connectivity check:", isUp);
+
 
   if (!isUp) {
     console.warn("⚠️ Clinical backend not reachable. Using fallback.");
@@ -2731,7 +2722,7 @@ async function checkAIStatus() {
         const res = await fetch(`${API}/api/ai/status`);
         if (res.ok) {
             const data = await res.json();
-            console.log(`🤖 Clinical AI: ${data.message} (${data.mode || 'unknown'})`);
+
             if (!data.available) addNotification('AI is running in smart fallback mode. Add your Gemini API key to .env for full AI.', 'info');
         }
     } catch (e) { }
